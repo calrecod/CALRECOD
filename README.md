@@ -8,4 +8,6 @@ Computed Aided Learning of Reinforced Concrete Design - MatLab
 
 3.- Add all of folder directories to the MatLab path (Go to MatLab >> Click in HOME >> Set Path >> Add folders)
 
-4.- Official Youtube channel: https://www.youtube.com/channel/UCRcDweFXNxsT1JBR8U0OLtQ 
+# ADDITIONAL REFERENCES
+
+Official Youtube channel: https://www.youtube.com/channel/UCRcDweFXNxsT1JBR8U0OLtQ 
