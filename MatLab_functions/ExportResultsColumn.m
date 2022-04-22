@@ -51,7 +51,7 @@ fileid_04=fopen([directionData,nombre_archivo],'w+t');
 
 % Writing the .txt file for the exportation of results______________
 if cols_sym_asym_isr~="ISR"
-    fprintf(fileid_02,'%.2f %.2f %.2f %.2f %.2f\n',dimColumnsCollection(i,:));
+    fprintf(fileid_02,'%.2f %.2f %.2f %.2f %.2f\n',dimColumnsCollection(1,:));
 
     fprintf(fileid_03,'%d\n',bestArrangement);
 
@@ -59,7 +59,7 @@ if cols_sym_asym_isr~="ISR"
         fprintf(fileid_04,'%.2f %.2f\n',bestdisposicionRebar(j,:));
     end
 
-    fprintf(fileid_01,'%d\n',nbarColumnsCollection(i));
+    fprintf(fileid_01,'%d\n',nbarColumnsCollection(1));
 end
 
 fclose(fileid_01);
