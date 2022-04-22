@@ -70,7 +70,7 @@ fclose(fileid_04);
 nombre_archivo='coord_desplante_columns.txt';
 
 fileid=fopen([directionData,nombre_archivo],'w+t');
-for j=1:cols
-    fprintf(fileid,'%.2f %.2f %.2f\n',coordBaseCols(j,:));
-end
+
+fprintf(fileid,'%.2f %.2f %.2f\n',coordBaseCols(1,:));
+
 fclose(fileid);
