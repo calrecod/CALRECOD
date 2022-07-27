@@ -11,7 +11,8 @@ function [Mr_col,h,Inertia_xy_modif,bestArea,lowestCost,ovMostEc,nvEc,...
 %   plotRebarDesign)
 %
 %------------------------------------------------------------------------
-% PURPOSE: To determine an optimal rebar design.
+% PURPOSE: To determine an optimal symmetrical rebar design composed of
+%          only one type of rebar.
 % 
 % OUTPUT: Mr_col:               are the final resistant bending moment for
 %                               both axis directions of the optimal designed 
@@ -107,19 +108,15 @@ bp=b-2*rec(1);
 hp=h-2*rec(2);
 
 tableOptionsBar=zeros(7,8);
+% Data base: type of rebar
+tableOptionsBar(1:7,2)=[4;5;6;8;9;10;12];
 
-tableOptionsBar(1,2)=4;tableOptionsBar(2,2)=5;tableOptionsBar(3,2)=6;
-tableOptionsBar(4,2)=8;tableOptionsBar(5,2)=9;tableOptionsBar(6,2)=10;
-tableOptionsBar(7,2)=12;
+% Database: unit weight kg/m of each type of rebar
+tableOptionsBar(1:7,8)=[0.994;1.552;2.235;3.973;5.033;6.225;8.938];
 
-% base de datos de peso unitario kg/m por tipo
-tableOptionsBar(1,8)=0.994;tableOptionsBar(2,8)=1.552;tableOptionsBar(3,8)=2.235;
-tableOptionsBar(4,8)=3.973;tableOptionsBar(5,8)=5.033;tableOptionsBar(6,8)=6.225;
-tableOptionsBar(7,8)=8.938;
-
-% base de datos de PU $/kg por tipo
-% se usarán los siguientes rendimientos kg/jor
-% por cada tipo de varilla:
+% Database: UnitPrice PU $/kg for each type of rebar
+% The following construction performances will be used (kg/jor)
+% for each type of rebar:
 % _____________________________________________
 % #4 - 212, #5 - 216, #6 - 220
 % #8 - 220, #9 - 220, #10 - 220, %12 - 220
@@ -128,7 +125,7 @@ tableOptionsBar(7,8)=8.938;
 nopciones=0;
 while nopciones==0
     lowestCost=inf;
-    maxEfEc=inf;
+    maxEfEc=1;
     for i=1:7
         
         tableOptionsBar(i,1)=i;
@@ -152,6 +149,8 @@ while nopciones==0
         sepMin=max([1.5*2.54, 3/2*dv]);
         tableOptionsBar(i,5)=nv;
 
+        % There is a limit of the number of rebars that can be laid out
+        % on each boundary of the cross-section, for each type of rebar
         maxVarillasSup=fix((bp+sepMin)/(sepMin+dv));
         maxVarillasCos=fix((hp+sepMin)/(sepMin+dv));
 
@@ -206,17 +205,18 @@ while nopciones==0
     Mr_col(1)=bestMrx;
     Mr_col(2)=bestMry;
     
-    %%% Cálculo de nueva inercia de la sección reforzada..................
+    %%% MODIFIED INERTIA MOMENTUM THROUGH THE TRANSFORMED CRACKED
+    %%% CROSS-SECTION .............................................
 
-    %%%% calculo de area de varillado en cada cara
+    %%%% Calculation of steel area on each cross-section's boundary
     area_vx=vxEc*avEc; 
     area_vy=vyEc*avEc;
 
     t1_var=area_vx/(b-2*rec(1));
     t2_var=area_vy/(h-2*rec(2));
     
-    excentricity_x=abs(pu/mux)*100;
-    excentricity_y=abs(pu/muy)*100;
+    excentricity_x=abs(mux/pu)*100;
+    excentricity_y=abs(muy/pu)*100;
     eccentricity_xy=[excentricity_x,excentricity_y];
     
     [Inertia_xy_modif,Atransf_xy]=CrackingColumnsSym(h,b,fdpc,rec,t1_var,eccentricity_xy,...

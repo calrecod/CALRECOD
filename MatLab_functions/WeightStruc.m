@@ -26,18 +26,18 @@ function [wsteelColsTotal,pacColsElem,wsteelConcBeams,wsteelConcCols,...
 %
 %         wsteelConcBeams:          Sum of the weight of both steel
 %                                   reinforcement and concrete of each of
-%                                   the beams
+%                                   the beams (Kg)
 %
 %         wsteelConcCols:           Sum of the weight of both steel
 %                                   reinforcement and concrete of each column
 %
 %         wsteelConcFootings:       Sum of the weight of both steel
 %                                   reinforcement and concrete of each 
-%                                   isolated footing
+%                                   isolated footing (Kg)
 %
 %         volbeams,volcols,volfoot: are sum of the volume of concrete of
 %                                   each beam, column and isolated footing, 
-%                                   respectively
+%                                   respectively (m3)
 %
 %         wsteelStruc:              Total weight of steel reinforcement of
 %                                   the whole structural frame
@@ -105,7 +105,7 @@ wbeams=0;
 for i=1:nbeams
     nelem=elem_beams(i);
     wconc=lenElem(nelem)*areaElem(nelem)*0.000001*2400; %kg
-    volbeams=volbeams+lenElem(nelem)*areaElem(nelem)*0.000001; % cm3
+    volbeams=volbeams+lenElem(nelem)*areaElem(nelem)*0.000001; % m3
     wsteel=areaBarbeams(i)*0.000001*lenElem(nelem)*7800; %kg
     
     wbeams=wbeams+wconc+wsteel;
@@ -123,7 +123,7 @@ volcols=0;
 for i=1:ncols
     nelem=elem_cols(i);
     wconc=lenElem(nelem)*areaElem(nelem)*0.000001*2400; %kg
-    volcols=volcols+lenElem(nelem)*areaElem(nelem)*0.000001;
+    volcols=volcols+lenElem(nelem)*areaElem(nelem)*0.000001; % m3
     
     wsteel=steelareaCols(i)*0.000001*lenElem(nelem)*7800; %kg
     wsteelColsTotal=wsteelColsTotal+wsteel;
@@ -143,7 +143,7 @@ for i=1:nfootings
     be=dimFootings(i,1);
     le=dimFootings(i,2);
     wconc=be*le*hfootings(i)*0.000001*2400; %kg
-    volfoot=volfoot+be*le*hfootings(i)*0.000001;
+    volfoot=volfoot+be*le*hfootings(i)*0.000001; % m3
     
     wsteel=(areaBarFootings(i,1)*0.0001*be*0.01+...
             areaBarFootings(i,2)*0.0001*le*0.01)*7800; %kg

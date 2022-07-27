@@ -1,3 +1,25 @@
+% Design_RCPlane_Frames_Ex01
+%----------------------------------------------------------------
+% PURPOSE 
+%    To design optimally the reinforcement of structural plane concrete 
+%    frame composed of rectangular beams, rectangular columns and isolated
+%    footings.
+%
+%    Note: function DesignRCPlaneFrameBCIF is the one used to design
+%          optimally the reinforcement on all elements. In case it is 
+%          necessary some height dimension of the elements might be 
+%          increased
+%
+%          At the end some required basic data is exported for a proper
+%          visualization of the optimal design in ANSYS SpaceClaim through
+%          Visual CALRECOD. In case it is required for a visual assessment
+%----------------------------------------------------------------
+
+% LAST MODIFIED: L.F.Veduzco    2022-07-27
+%                Faculty of Engineering
+%                Autonomous University of Queretaro
+%----------------------------------------------------------------
+
 clc 
 clear all
 
@@ -142,7 +164,7 @@ end
        % elements for each structural element
  
 pu_beams=38.85; % unit construction cost of reinforcement assembly
-cols_sym_asym_isr="Asymmetric";
+cols_sym_asym_isr="Symmetric";
 if cols_sym_asym_isr=="Symmetric"
     pu_cols=[29.19, 29.06, 28.93, 28.93, 28.93, 28.93, 28.93]; % symmetric rebar
 elseif cols_sym_asym_isr=="Asymmetric"
@@ -203,7 +225,6 @@ qbarra_y=zeros(nbars,2);
 for i=1:nbeams
     qbarra_y(elem_beams(i),2)=1.1*areaElem(elem_beams(i))*...
         unit_weight_elem(elem_beams(i),2)+1.1*(beams_LL(i,2));
-    
 end
 
 % To consider self weight of columns as punctual vertical loads on its
@@ -214,31 +235,21 @@ dof_weight_elem_cols=[2 5 14 17 23; % dof
 for i=1:length(dof_weight_elem_cols(1,:))
     fglobal(dof_weight_elem_cols(1,i))=-1.1*areaElem(dof_weight_elem_cols(2,i))*...
         unit_weight_elem(dof_weight_elem_cols(2,i),2)*lenElem(dof_weight_elem_cols(2,i));
-
 end
 
-%dof_seismic_forces=[4 7]; % in case there are equivalent sesimic loads 
+dof_seismic_forces=[4 7]; % in case there are equivalent sesimic loads 
                           % applied
 dof_seismic_forces=[];    % in case there are not seismic lateral loads
                           % applied
 
-%%% To compute lateral equvalent seismic forces with the inverted pendulum
-% method ______________________________________________________________
-if isempty(dof_seismic_forces)==0
-    modes=[1];
-    sa=200; % ground pseudo-acceleration
-    [fmax_floor,modals]=SeismicLoadsNFloor2DFrame(support,unit_weight_elem,...
-                    type_elem,lenElem,areaElem,Eelem,inertiaElem,vertical_loads,...
-                    nfloors,floor_elem,modes,sa);
-    fglobal(dof_seismic_forces)=fmax_floor;
-end
+fglobal(dof_seismic_forces)=[1500;2500];
 
 %%%----------------------------------------------------------------------
 ductility=3; % required ductility on the element's cross-sections
 
 recxy_cols=[4 4];
 % To export results
-directionData='C:\Users\luizv\OneDrive\Maestría\CAL-RECOD Documentation\Functions\CALRECOD\DesignResults\';
+directionData='';
 plotAnalysisResults=1; % this parameter is used to indicate if the 
                        % analyisis' results plots will be required or not
                        % (1) yes, (otherwise) no. (see Documentation)

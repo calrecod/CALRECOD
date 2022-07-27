@@ -46,71 +46,72 @@ function [diagrama,mexef,eficiencia,cxy]=diagramasDisposicion(As,b,h,E,npuntos,.
 %                Autonomous University of Queretaro
 %------------------------------------------------------------------------
 
-
-diagrama=zeros(npuntos+2,9);
-c_vector_bar=zeros(npuntos+2,2);
+if npuntos<3
+    disp('Error: the number of points for the Interaction Diagram must be 3 or higher');
+    return;
+end
+    
+diagrama=zeros(npuntos,9);
+c_vector_bar=zeros(npuntos,2);
 
 fy=4200;
 Ac=b*h;
 pot=As*fy*0.001;
 
 poc=(fdpc*(Ac-As)+fy*As)*0.001;
-df=(pot+poc)/(npuntos);
+df=(pot+poc)/(npuntos-1);
+dfi=0.1/(npuntos-1);
 
 diagrama(1,1)=-poc;
-diagrama(npuntos+2,1)=pot;
+diagrama(npuntos,1)=pot;
 diagrama(1,2)=0;
-diagrama(npuntos+2,2)=0;
+diagrama(1,6)=0;
 
 c_vector_bar(1,1)=4*h;
 c_vector_bar(1,2)=4*h;
 
-ncondiciones=length(load_conditions(:,1));
-
 varillado=[disposicion_varillado(:,1) disposicion_varillado(:,2)];
 dimensionesColumna=[b h];
 for sentido=1:2
-   if (sentido==2)
-       b=dimensionesColumna(2);
-       h=dimensionesColumna(1);
-       disposicion_varillado(:,1)=-varillado(:,2);
-       disposicion_varillado(:,2)=varillado(:,1);
-   end
-for i=1:npuntos
-    diagrama(i+1,1)=(-poc+i*df);
-    fr=diagrama(i+1,1);
-    cUno=0.001;
-    cDos=4*h;
+    if (sentido==2)
+        b=dimensionesColumna(2);
+        h=dimensionesColumna(1);
+        disposicion_varillado(:,1)=-varillado(:,2);
+        disposicion_varillado(:,2)=varillado(:,1);
+    end
+    diagrama(1,4*sentido-1)=0.65*-poc;
+    diagrama(1,4*sentido)=0;
+    for i=1:npuntos-1
+        diagrama(i+1,1)=(-poc+i*df);
+        fr=diagrama(i+1,1);
+        cUno=0.001;
+        cDos=4*h;
 
-    [raiz]=bisectionMrSymRebarCols(cUno,cDos,fr,E,h,b,fdpc,beta,...
-                             0.001,nv,ov,av,disposicion_varillado);  
-    
-    diagrama(i+1,4*sentido-2)=raiz(3);
+        [raiz]=bisectionMrSymRebarCols(cUno,cDos,fr,E,h,b,fdpc,beta,...
+                                 0.001,nv,ov,av,disposicion_varillado);  
 
-    c_vector_bar(i+1,sentido)=raiz(1);
-    
-    %%%%%%%%%%%%%%% diagramas reducidos por FR %%%%%%%%%%%%%%%%%%%%
-    
-    if diagrama(i+1,4*sentido-2)>diagrama(i,4*sentido-2)
-       diagrama(i+1,4*sentido-1)=0.65*diagrama(i+1,1);
-       diagrama(i+1,4*sentido)=0.65*diagrama(i+1,4*sentido-2);
-    else
+        diagrama(i+1,4*sentido-2)=raiz(3);
+
+        c_vector_bar(i+1,sentido)=raiz(1);
+
+        %%%%%%%%%%%%%%% diagramas reducidos por FR %%%%%%%%%%%%%%%%%%%%
+
+        %%%%%%%%%%%%%%% Reduced diagrams %%%%%%%%%%%%%%%%%%%%
+        diagrama(i+1,4*sentido-1)=(0.65+i*dfi)*diagrama(i+1,1);
+        diagrama(i+1,4*sentido)=(0.65+i*dfi)*diagrama(i+1,4*sentido-2);
         
-        diagrama(i+1,4*sentido-1)=0.75*diagrama(i+1,1);
-        diagrama(i+1,4*sentido)=0.75*diagrama(i+1,4*sentido-2);
-    end 
-%%%%%%%%%%%%%%%%%%%%%%%% Excentriciddes %%%%%%%%%%%%%%%%%%%%%%%%%%%
+        %%%%%%%%%%%%%%%%%%%%%%%% Ecentricities %%%%%%%%%%%%%%%%%%%%
 
-   diagrama(i+1,4*sentido+1)=diagrama(i+1,4*sentido)/...
-                                     diagrama(i+1,4*sentido-1);
-end
-  
-  diagrama(1,4*sentido-1)=0.65*-poc;
-  diagrama(npuntos+2,4*sentido-1)=0.75*pot;
-  diagrama(1,4*sentido)=0;
-  diagrama(npuntos+2,4*sentido)=0;
+       diagrama(i+1,4*sentido+1)=diagrama(i+1,4*sentido)/...
+                                         diagrama(i+1,4*sentido-1);
+    end
+    
+    diagrama(npuntos,4*sentido-1)=0.75*pot;
+    diagrama(npuntos,4*sentido)=0;
+    diagrama(npuntos,4*sentido-2)=0;
 end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%% Eficiencias %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-[mexef,eficiencia,cxy]=eficienciaRec(diagrama,load_conditions,pot,poc,c_vector_bar);
+[mexef,eficiencia,cxy]=effRecColsBinarySearch(diagrama,load_conditions,...
+    pot,poc,c_vector_bar);

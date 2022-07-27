@@ -1,5 +1,6 @@
 function ExportResultsColumn(directionData,dimColumnsCollection,...
-    bestdisposicionRebar,nbarColumnsCollection,bestArrangement,cols_sym_asym_isr,coordBaseCols)
+    bestdisposicionRebar,nbarColumnsCollection,bestArrangement,...
+    cols_sym_asym_isr,coordBaseCols)
 
 %------------------------------------------------------------------------
 % Syntax:

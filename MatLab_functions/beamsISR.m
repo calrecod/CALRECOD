@@ -118,7 +118,7 @@ function [sepbarsRestricSections,b,h,inertia_modif,dispositionBar_Der,barArrange
 %
 %         h_rec_sections:       are the concrete height cover for each of
 %                               the three cross-sections as a vector of six
-%                               columns and one row as:\\
+%                               columns and one row as:
 %                               [cover_left_up,cover_left_low,cover_mid_up,
 %                               cover_mid_low,cover_right_up,cover_right_low]
 %
@@ -203,7 +203,7 @@ while bh_condition==0
         arregloVar_t1=[];
         arregloVar_t2=[];
         bestBarDisposition=[];
-        area_var_t=[t2Best(1) t2Best(2)];
+        area_var_t=[bestAreatDer_ten bestAreatDer_com];
         ef=0;
     end
     
@@ -261,7 +261,7 @@ while bh_condition==0
         arregloVar_t1=[];
         arregloVar_t2=[];
         bestBarDisposition=[];
-        area_var_t=[t2Best(1) t2Best(2)];
+        area_var_t=[bestAreatCen_ten bestAreatCen_com];
         ef=0;
     end
     
@@ -318,7 +318,7 @@ while bh_condition==0
         arregloVar_t1=[];
         arregloVar_t2=[];
         bestBarDisposition=[];
-        area_var_t=[t2Best(1) t2Best(2)];
+        area_var_t=[bestAreatIzq_ten bestAreatIzq_com];
         ef=0;
     end
             h_left=h;

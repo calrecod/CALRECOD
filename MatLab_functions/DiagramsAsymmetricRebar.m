@@ -1,33 +1,31 @@
-function [maxef,diagramaInteraccion,efficiency,cp_axis,cxy]=...
-    EvaluateAsymmetric(load_conditions,npoints,position,b,h,...
-    fy,fdpc,beta,E,number_rebars_sup,number_rebars_inf,number_rebars_left,...
-    number_rebars_right,rebarAvailable,dispositionRebar)
+function [diagramaInteraccion,c_vector,poc,pot]=DiagramsAsymmetricRebar...
+    (npoints,rebarcombo,b,h,fy,fdpc,beta,E,number_rebars_sup,...
+    number_rebars_inf,number_rebars_left,number_rebars_right,rebarAvailable,...
+    dispositionRebar)
 
 %------------------------------------------------------------------------
 % Syntax:
-% [maxef,diagramaInteraccion,efficiency,cp_axis,cxy]=...
-%   EvaluateAsymmetric(load_conditions,npoints,position,b,h,...
-%   fy,fdpc,beta,E,number_rebars_sup,number_rebars_inf,number_rebars_left,...
-%   number_rebars_right,rebarAvailable,dispositionRebar)
+% [diagramaInteraccion,c_vector,poc,pot]=DiagramsAsymmetricRebar...
+% (npoints,rebarcombo,b,h,fy,fdpc,beta,E,number_rebars_sup,...
+% number_rebars_inf,number_rebars_left,number_rebars_right,rebarAvailable,...
+% dispositionRebar)
 %
 %------------------------------------------------------------------------
 % PURPOSE: To compute the interaction diagram of an asymmetrically 
 % reinforced cross-section design option.
 % 
-% OUTPUT: maxef:                is the critical structural efficiency 
-%                               according to the load conditions applied
+% OUTPUT: diagramaInteraccion:  is the array containing the interaction 
+%                               diagram data for both cross-section's axis:
 %
-%         diagramaInteraccion:  is the array containing the interaction 
-%                               diagram data
+%                  [P,MRx,FR*P,FR*MRx,ec-x,MRy,FR*P,FR*MRy,ecc-y]
 %
-%         efficiency:           is the resume table of structural efficiency
-%                               analysis for each load condition
+%         c_vector:             are neutral axis depth values for each axis 
+%                               direction of the cross-section corresponding 
+%                               to each of the interaction diagram points
 %
-%         cp_axis:              are the central plastic locations for each
-%                               axis direction of the cross-section: [CPx,CPy]
-%
-%         cxy:                  are neutral axis depth values for each axis 
-%                               direction of the cross-section
+%         poc,pot:              is the max resistance in compression of the
+%                               cross-section and the max resistance in 
+%                               tension, respectively
 %
 % INPUT:  b,h:                  cross-section initial dimensions
 %
@@ -43,22 +41,21 @@ function [maxef,diagramaInteraccion,efficiency,cp_axis,cxy]=...
 %
 %         dispositionRebar:     are the local rebar coordinates
 %
-%         position:             are the variables to optimize in the PSO 
-%                               algorithms. In this case: op1,op2,op3,op4
-%                               as a vector of size [1,4] which are the
-%                               resultant types of rebar for each of the 
+%         rebarcombo:           Are the combination of types of rebar to be 
+%                               placed over the cross-section (as indices
+%                               referring to their place in the 
+%                               "RebarAvailable" array). In this case: 
+%                               a vector [op1,op2,op3,op4] of size [1,4] 
+%                               referring to the type of rebar on each of
 %                               four cross-section boundaries (upper 
 %                               boundary, lower boundary, left side and 
 %                               right side, respectively)
-%
-%         load_conditions:      are the load conditions: vector of size 
-%                               [nloads,4] in format [nload,Pu,Mux,Muy]
 %
 %         npoints:              number of points to be computed for the
 %                               definition of the interaction diagram
 %
 %------------------------------------------------------------------------
-% LAST MODIFIED: L.F.Veduzco    2022-02-05
+% LAST MODIFIED: L.F.Veduzco    2022-06-20
 %                Faculty of Engineering
 %                Autonomous University of Queretaro
 %------------------------------------------------------------------------
@@ -66,12 +63,13 @@ if npoints<3
     disp('Error: the number of points for the Interaction Diagram must be 3 or higher');
     return;
 end
+
 cp_axis=[];
 
-op1=position(1);
-op2=position(2);
-op3=position(3);
-op4=position(4);
+op1=rebarcombo(1);
+op2=rebarcombo(2);
+op3=rebarcombo(3);
+op4=rebarcombo(4);
 
 diagramaInteraccion=zeros(npoints,9);
 c_vector=zeros(npoints,2);
@@ -122,7 +120,7 @@ dfi=0.1/(npoints-1);
 diagramaInteraccion(1,1)=-poc;
 diagramaInteraccion(npoints,1)=pot;
 diagramaInteraccion(1,2)=0;
-diagramaInteraccion(1,6)=0.0;
+diagramaInteraccion(1,6)=0;
 
 c_vector(1,:)=4*h;
 c_vector(npoints,:)=0;
@@ -140,7 +138,6 @@ for sentido=1:2
     [cp]=PlastiCenterAxis(fy,fdpc,b,h,dispositionRebar,arregloVar,...
                             rebarAvailable);
     cp_axis=[cp_axis,cp];
-   
     diagramaInteraccion(1,4*sentido-1)=0.65*-poc;
     diagramaInteraccion(1,4*sentido)=0;
     for i=1:npoints-1
@@ -160,7 +157,7 @@ for sentido=1:2
         %%%%%%%%%%%%%%% Reduced diagramas %%%%%%%%%%%%%%%%%%%%
         diagramaInteraccion(i+1,4*sentido-1)=(0.65+i*dfi)*diagramaInteraccion(i+1,1);
         diagramaInteraccion(i+1,4*sentido)=(0.65+i*dfi)*diagramaInteraccion(i+1,4*sentido-2);
-                                                          
+                                                                  
         %%%%%%%%%%%%%%%%%%%%%%%%% Eccentricities %%%%%%%%%%%%%%%%%%%%%%%%%%
 
         diagramaInteraccion(i+1,4*sentido+1)=diagramaInteraccion(i+1,4*sentido)/...
@@ -171,8 +168,5 @@ for sentido=1:2
     diagramaInteraccion(npoints,4*sentido)=0;
     diagramaInteraccion(npoints,4*sentido-2)=0;
     diagramaInteraccion(npoints,4*sentido-2)=0;
+
 end
-%%%%%%%%%%%%%%%%%%%%%%%%%%% Efficiency %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-[maxef,efficiency,cxy]=effRecColsBinarySearch(diagramaInteraccion,...
-                                    load_conditions,pot,poc,c_vector);
-       

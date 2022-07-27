@@ -43,7 +43,7 @@ hold on
 plot(xfr,yfr,'r')
 hold on
 plot(xcondicion,ycondicion,'r o','linewidth',0.1,'MarkerFaceColor','red' )
-axis([0 x(1+fix(npuntos/2))*2 y(1,1) y(npuntos,1)]);
+axis([0 x(1+fix(npuntos/2)+1)*2 y(1,1) y(npuntos,1)]);
 
 xlabel('Momentos de flexión')
 ylabel('Fuerza axial')
@@ -70,7 +70,7 @@ hold on
 plot(xfr,yfr,'r')
 hold on
 plot(xcondicion,ycondicion,'r o','linewidth',0.1,'MarkerFaceColor','red' )
-axis([0 x(1+fix(npuntos/2))*2 y(1,1) y(npuntos,1)]);
+axis([0 x(1+fix(npuntos/2)+1)*2 y(1,1) y(npuntos,1)]);
 
 xlabel('Momentos de flexión')
 ylabel('Fuerza axial')

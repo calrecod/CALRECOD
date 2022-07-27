@@ -1,4 +1,4 @@
-function [InertiaXYmodif,Atransf_xy]=CrackingColumnsSym(h,b,fdpc,rec,...
+function [InertiaXYmodif,Atransf_xy,elimxy]=CrackingColumnsSym(h,b,fdpc,rec,...
           tx,eccentricityXY,ty,Pu,cxy,conditionCrack,E)
 
 %------------------------------------------------------------------------
@@ -17,6 +17,9 @@ function [InertiaXYmodif,Atransf_xy]=CrackingColumnsSym(h,b,fdpc,rec,...
 %         Atransf_xy:     is the transformed effective area for both axis 
 %                         directions according to the cracking mechanism 
 %                         (cracked or non-cracked)
+%
+%         elimxy:         limit eccentricity in the X and Y axis
+%                         direction (cm)
 %
 % INPUT:  Pu:             axial load over the column's cross-section (Ton)
 %
@@ -65,8 +68,8 @@ Inertia_x_modif=b*h^3/12+rest_inertia;
 a_noag=b*h+(n-1)*2*(b-2*rec(1))*tx+2*(h-2*rec(2))*(n-1)*ty;
 
 % excentricity limit to be considered as non-cracked
-elim=2*(abs(Pu*1000)/a_noag+frot)*Inertia_x_modif/(abs(Pu*1000)*h); % Kg,cm
-
+elim=2*(abs(Pu*1000)/a_noag+frot)*Inertia_x_modif/(abs(Pu*1000)*h); % cm
+elimxy=[elim];
 if conditionCrack=="Cracked"
     cracking_factor=0;
 elseif conditionCrack=="Non-cracked"
@@ -88,7 +91,7 @@ else
                 2*n*ty*(h/2-rec(2)+(h/2-cxy(1)))^3/12+...
                 2*n*ty*(h/2-rec(2)+(h/2-cxy(1)))*(0.5*(h/2-rec(2)+(h/2-cxy(1))))^2;
 
-    Inertia_x_modif=b*h^3/12+rest_inertia;
+    Inertia_x_modif=rest_inertia;
     k=cxy(1)-h/2;
     Atransx=b*(h-cxy(1))+(b-2*rec(1))*tx*((n-1)+n)+...
             2*(h/2-rec(2)-k)*ty*((n-1))+...
@@ -121,7 +124,8 @@ Inertia_y_modif=b*h^3/12+rest_inertia;
 a_noag=b*h+(n-1)*2*(b-2*rec(1))*tx+2*(h-2*rec(2))*(n-1)*ty;
 
 % excentricity limit to be considered as non-cracked
-elim=2*(abs(Pu*1000)/a_noag+frot)*Inertia_y_modif/(abs(Pu*1000)*h); % Kg,cm
+elim=2*(abs(Pu*1000)/a_noag+frot)*Inertia_y_modif/(abs(Pu*1000)*h); % cm
+elimxy=[elimxy,elim]
 
 if conditionCrack=="Cracked"
     cracking_factor=0;
@@ -144,7 +148,7 @@ else
                 2*n*ty*(h/2-rec(2)+(h/2-cxy(1)))^3/12+...
                 2*n*ty*(h/2-rec(2)+(h/2-cxy(1)))*(0.5*(h/2-rec(2)+(h/2-cxy(1))))^2;
 
-    Inertia_y_modif=b*h^3/12+rest_inertia;
+    Inertia_y_modif=rest_inertia;
     k=cxy(1)-h/2;
     Atransy=b*(h-cxy(1))+(b-2*rec(1))*tx*((n-1)+n)+...
             2*(h/2-rec(2)-k)*ty*((n-1))+...

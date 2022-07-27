@@ -41,8 +41,7 @@ function [b,h,cost_elem_col,Ac_sec_elem,Ef_sec_col,Mr_col,t_value_x,...
 % INPUT:  b,h:              cross-section dimensions of column (width 
 %                             and height)
 %
-%         fdpc:             is the reduced value of f'c with the factor 
-%                           0.85 as prescribed in the ACI 318-19 code
+%         fc:               is the f'c value (Kg/cm2)
 %
 %         beta1:            is determined as established in ACI 318 code
 %                           (see Documentation)
@@ -72,6 +71,7 @@ function [b,h,cost_elem_col,Ac_sec_elem,Ef_sec_col,Mr_col,t_value_x,...
 %                Autonomous University of Queretaro
 %------------------------------------------------------------------------
 
+npuntos=30;
 Ac_sec_elem=0;
 iteracion=0;
 while Ac_sec_elem==0
@@ -84,8 +84,6 @@ while Ac_sec_elem==0
     tma=0.75;
 
     sepMin=3/2*tma*2.54;
-    npuntos=20;
-
     dimensionesColumna=[b h];
     
     bp=b-2*rec(1);
@@ -101,7 +99,7 @@ while Ac_sec_elem==0
     
     efmax=1.0;
     
-    limEficienciaMenor=0.8;
+    limEficienciaMenor=0.9;
     limEficienciaMayor=1.0;
     
     % initialize values for interation
@@ -133,8 +131,8 @@ while Ac_sec_elem==0
     %compute next first step to initialize loop
     dEfdt1=(Eftk1dt-Eftk1)/(tk1dt-tk1);
     
-    % initial step-length 1.0
-    alfa0=0.1;
+    % initial step-length 0.1
+    alfa0=0.05;
     if Eftk1>limEficienciaMayor
         
         pk1=1; % search direction

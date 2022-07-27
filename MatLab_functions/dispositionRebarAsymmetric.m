@@ -61,18 +61,18 @@ dv4=RebarAvailable(op4,2);
 
 disposition_rebar=zeros(nv,2);
 dv=RebarAvailable(7,2);
-if number_rebars_sup(op1)>=2
+if number_rebars_sup>=2
     
-    separation_hor1=round((bprima-((number_rebars_sup(op1))*dv1))/...
-        (number_rebars_sup(op1)-1),1);
+    separation_hor1=round((bprima-((number_rebars_sup)*dv1))/...
+        (number_rebars_sup-1),1);
     
-    separation_ver2=round(((hprima)-((number_rebars_right(op4)+2)*dv4))/...
-    (number_rebars_right(op4)+1),1);
+    separation_ver2=round(((hprima)-((number_rebars_right+2)*dv4))/...
+    (number_rebars_right+1),1);
 
     % Rebar disposition________________________________________________
     %__________________________________________________________________
     % rebars disposition horizontally (superior)
-    for j=1:number_rebars_sup(op1)
+    for j=1:number_rebars_sup
 
         % rebar coordinates in the superior part
         disposition_rebar(j,1)=-bprima*0.5+(dv)*0.5+(j-1)*...
@@ -81,24 +81,24 @@ if number_rebars_sup(op1)>=2
     end
     
     % rebar disposition in the vertical right part
-    for j=1:number_rebars_right(op4)
+    for j=1:number_rebars_right
 
         % right side
-        disposition_rebar(j+number_rebars_sup(op1)+number_rebars_inf(op2)+...
-            number_rebars_left(op3),2)=hprima*0.5-(dv4)*0.5-(separation_ver2+dv4*0.5)-(j-1)*(separation_ver2+dv4);
+        disposition_rebar(j+number_rebars_sup+number_rebars_inf+...
+            number_rebars_left,2)=hprima*0.5-(dv4)*0.5-(separation_ver2+dv4*0.5)-(j-1)*(separation_ver2+dv4);
 
-        disposition_rebar(j+number_rebars_sup(op1)+number_rebars_inf(op2)+...
-            number_rebars_left(op3),1)=bprima*0.5-(dv*0.5);
+        disposition_rebar(j+number_rebars_sup+number_rebars_inf+...
+            number_rebars_left,1)=bprima*0.5-(dv*0.5);
     end
 
 else
-    separation_ver2=round((hprima-((number_rebars_right(op4)+1)*dv4))/...
-    (number_rebars_right(op4)),1);
+    separation_ver2=round((hprima-((number_rebars_right+1)*dv4))/...
+    (number_rebars_right),1);
 
     % REBAR DISPOSITION________________________________________________
     %__________________________________________________________________
     % rebar disposition horizontally (superior) only one rebar
-    for j=1:number_rebars_sup(op1)
+    for j=1:number_rebars_sup
 
         % rebar coordinates in the superior part
         disposition_rebar(j,1)=-bprima*0.5+(dv)*0.5;
@@ -106,71 +106,69 @@ else
     end
     
     % rebar disposition over right side
-    for j=1:number_rebars_right(op4)
+    for j=1:number_rebars_right
         % right side
-        disposition_rebar(j+number_rebars_sup(op1)+number_rebars_inf(op2)+...
-            number_rebars_left(op3),2)=hprima*0.5-(j-1)*(separation_ver2+dv4);
+        disposition_rebar(j+number_rebars_sup+number_rebars_inf+...
+            number_rebars_left,2)=hprima*0.5-(j-1)*(separation_ver2+dv4);
 
-        disposition_rebar(j+number_rebars_sup(op1)+number_rebars_inf(op2)+...
-            number_rebars_left(op3),1)=bprima*0.5-(dv*0.5);
+        disposition_rebar(j+number_rebars_sup+number_rebars_inf+...
+            number_rebars_left,1)=bprima*0.5-(dv*0.5);
     end
 end
 
-if number_rebars_inf(op2)>=2
-    separation_hor2=round((bprima-((number_rebars_inf(op2))*dv2))/...
-        (number_rebars_inf(op2)-1),1);
+if number_rebars_inf>=2
+    separation_hor2=round((bprima-((number_rebars_inf)*dv2))/...
+        (number_rebars_inf-1),1);
     
-    separation_ver1=round((hprima-((number_rebars_left(op3)+2)*dv3))/...
-    (number_rebars_left(op3)+1),1);
+    separation_ver1=round((hprima-((number_rebars_left+2)*dv3))/...
+    (number_rebars_left+1),1);
     
     % REBAR DISPOSITION________________________________________________
     %__________________________________________________________________
     % rebar coordinates on the inferior part
-    for j=1:number_rebars_inf(op2)
+    for j=1:number_rebars_inf
         
-        disposition_rebar(number_rebars_sup(op1)+j,1)=-bprima*0.5+...
+        disposition_rebar(number_rebars_sup+j,1)=-bprima*0.5+...
             (dv)*0.5+(j-1)*(separation_hor2+dv2);
-        disposition_rebar(number_rebars_sup(op1)+j,2)=-hprima*0.5+...
+        disposition_rebar(number_rebars_sup+j,2)=-hprima*0.5+...
             (dv*0.25);
 
     end
     
     % left side
-    for j=1:number_rebars_left(op3)
+    for j=1:number_rebars_left
 
-        disposition_rebar(j+number_rebars_sup(op1)+number_rebars_inf(op2),2)=...
+        disposition_rebar(j+number_rebars_sup+number_rebars_inf,2)=...
             hprima*0.5-(dv3)*0.5-(separation_ver1+dv3*0.5)-(j-1)*(separation_ver1+dv3);
 
-        disposition_rebar(j+number_rebars_sup(op1)+number_rebars_inf(op2),1)=...
+        disposition_rebar(j+number_rebars_sup+number_rebars_inf,1)=...
             -bprima*0.5+(dv*0.5);
     end
 else
-    separation_ver1=round((hprima-((number_rebars_left(op3)+1)*dv3))/...
-    (number_rebars_left(op3)),1);
+    separation_ver1=round((hprima-((number_rebars_left+1)*dv3))/...
+    (number_rebars_left),1);
 
     % REBAR DISPOSITION________________________________________________
     %__________________________________________________________________
     % rebar coordinates over the inferior part
-    for j=1:number_rebars_inf(op2)
+    for j=1:number_rebars_inf
         
-        disposition_rebar(number_rebars_sup(op1)+j,1)=bprima*0.5-...
+        disposition_rebar(number_rebars_sup+j,1)=bprima*0.5-...
             (dv)*0.5;
-        disposition_rebar(number_rebars_sup(op1)+j,2)=-hprima*0.5+...
+        disposition_rebar(number_rebars_sup+j,2)=-hprima*0.5+...
             (dv*0.25);
 
     end
     
     % left side
-    for j=1:number_rebars_left(op3)
+    for j=1:number_rebars_left
 
-        disposition_rebar(j+number_rebars_sup(op1)+number_rebars_inf(op2),2)=...
+        disposition_rebar(j+number_rebars_sup+number_rebars_inf,2)=...
             -hprima*0.5+(dv3)*0.5+(j-1)*(separation_ver1+dv3);
 
-        disposition_rebar(j+number_rebars_sup(op1)+number_rebars_inf(op2),1)=...
+        disposition_rebar(j+number_rebars_sup+number_rebars_inf,1)=...
             -bprima*0.5+(dv*0.5);
 
     end
 
 end
-
-

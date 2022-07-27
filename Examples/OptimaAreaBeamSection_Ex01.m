@@ -1,3 +1,19 @@
+% OptimaAreaBeamSection_Ex01
+%----------------------------------------------------------------
+% PURPOSE 
+%    To determine the minimum required reinforcement area in tension for a
+%    rectangular beam cross-section, according the uniaxial pure flexure 
+%    loads
+%
+%    Note: function SGD1tBeamsISR is the only one required to
+%          determine such optimal reinforcement area
+%----------------------------------------------------------------
+
+% LAST MODIFIED: L.F.Veduzco    2022-07-27
+%                Faculty of Engineering
+%                Autonomous University of Queretaro
+%----------------------------------------------------------------
+
 clc
 clear all
 

@@ -1,9 +1,9 @@
-function [InertiaXYmodif,Atransfxy]=CrackingColumnsAsym(h,b,fdpc,rec,eccentricityXY,...
+function [InertiaXYmodif,Atransfxy,elimxy]=CrackingColumnsAsym(h,b,fdpc,rec,eccentricityXY,...
                             t1bar,t2bar,t3bar,t4bar,Pu,cxy,conditionCracking,cp)
 
 %------------------------------------------------------------------------
 % Syntax:
-% [InertiaXYmodif,Atransfxy]=CrackingColumnsAsym(h,b,fdpc,rec,eccentricityXY,...
+% [InertiaXYmodif,Atransfxy,elimxy]=CrackingColumnsAsym(h,b,fdpc,rec,eccentricityXY,...
 %                            t1bar,t2bar,t3bar,t4bar,Pu,cxy,conditionCracking,cp)
 %------------------------------------------------------------------------
 % PURPOSE: To compute the reduced inertia momentum of a column 
@@ -18,10 +18,14 @@ function [InertiaXYmodif,Atransfxy]=CrackingColumnsAsym(h,b,fdpc,rec,eccentricit
 %                           directions according to the cracking mechanism 
 %                           (cracked or non-cracked)
 %
+%         elimxy:           limit eccentricity in the X and Y axis
+%                           direction (cm)
+%
 % INPUT:  Pu:               axial load over the column's cross-section
+%                           (Ton)
 %
 %         rec:              concrete cover for both axis direction of the 
-%                           cross-section: format [coverx,covery]
+%                           cross-section: format [coverx,covery] (cm)
 %
 %         fdpc:             is the factored value of f'c as 0.85f'c according 
 %                           to the ACI 318-19 code  
@@ -48,7 +52,7 @@ function [InertiaXYmodif,Atransfxy]=CrackingColumnsAsym(h,b,fdpc,rec,eccentricit
 %         E:                Elasticity Modulus (Kg/cm2)
 %
 %------------------------------------------------------------------------
-% LAST MODIFIED: L.F.Veduzco    2022-02-05
+% LAST MODIFIED: L.F.Veduzco    2022-07-25
 %                Faculty of Engineering
 %                Autonomous University of Queretaro
 %------------------------------------------------------------------------
@@ -61,10 +65,6 @@ E=2.0e6;
 n=E/(14000*sqrt(fdpc));
 
 % Inertia X-axis_____________________________________________________
-t1_var_der=t2bar;
-t2_var_der=t1bar;
-t3_var_der=t4bar;
-t4_var_der=t3bar;
 
 % non-cracked cross-section inertia
 rest_inertia=b*h*((h/2-cp(1))^2)+...
@@ -80,7 +80,7 @@ a_noag=b*h+(n-1)*(b-2*rec(1))*(t1bar+t2bar)+(h-2*rec(2))*(n-1)*(t3bar+t4bar);
 
 % excentricity limit to be considered as non-cracked
 elim=2*(abs(Pu*1000)/a_noag+frot)*Inertia_x_modif/(abs(Pu*1000)*h);
-
+elimxy=[elim];
 if conditionCracking=="Cracked"
     cracking_factor=0;
 elseif conditionCracking=="Non-cracked"
@@ -96,7 +96,7 @@ if eccentricityXY(1)<=elim+cracking_factor
             (h-2*rec(2))*(n-1)*t4bar;
 else
     
-    % cracked section ---- (compression on the upper part of the section)
+    % cracked section ---- 
     rest_inertia=b*cxy(1)^3/4+...
                 (n)*(b-2*rec(1))*t2bar*(h-rec(2)-cxy(1))^2+...
                 (n-1)*t1bar*(b-2*rec(1))*(cxy(1)-rec(2))^2+...
@@ -105,23 +105,8 @@ else
                 n*(t3bar+t4bar)*(h/2-rec(2)+(h/2-cxy(1)))^3/12+...
                 n*(t3bar+t4bar)*(h/2-rec(2)+(h/2-cxy(1)))*(0.5*(h/2-rec(2)+(h/2-cxy(1))))^2;
 
-    % cracked section ---- (compression on the lower part of the section)
-    cxy_right=cxy; % The same neutral axis depth value is considered for...
-                   % both directions of analysis.
-    rest_inertia_der=b*cxy(1)^3/4+...
-                (n)*(b-2*rec(1))*t1_var_der*(h-rec(2)-cxy(1))^2+...
-                (n-1)*t2_var_der*(b-2*rec(1))*(cxy(1)-rec(2))^2+...
-                (n-1)*(t3bar+t4bar)*(h/2-rec(2)-(h/2-cxy(1)))^3/12+...
-                (n-1)*(t3bar+t4bar)*(h/2-rec(2)-(h/2-cxy(1)))*(0.5*(h/2-rec(2)-(h/2-cxy(1))))^2+...
-                n*(t3bar+t4bar)*(h/2-rec(2)+(h/2-cxy(1)))^3/12+...
-                n*(t3bar+t4bar)*(h/2-rec(2)+(h/2-cxy(1)))*(0.5*(h/2-rec(2)+(h/2-cxy(1))))^2;
-
-    % THE LOWER INERTIA IS USED (FOR BEING THE CRITICAL ONE)...
-    if rest_inertia_der<rest_inertia
-        rest_inertia=rest_inertia_der;
-    end
     k=cxy(1)-h/2;
-    Inertia_x_modif=b*h^3/12+rest_inertia;
+    Inertia_x_modif=rest_inertia;
     Atransx=b*(h-cxy(1))+(b-2*rec(1))*t1bar*((n-1))+...
             +(b-2*rec(1))*t2bar*((n))+...
             2*(h/2-rec(2)-k)*t3bar*((n-1))+...
@@ -144,11 +129,6 @@ t1bar=tvalues(4);
 t2bar=tvalues(3);
 t3bar=tvalues(1);
 t4bar=tvalues(2);
-
-t1_var_der=t2bar;
-t2_var_der=t1bar;
-t3_var_der=t4bar;
-t4_var_der=t3bar;
 
 rec_values=rec;
 rec(1)=rec_values(2);
@@ -173,7 +153,7 @@ a_noag=b*h+(b-2*rec(1))*(n-1)*t1bar+...
             (h-2*rec(2))*(n-1)*t4bar;
 % excentricity limit to be considered as non-cracked
 elim=2*(abs(Pu*1000)/a_noag+frot)*Inertia_y_modif/(abs(Pu*1000)*h);
-
+elimxy=[elimxy,elim];
 if conditionCracking=="Cracked"
     cracking_factor=0;
 elseif conditionCracking=="Non-cracked"
@@ -189,7 +169,7 @@ if eccentricityXY(2)<=elim+cracking_factor
             (h-2*rec(2))*(n-1)*t4bar;
 else
 
-    % cracked section ---- (compression on the upper part of the section)
+    % cracked section ---- 
     rest_inertia=b*cxy(1)^3/4+...
                 (n)*(b-2*rec(1))*t2bar*(h-rec(2)-cxy(1))^2+...
                 (n-1)*t1bar*(b-2*rec(1))*(cxy(1)-rec(2))^2+...
@@ -198,22 +178,7 @@ else
                 n*(t3bar+t4bar)*(h/2-rec(2)+(h/2-cxy(1)))^3/12+...
                 n*(t3bar+t4bar)*(h/2-rec(2)+(h/2-cxy(1)))*(0.5*(h/2-rec(2)+(h/2-cxy(1))))^2;
 
-    % cracked section ---- (compression on the lower part of the section)
-    cxy_right=cxy; % The same neutral axis depth value is considered for...
-                   % both directions of analysis.
-    rest_inertia_der=b*cxy(1)^3/4+...
-                (n)*(b-2*rec(1))*t1_var_der*(h-rec(2)-cxy(1))^2+...
-                (n-1)*t2_var_der*(b-2*rec(1))*(cxy(1)-rec(2))^2+...
-                (n-1)*(t3bar+t4bar)*(h/2-rec(2)-(h/2-cxy(1)))^3/12+...
-                (n-1)*(t3bar+t4bar)*(h/2-rec(2)-(h/2-cxy(1)))*(0.5*(h/2-rec(2)-(h/2-cxy(1))))^2+...
-                n*(t3bar+t4bar)*(h/2-rec(2)+(h/2-cxy(1)))^3/12+...
-                n*(t3bar+t4bar)*(h/2-rec(2)+(h/2-cxy(1)))*(0.5*(h/2-rec(2)+(h/2-cxy(1))))^2;
-
-    %  THE LOWER INERTIA IS USED (FOR BEING THE CRITICAL ONE)...
-    if rest_inertia_der<rest_inertia
-        rest_inertia=rest_inertia_der;
-    end
-    Inertia_y_modif=b*h^3/12+rest_inertia;
+    Inertia_y_modif=rest_inertia;
     k=cxy(1)-h/2;
     Atransy=b*(h-cxy(1))+(b-2*rec(1))*t1bar*((n-1))+...
             (b-2*rec(1))*t2bar*n+...

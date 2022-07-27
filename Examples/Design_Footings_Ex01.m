@@ -1,3 +1,23 @@
+% Design_Footings_Ex01
+%----------------------------------------------------------------
+% PURPOSE 
+%    To design optimally the reinforcement of an isolated footing's both
+%    transversal cross-section 
+%
+%    Note: function designDimFootings is used to dimension the transversal
+%          cross section dimensions of the footing, based on the bearing
+%          load capacity of the soil and the load pressures
+%
+%          function isrFootings is the one required to optimally design the
+%          reinforcement. Two options are available for reinforcement:
+%          either a pure ISR or with rebar
+%
+%----------------------------------------------------------------
+
+% LAST MODIFIED: L.F.Veduzco    2022-07-27
+%                Faculty of Engineering
+%                Autonomous University of Queretaro
+%----------------------------------------------------------------
 clear all
 clc
 

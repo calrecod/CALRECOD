@@ -99,7 +99,7 @@ while(es>ea)
     
     c=cDos-(raizDos*(cUno-cDos)/(raizUno-raizDos));
     if c<=0
-        c=0.00000001;
+        c=0.001;
     end
         
     a=beta1*c;
@@ -109,14 +109,11 @@ while(es>ea)
 
     es=abs((c-cu)/c);
     
-    if itdos>1000 || ituno>1000
+    if total_iterations>1500
         break;
     end
     
     total_iterations=total_iterations+1;
-    if total_iterations>500
-        break;
-    end
     
 end
 mrt=eleMec(1,2)+eleMec(2,2);

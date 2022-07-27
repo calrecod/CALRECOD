@@ -1,3 +1,22 @@
+% ProblemCasesFrames_Ex01_Weight
+%----------------------------------------------------------------
+% PURPOSE 
+%    To determine the total weight of a structural reinforced concrete 
+%    plane frame considering concrete volumes and reinforcing steel
+%    volumes. The structural frame is composed of rectangular beams,
+%    rectangular columns and rectangular/square isolated footings. 
+%
+%    Note: an avarage of steel percentage area quantity (pmix+pmax)/2 is
+%          considered for all element's cross-sections
+%
+%          function WeightStruc is the one used such weight of the
+%          structure
+%----------------------------------------------------------------
+
+% LAST MODIFIED: L.F.Veduzco    2022-07-27
+%                Faculty of Engineering
+%                Autonomous University of Queretaro
+%----------------------------------------------------------------
 
 clc 
 clear all

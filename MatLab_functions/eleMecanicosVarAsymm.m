@@ -76,32 +76,33 @@ av3=dv3^2*pi/4;
 
 dv4=rebarAvailable(op4,2);
 av4=dv4^2*pi/4;
+
 for i=1:nv
     % Superior rebars______________________________
-    if i<=number_rebars_sup(op1)
+    if i<=number_rebars_sup
         
         eMecVarillado(i,1)=rebarAvailable(op1,1);
         av=av1;
         eMecVarillado(i,5)=av;
-    elseif i<=(number_rebars_sup(op1)+number_rebars_inf(op2)) &&...
-            i>(number_rebars_sup(op1))
+    elseif i<=(number_rebars_sup+number_rebars_inf) &&...
+            i>(number_rebars_sup)
         
         eMecVarillado(i,1)=rebarAvailable(op2,1);
         av=av2;
         eMecVarillado(i,5)=av;
         
-    elseif i<=(number_rebars_sup(op1)+number_rebars_inf(op2)+...
-                number_rebars_left(op3)) &&...
-            i>(number_rebars_sup(op1)+number_rebars_inf(op2))
+    elseif i<=(number_rebars_sup+number_rebars_inf+...
+                number_rebars_left) &&...
+            i>(number_rebars_sup+number_rebars_inf)
         
         eMecVarillado(i,1)=rebarAvailable(op3,1);
         av=av3;
         eMecVarillado(i,5)=av;
         
-     elseif i<=(number_rebars_sup(op1)+number_rebars_inf(op2)+...
-                number_rebars_left(op3)+number_rebars_right(op4)) &&...
-            i>(number_rebars_sup(op1)+number_rebars_inf(op2)+...
-            number_rebars_left(op3))
+     elseif i<=(number_rebars_sup+number_rebars_inf+...
+                number_rebars_left+number_rebars_right) &&...
+            i>(number_rebars_sup+number_rebars_inf+...
+            number_rebars_left)
         
         eMecVarillado(i,1)=rebarAvailable(op4,1);
         av=av4;

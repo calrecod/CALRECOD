@@ -1,6 +1,34 @@
 function diagramsFinalRebarCols(load_conditions,diagrama,disposicion_varillado,...
                         h,b,arregloVar)
 
+%------------------------------------------------------------------------
+% Syntax:
+% diagramsFinalRebarCols(load_conditions,diagrama,disposicion_varillado,...
+%                       h,b,arregloVar)
+%
+%------------------------------------------------------------------------
+% PURPOSE: To graph the interaction diagram of a reinforced column
+% cross-section and the reinforced cross-section itself, with rebars.
+% 
+% INPUT:  load_conditions:      load conditions in format: nload_conditions
+%                               rows and four columns as [nload,Pu,Mux,Muy]
+%
+%         diagrama:             interaction diagram data computed by using
+%                               the function: widthEfficiencyCols
+%                               (see Documentation)
+%
+%         disposicion_varillado:rebar local coordinates over the
+%                               cross-section [x,y]
+%
+%         arregloVar:           list of types of rebar distributed over the
+%                               cross-section
+%
+%------------------------------------------------------------------------
+% LAST MODIFIED: L.F.Veduzco    2022-02-05
+%                Faculty of Engineering
+%                Autonomous University of Queretaro
+%------------------------------------------------------------------------
+
 %%%%%%%%%%%%%%%%%%%%%%%%% seccion %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 x_var=disposicion_varillado(:,1);
@@ -144,7 +172,7 @@ hold on
 plot(xfr,yfr,'r')
 hold on
 plot(xcondicion,ycondicion,'r o','linewidth',0.1,'MarkerFaceColor','red' )
-axis([0 diagrama(fix(npuntos/2),2)*2 diagrama(1,1) diagrama(npuntos,1)]);
+axis([0 diagrama(fix(npuntos/2)+1,2)*2 diagrama(1,1) diagrama(npuntos,1)]);
 xlabel('Flexure moment')
 ylabel('Axial Force')
 title('Interaction diagram Rebar - X')
@@ -170,7 +198,7 @@ hold on
 plot(xfr,yfr,'r')
 hold on
 plot(xcondicion,ycondicion,'r o','linewidth',0.1,'MarkerFaceColor','red' )
-axis([0 diagrama(fix(npuntos/2),6)*2 diagrama(1,1) diagrama(npuntos,1)]);
+axis([0 diagrama(fix(npuntos/2)+1,6)*2 diagrama(1,1) diagrama(npuntos,1)]);
 xlabel('Flexure Bending')
 ylabel('Axial Force')
 title('Interaction diagram Rebar - Y')

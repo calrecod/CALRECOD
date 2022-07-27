@@ -1,3 +1,21 @@
+% Design_Columns_Ex01
+%----------------------------------------------------------------
+% PURPOSE 
+%    To design optimally (with respect to saving in reinforcing area)
+%    a rectangular column' cross-section (considering biaxial bending)
+%    only with respect to one direction of action for the load combinations
+%    (left or right) - three options of reinforcement optimization are
+%    possible: with a pure ISR, symmtrical rebar or asymmetrical rebar
+%
+%    Note: isrColumnsSymAsym function is the only on required.
+%
+%----------------------------------------------------------------
+
+% LAST MODIFIED: L.F.Veduzco    2022-07-27
+%                Faculty of Engineering
+%                Autonomous University of Queretaro
+%----------------------------------------------------------------
+
 clear all
 clc
 
@@ -7,11 +25,11 @@ b=60; % cm
 h=60; % cm
 fy=4200; % yield stress of rebars 
 fc=280; % Kg/cm2
-load_conditions=[1 14 22 31]; % [nload, Pu, Mx, My] (Ton-m)
+load_conditions=[1 15 32 8]; % [nload, Pu, Mx, My] (Ton-m)
 rec=[4 4]; % [coverx covery] (cm)
 
 % ADITIONAL PARAMETERS ______________________________________________
-cols_sym_asym_isr="Symmetric";
+cols_sym_asym_isr="ISR";
 if cols_sym_asym_isr=="Symmetric"
     pu_cols=[29.19, 29.06, 28.93, 28.93, 28.93, 28.93, 28.93]; % symmetric rebar
 elseif cols_sym_asym_isr=="Asymmetric"

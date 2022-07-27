@@ -1,3 +1,18 @@
+% Design_Beams_Ex01
+%----------------------------------------------------------------
+% PURPOSE 
+%    To design optimally (with respect to saving in reinforcing area)
+%    a beam element for all its three critical cross-sctions (left,middle
+%    right)
+%
+%    Note: beamsISR function is the only on required.
+%
+%----------------------------------------------------------------
+
+% LAST MODIFIED: L.F.Veduzco    2022-07-27
+%                Faculty of Engineering
+%                Autonomous University of Queretaro
+%----------------------------------------------------------------
 clc
 clear all
 
