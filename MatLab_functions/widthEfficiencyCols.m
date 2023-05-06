@@ -108,7 +108,7 @@ for sentido=1:2
         diagramaInteraccion(i+1,4*sentido-1)=(0.65+i*dfi)*diagramaInteraccion(i+1,1);
         diagramaInteraccion(i+1,4*sentido)=(0.65+i*dfi)*diagramaInteraccion(i+1,4*sentido-2);
                                             
-        %%%%%%%%%%%%%%%%%%%%%%%%%% Excentriciddes %%%%%%%%%%%%%%%%%%%%%%%%%%%
+        %%%%%%%%%%%%%%%%%%%%%%%%%% Eccentricities %%%%%%%%%%%%%%%%%%%%%%%%%%%
 
         diagramaInteraccion(i+1,4*sentido+1)=diagramaInteraccion(i+1,4*sentido)/...
                                          diagramaInteraccion(i+1,4*sentido-1);
@@ -121,7 +121,7 @@ for sentido=1:2
     diagramaInteraccion(npdiag,6)=0;
 end
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%% Eficiencias %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%% Efficiencies %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 conditions(:,3:4)=abs(conditions(:,3:4)); % only with positive moments
                                           % is enough for symmetrical
                                           % designs, given that the ISR
