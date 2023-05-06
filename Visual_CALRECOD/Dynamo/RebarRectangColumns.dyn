@@ -1,0 +1,1486 @@
+{
+  "Uuid": "3c9d0464-8643-5ffe-96e5-ab1769818209",
+  "IsCustomNode": false,
+  "Description": "",
+  "Name": "RebarRectangColumns",
+  "ElementResolver": {
+    "ResolutionMap": {}
+  },
+  "Inputs": [
+    {
+      "Id": "0321187d887d4210b3477543e05908f4",
+      "Name": "Distribution of rebars in each column",
+      "Type": "string",
+      "Value": "..\\..\\..\\..\\..\\..\\..\\DynamoRevit\\Dynamo_visualization\\collection_disposition_rebar_cols.csv",
+      "Description": "Permite seleccionar un archivo del sistema para obtener su nombre de archivo"
+    },
+    {
+      "Id": "5229a5eafb974c12b26e13849c3ea209",
+      "Name": "Rebar diameter data of each column's rebar",
+      "Type": "string",
+      "Value": "..\\..\\..\\..\\..\\..\\..\\DynamoRevit\\Dynamo_visualization\\collection_type_bar_cols.csv",
+      "Description": "Permite seleccionar un archivo del sistema para obtener su nombre de archivo"
+    },
+    {
+      "Id": "9bf4b5b7fbb44ffdb7a159d28e50bb4f",
+      "Name": "Number of rebars of each column",
+      "Type": "string",
+      "Value": "..\\..\\..\\..\\..\\..\\..\\DynamoRevit\\Dynamo_visualization\\nrebar_cols_collection.csv",
+      "Description": "Permite seleccionar un archivo del sistema para obtener su nombre de archivo"
+    },
+    {
+      "Id": "edd9053e8027473698cbc963c55d593e",
+      "Name": "Geometry of columns",
+      "Type": "string",
+      "Value": "..\\..\\..\\..\\..\\..\\..\\DynamoRevit\\Dynamo_visualization\\dim_cols_collection.csv",
+      "Description": "Permite seleccionar un archivo del sistema para obtener su nombre de archivo"
+    }
+  ],
+  "Outputs": [],
+  "Nodes": [
+    {
+      "ConcreteType": "Dynamo.Graph.Nodes.ZeroTouch.DSFunction, DynamoCore",
+      "NodeType": "FunctionNode",
+      "FunctionSignature": "DSCore.List.Transpose@var[]..[]",
+      "Id": "19cbd858eae642f882d63697e6518594",
+      "Inputs": [
+        {
+          "Id": "1f396fe42358430cba9a0d4ae295fcf8",
+          "Name": "lists",
+          "Description": "Una lista de listas a las que aplicar la transposición.\n\nvar[]..[]",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "59f91f68522e4aaf910a8f7a2df09dd1",
+          "Name": "lists",
+          "Description": "Una lista de listas a las que se ha aplicado la transposición.",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Auto",
+      "Description": "Intercambia filas y columnas en una lista de listas. Si hay varias filas que son más cortas que otras, se insertan valores nulos como marcadores de posición en la matriz resultante, para que sea siempre rectangular.\n\nList.Transpose (lists: var[]..[]): var[]..[]"
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.ColorPalette, CoreNodeModels",
+      "InputValue": {
+        "R": 34,
+        "G": 139,
+        "B": 34,
+        "A": 255
+      },
+      "NodeType": "ColorInputNode",
+      "Id": "0840b6cb9390408db90b5f31bceb2de2",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "37a7d9153d1746bd960c3cc97f8ba8de",
+          "Name": "Color",
+          "Description": "Selected Color.",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Seleccionar un color de la paleta"
+    },
+    {
+      "ConcreteType": "PythonNodeModels.PythonNode, PythonNodeModels",
+      "NodeType": "PythonScriptNode",
+      "Code": "import clr\nclr.AddReference('ProtoGeometry')\nfrom Autodesk.DesignScript.Geometry import *\ndataEnteringNode = IN\n\n# INPUT\ncoord_col=IN[0]\nbasic=IN[1]\nnbars_col=IN[2]\ntipovar=IN[3]\ncoordbars=IN[4]\n\navailableRebar=[[4,1.27,1.266768698],\n\t\t\t\t[5,1.5875,1.97932609],\n\t\t\t\t[6,1.905,2.85022957],\n\t\t\t\t[8,2.54,5.067074791],\n\t\t\t\t[9,2.8575,6.413016532],\n\t\t\t\t[10,3.175,7.917304361],\n\t\t\t\t[12,3.81,11.40091828]]\n# MAIN LOOP\nlist_bars=[]\nncols=len(coord_col)\nsumanv_col=0\nnvar=0\nfor i in range(0,ncols):\n\tnvar=nvar+nbars_col[i][0]\n\thc=float(basic[i][2])*0.01\n\tfor b in range(0+int(sumanv_col),int(nvar)):\n\t\txvar=coordbars[b][0]*0.01+float(coord_col[i][0])*0.01\n\t\tyvar=coordbars[b][1]*0.01+float(coord_col[i][1])*0.01\n\t\t\n\t\ttypeRebar=availableRebar[tipovar[b][0]][0]\n\t\trvar=float(typeRebar)/8*2.54*0.01*0.5\n\t\t\n\t\tcenter_point=Point.ByCoordinates(xvar,yvar,float(coord_col[i][2])*0.01+0.5*hc)\n\t\tmyColCirc=Circle.ByCenterPointRadius(center_point,rvar)\n\t\tpsur=Surface.ByPatch(myColCirc)\n\t\tptorre=Surface.Thicken(psur,hc)\n\t\tlist_bars.append(ptorre)\n\t\t\n\tsumanv_col=sumanv_col+nbars_col[i][0]\n\t\t\n\t\nOUT=list_bars\n",
+      "Engine": "IronPython2",
+      "VariableInputPorts": true,
+      "Id": "9f6f05c6c9fc4218be5b811092a3183e",
+      "Inputs": [
+        {
+          "Id": "f650f6e88d1d42e8ac73b8f27ef4a0ca",
+          "Name": "IN[0]",
+          "Description": "Input #0",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "10bd44518ed54c6e934ea87e555bae4f",
+          "Name": "IN[1]",
+          "Description": "Input #1",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "c204a90e668a4c879a7fce2cc1495401",
+          "Name": "IN[2]",
+          "Description": "Input #2",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "e61e919753624bb58741fbe2b6654e50",
+          "Name": "IN[3]",
+          "Description": "Input #3",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "2f78f1961b8043c88b81cfff5c161cf9",
+          "Name": "IN[4]",
+          "Description": "Input #4",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "d9dd384534034f2783fe1bc8cbbd91e7",
+          "Name": "OUT",
+          "Description": "Resultado de la secuencia de comandos de Python",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Ejecuta una secuencia de comandos de Python incrustada."
+    },
+    {
+      "ConcreteType": "Dynamo.Graph.Nodes.ZeroTouch.DSFunction, DynamoCore",
+      "NodeType": "FunctionNode",
+      "FunctionSignature": "DSOffice.Data.ImportCSV@string,bool",
+      "Id": "954a310690554143bf20472b1c3299ef",
+      "Inputs": [
+        {
+          "Id": "75df8205c94c4dc8bd9f2fd18ae234ab",
+          "Name": "filePath",
+          "Description": "Archivo CSV que se debe convertir en una lista.\n\nstring",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "986f359ed05f43eab9ff6bd6faac3bfc",
+          "Name": "transpose",
+          "Description": "Si se debe aplicar transposición a la lista resultante.\n\nbool\nValor por defecto : false",
+          "UsingDefaultValue": true,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "c6fb4a7ae70048e58619167352edaa54",
+          "Name": "list",
+          "Description": "Lista con los elementos del archivo CSV.",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Auto",
+      "Description": "Importa datos de un archivo CSV (valores separados por comas), coloca los elementos en una lista y le aplica transposición si es necesario.\n\nData.ImportCSV (filePath: string, transpose: bool = false): var[]..[]"
+    },
+    {
+      "ConcreteType": "Dynamo.Graph.Nodes.ZeroTouch.DSFunction, DynamoCore",
+      "NodeType": "FunctionNode",
+      "FunctionSignature": "DSOffice.Data.ImportCSV@string,bool",
+      "Id": "d784796831a4432d98ee82068cf38fb2",
+      "Inputs": [
+        {
+          "Id": "0d3ffb1da2554d4aa97fb8869400a416",
+          "Name": "filePath",
+          "Description": "Archivo CSV que se debe convertir en una lista.\n\nstring",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "a44bfb742473435496da325b38aa8582",
+          "Name": "transpose",
+          "Description": "Si se debe aplicar transposición a la lista resultante.\n\nbool\nValor por defecto : false",
+          "UsingDefaultValue": true,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "85f1b88600d649ffaa82d2549d07176a",
+          "Name": "list",
+          "Description": "Lista con los elementos del archivo CSV.",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Auto",
+      "Description": "Importa datos de un archivo CSV (valores separados por comas), coloca los elementos en una lista y le aplica transposición si es necesario.\n\nData.ImportCSV (filePath: string, transpose: bool = false): var[]..[]"
+    },
+    {
+      "ConcreteType": "Dynamo.Graph.Nodes.ZeroTouch.DSFunction, DynamoCore",
+      "NodeType": "FunctionNode",
+      "FunctionSignature": "Modifiers.GeometryColor.ByGeometryColor@Autodesk.DesignScript.Geometry.Geometry,DSCore.Color",
+      "Id": "04fff3c0c2c8495da6541e3fd3f26b72",
+      "Inputs": [
+        {
+          "Id": "2ec94f83d289417e9c1d577ab5932d1b",
+          "Name": "geometry",
+          "Description": "La geometría a la que desea aplicar el color.\n\nGeometry",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "b1eff6df30ff455f8e0b8f3642ff5dd4",
+          "Name": "color",
+          "Description": "El color.\n\nColor",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "8d50cf164660453eae23f4544d63de7b",
+          "Name": "GeometryColor",
+          "Description": "Un objeto de visualización.",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Auto",
+      "Description": "Visualice geometría mediante un color.\n\nGeometryColor.ByGeometryColor (geometry: Geometry, color: Color): GeometryColor"
+    },
+    {
+      "ConcreteType": "Dynamo.Graph.Nodes.ZeroTouch.DSFunction, DynamoCore",
+      "NodeType": "FunctionNode",
+      "FunctionSignature": "DSOffice.Data.ImportCSV@string,bool",
+      "Id": "3e1118e764ec4d609d4994e42c72fa9e",
+      "Inputs": [
+        {
+          "Id": "dba9fd283bfd42c2868a7979f7452d3f",
+          "Name": "filePath",
+          "Description": "Archivo CSV que se debe convertir en una lista.\n\nstring",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "d43510854ce445118c685a0fa2659370",
+          "Name": "transpose",
+          "Description": "Si se debe aplicar transposición a la lista resultante.\n\nbool\nValor por defecto : false",
+          "UsingDefaultValue": true,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "b834ba197eda4c31a997b20c4fb59ba9",
+          "Name": "list",
+          "Description": "Lista con los elementos del archivo CSV.",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Auto",
+      "Description": "Importa datos de un archivo CSV (valores separados por comas), coloca los elementos en una lista y le aplica transposición si es necesario.\n\nData.ImportCSV (filePath: string, transpose: bool = false): var[]..[]"
+    },
+    {
+      "ConcreteType": "Dynamo.Graph.Nodes.ZeroTouch.DSFunction, DynamoCore",
+      "NodeType": "FunctionNode",
+      "FunctionSignature": "DSCore.List.Transpose@var[]..[]",
+      "Id": "c445a997e17042d6b0db4df450affa40",
+      "Inputs": [
+        {
+          "Id": "359fa5e5335d4687aa09236965a05ea5",
+          "Name": "lists",
+          "Description": "Una lista de listas a las que aplicar la transposición.\n\nvar[]..[]",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "51208dd6fa0a438ba6cf057e8b64b201",
+          "Name": "lists",
+          "Description": "Una lista de listas a las que se ha aplicado la transposición.",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Auto",
+      "Description": "Intercambia filas y columnas en una lista de listas. Si hay varias filas que son más cortas que otras, se insertan valores nulos como marcadores de posición en la matriz resultante, para que sea siempre rectangular.\n\nList.Transpose (lists: var[]..[]): var[]..[]"
+    },
+    {
+      "ConcreteType": "Dynamo.Graph.Nodes.ZeroTouch.DSFunction, DynamoCore",
+      "NodeType": "FunctionNode",
+      "FunctionSignature": "DSCore.List.Transpose@var[]..[]",
+      "Id": "38a4199ec6054a6db64474b95cbc37a2",
+      "Inputs": [
+        {
+          "Id": "4be008a30b784701b186d25e39ee0164",
+          "Name": "lists",
+          "Description": "Una lista de listas a las que aplicar la transposición.\n\nvar[]..[]",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "1309586a1f504ee781602b05859e4c93",
+          "Name": "lists",
+          "Description": "Una lista de listas a las que se ha aplicado la transposición.",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Auto",
+      "Description": "Intercambia filas y columnas en una lista de listas. Si hay varias filas que son más cortas que otras, se insertan valores nulos como marcadores de posición en la matriz resultante, para que sea siempre rectangular.\n\nList.Transpose (lists: var[]..[]): var[]..[]"
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.Filename, CoreNodeModels",
+      "HintPath": "C:\\Users\\luizv\\OneDrive\\DynamoRevit\\Dynamo_visualization\\collection_disposition_rebar_cols.csv",
+      "InputValue": "..\\..\\..\\..\\..\\..\\..\\DynamoRevit\\Dynamo_visualization\\collection_disposition_rebar_cols.csv",
+      "NodeType": "ExtensionNode",
+      "Id": "0321187d887d4210b3477543e05908f4",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "5a68c5bffbed41539b05fce08612715a",
+          "Name": "",
+          "Description": "Filename",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Permite seleccionar un archivo del sistema para obtener su nombre de archivo"
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.Filename, CoreNodeModels",
+      "HintPath": "C:\\Users\\luizv\\OneDrive\\DynamoRevit\\Dynamo_visualization\\collection_type_bar_cols.csv",
+      "InputValue": "..\\..\\..\\..\\..\\..\\..\\DynamoRevit\\Dynamo_visualization\\collection_type_bar_cols.csv",
+      "NodeType": "ExtensionNode",
+      "Id": "5229a5eafb974c12b26e13849c3ea209",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "addd9f0f091949c296c827e8f2f9f75a",
+          "Name": "",
+          "Description": "Filename",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Permite seleccionar un archivo del sistema para obtener su nombre de archivo"
+    },
+    {
+      "ConcreteType": "Dynamo.Graph.Nodes.ZeroTouch.DSFunction, DynamoCore",
+      "NodeType": "FunctionNode",
+      "FunctionSignature": "DSOffice.Data.ImportCSV@string,bool",
+      "Id": "26dac29d94c241c5aa67e16f5b819bd6",
+      "Inputs": [
+        {
+          "Id": "4932f46f7874409ea64ee0c4a90bee18",
+          "Name": "filePath",
+          "Description": "Archivo CSV que se debe convertir en una lista.\n\nstring",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "b9d1befc02704d0d91c4d48a8b6ae7c3",
+          "Name": "transpose",
+          "Description": "Si se debe aplicar transposición a la lista resultante.\n\nbool\nValor por defecto : false",
+          "UsingDefaultValue": true,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "7805e8874207426d80eb1dd1a919150a",
+          "Name": "list",
+          "Description": "Lista con los elementos del archivo CSV.",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Auto",
+      "Description": "Importa datos de un archivo CSV (valores separados por comas), coloca los elementos en una lista y le aplica transposición si es necesario.\n\nData.ImportCSV (filePath: string, transpose: bool = false): var[]..[]"
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.Filename, CoreNodeModels",
+      "HintPath": "C:\\Users\\luizv\\OneDrive\\DynamoRevit\\Dynamo_visualization\\nrebar_cols_collection.csv",
+      "InputValue": "..\\..\\..\\..\\..\\..\\..\\DynamoRevit\\Dynamo_visualization\\nrebar_cols_collection.csv",
+      "NodeType": "ExtensionNode",
+      "Id": "9bf4b5b7fbb44ffdb7a159d28e50bb4f",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "8b4a34a5dcc8439592f7be7cf23196f6",
+          "Name": "",
+          "Description": "Filename",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Permite seleccionar un archivo del sistema para obtener su nombre de archivo"
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.Filename, CoreNodeModels",
+      "HintPath": "C:\\Users\\luizv\\OneDrive\\DynamoRevit\\Dynamo_visualization\\dim_cols_collection.csv",
+      "InputValue": "..\\..\\..\\..\\..\\..\\..\\DynamoRevit\\Dynamo_visualization\\dim_cols_collection.csv",
+      "NodeType": "ExtensionNode",
+      "Id": "edd9053e8027473698cbc963c55d593e",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "81fb72935e0f4f048d820d03e41d7398",
+          "Name": "",
+          "Description": "Filename",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Permite seleccionar un archivo del sistema para obtener su nombre de archivo"
+    },
+    {
+      "ConcreteType": "Dynamo.Graph.Nodes.ZeroTouch.DSFunction, DynamoCore",
+      "NodeType": "FunctionNode",
+      "FunctionSignature": "DSCore.List.Transpose@var[]..[]",
+      "Id": "3c52df795dd0445da300efe3a0c39b0d",
+      "Inputs": [
+        {
+          "Id": "9640cdbbbc134166a5c5a9e0383a7afe",
+          "Name": "lists",
+          "Description": "Una lista de listas a las que aplicar la transposición.\n\nvar[]..[]",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "bc4cede10f4b4fff8dfea76a1ab1b685",
+          "Name": "lists",
+          "Description": "Una lista de listas a las que se ha aplicado la transposición.",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Auto",
+      "Description": "Intercambia filas y columnas en una lista de listas. Si hay varias filas que son más cortas que otras, se insertan valores nulos como marcadores de posición en la matriz resultante, para que sea siempre rectangular.\n\nList.Transpose (lists: var[]..[]): var[]..[]"
+    },
+    {
+      "ConcreteType": "Dynamo.Graph.Nodes.ZeroTouch.DSFunction, DynamoCore",
+      "NodeType": "FunctionNode",
+      "FunctionSignature": "DSCore.Color.Divide@DSCore.Color,double",
+      "Id": "b68b47520dfa430880d9b5f4680d07dc",
+      "Inputs": [
+        {
+          "Id": "40cfb85f15d54a768bb0a2a00c82ea0b",
+          "Name": "c1",
+          "Description": "Color",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "aaa9abe17450484496ea3da5bad8cac4",
+          "Name": "div",
+          "Description": "double",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "1b36f6e786a648259c31348f54226a47",
+          "Name": "Color",
+          "Description": "Color",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Auto",
+      "Description": "Divide un color de entrada con un divisor de número para producir un color más claro y eliminar matiz de color\n\nColor.Divide (c1: Color, div: double): Color"
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.DoubleSlider, CoreNodeModels",
+      "NodeType": "NumberInputNode",
+      "NumberType": "Double",
+      "MaximumValue": 10.0,
+      "MinimumValue": 1.0,
+      "StepValue": 0.1,
+      "InputValue": 2.8,
+      "Id": "8829e76c802845f4ac7ef51fae0c96f8",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "ca20b537b8154ab09b1eaec6022fa987",
+          "Name": "",
+          "Description": "Double",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Control deslizante que genera valores numéricos"
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.Filename, CoreNodeModels",
+      "HintPath": "C:\\Users\\luizv\\OneDrive\\DynamoRevit\\Dynamo_visualization\\coord_base_columns.csv",
+      "InputValue": "..\\..\\..\\..\\..\\..\\..\\DynamoRevit\\Dynamo_visualization\\coord_base_columns.csv",
+      "NodeType": "ExtensionNode",
+      "Id": "d3cada6d2aaa44bda7016e315ebf3e08",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "e1981cad8ccb420c8de8f4786889ba77",
+          "Name": "",
+          "Description": "Filename",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Permite seleccionar un archivo del sistema para obtener su nombre de archivo"
+    },
+    {
+      "ConcreteType": "Dynamo.Graph.Nodes.ZeroTouch.DSFunction, DynamoCore",
+      "NodeType": "FunctionNode",
+      "FunctionSignature": "DSOffice.Data.ImportCSV@string,bool",
+      "Id": "4d6c91f4685b4ce19e7c07e52d54eb8f",
+      "Inputs": [
+        {
+          "Id": "162bcd0737bd45c992424bcde2320123",
+          "Name": "filePath",
+          "Description": "Archivo CSV que se debe convertir en una lista.\n\nstring",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "4bae48abed5c4609bbf37bfa032688d5",
+          "Name": "transpose",
+          "Description": "Si se debe aplicar transposición a la lista resultante.\n\nbool\nValor por defecto : false",
+          "UsingDefaultValue": true,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "563f24f4304e4ae398581d990b240d17",
+          "Name": "list",
+          "Description": "Lista con los elementos del archivo CSV.",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Auto",
+      "Description": "Importa datos de un archivo CSV (valores separados por comas), coloca los elementos en una lista y le aplica transposición si es necesario.\n\nData.ImportCSV (filePath: string, transpose: bool = false): var[]..[]"
+    },
+    {
+      "ConcreteType": "Dynamo.Graph.Nodes.ZeroTouch.DSFunction, DynamoCore",
+      "NodeType": "FunctionNode",
+      "FunctionSignature": "DSCore.List.Transpose@var[]..[]",
+      "Id": "4827c6e8a4774ff2b44ac576f0a1a058",
+      "Inputs": [
+        {
+          "Id": "81a62d9951604a02b96de5cd0f7c7259",
+          "Name": "lists",
+          "Description": "Una lista de listas a las que aplicar la transposición.\n\nvar[]..[]",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "f286a9c77191443dada285fb4ffe1dd8",
+          "Name": "lists",
+          "Description": "Una lista de listas a las que se ha aplicado la transposición.",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Auto",
+      "Description": "Intercambia filas y columnas en una lista de listas. Si hay varias filas que son más cortas que otras, se insertan valores nulos como marcadores de posición en la matriz resultante, para que sea siempre rectangular.\n\nList.Transpose (lists: var[]..[]): var[]..[]"
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.ColorPalette, CoreNodeModels",
+      "InputValue": {
+        "R": 255,
+        "G": 182,
+        "B": 193,
+        "A": 255
+      },
+      "NodeType": "ColorInputNode",
+      "Id": "e63aa17de8b44290a63cc7a5f4fd47c4",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "948181a32fcf4d45b89d23a712f14fe2",
+          "Name": "Color",
+          "Description": "Selected Color.",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Seleccionar un color de la paleta"
+    },
+    {
+      "ConcreteType": "PythonNodeModels.PythonNode, PythonNodeModels",
+      "NodeType": "PythonScriptNode",
+      "Code": "import clr\nclr.AddReference('ProtoGeometry')\nfrom Autodesk.DesignScript.Geometry import *\ndataEnteringNode = IN\n\n# INPUT\n\ncoord_col=IN[0]\nbasic=IN[1]\n\n# MAIN LOOP\nlist_cols=[]\nncols=len(coord_col)\nfor i in range(0,ncols):\n\thc=float(basic[i][2])*0.01\n\tb=basic[i][0]*0.01\n\th=basic[i][1]*0.01\n\t\n\tcsAxis=CoordinateSystem.ByOrigin(coord_col[i][0]*0.01,coord_col[i][1]*0.01,coord_col[i][2]*0.01+0.5*hc)\n\tmyColRec=Rectangle.ByWidthLength(csAxis,b,h)\n\tpsur=Surface.ByPatch(myColRec)\n\tptorre=Surface.Thicken(psur,hc)\n\tlist_cols.append(ptorre)\n\t\t\n\t\nOUT=list_cols\n",
+      "Engine": "IronPython2",
+      "VariableInputPorts": true,
+      "Id": "65645db289124c41ac5338ba7a6829d9",
+      "Inputs": [
+        {
+          "Id": "687ef2122930407d9a4436c54bde328a",
+          "Name": "IN[0]",
+          "Description": "Input #0",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "ceaf4ff4663f45939a7a07a07d98030b",
+          "Name": "IN[1]",
+          "Description": "Input #1",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "423a4bf8372c4e6c8e018e269ee3ef51",
+          "Name": "OUT",
+          "Description": "Resultado de la secuencia de comandos de Python",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Ejecuta una secuencia de comandos de Python incrustada."
+    },
+    {
+      "ConcreteType": "Dynamo.Graph.Nodes.ZeroTouch.DSFunction, DynamoCore",
+      "NodeType": "FunctionNode",
+      "FunctionSignature": "Modifiers.GeometryColor.ByGeometryColor@Autodesk.DesignScript.Geometry.Geometry,DSCore.Color",
+      "Id": "9db7d636c9854ea89e7feb0d9c3ce46e",
+      "Inputs": [
+        {
+          "Id": "4d8a1ba47e5b428e9e473b8b462c3528",
+          "Name": "geometry",
+          "Description": "La geometría a la que desea aplicar el color.\n\nGeometry",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "5153b6da5b1d4fadab36ab5f72a74c7a",
+          "Name": "color",
+          "Description": "El color.\n\nColor",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "1670c9dae7c8483cb71431c9413142df",
+          "Name": "GeometryColor",
+          "Description": "Un objeto de visualización.",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Auto",
+      "Description": "Visualice geometría mediante un color.\n\nGeometryColor.ByGeometryColor (geometry: Geometry, color: Color): GeometryColor"
+    },
+    {
+      "ConcreteType": "PythonNodeModels.PythonNode, PythonNodeModels",
+      "NodeType": "PythonScriptNode",
+      "Code": "# Carga las bibliotecas de DesignScript y normas de Python.\r\nimport sys\r\nimport clr\r\nclr.AddReference('ProtoGeometry')\r\nfrom Autodesk.DesignScript.Geometry import *\r\n\r\n# INPUT \r\ndataEnteringNode = IN\r\n\r\nejes = IN[0]\r\nbasic_data=IN[1]\r\nnbars_col=IN[2]\r\ntypeRebar=IN[3]\r\nrest=IN[4]\r\nrd=IN[5]\r\n\r\ndbe=2*rest*100\r\navailableRebar=[[4,1.27,1.266768698],\r\n\t\t\t\t[5,1.5875,1.97932609],\r\n\t\t\t\t[6,1.905,2.85022957],\r\n\t\t\t\t[8,2.54,5.067074791],\r\n\t\t\t\t[9,2.8575,6.413016532],\r\n\t\t\t\t[10,3.175,7.917304361],\r\n\t\t\t\t[12,3.81,11.40091828]]\r\n# Incluya el código debajo de esta línea\r\nsep1=[]\r\nsep2=[]\r\nhone=[]\r\nne=len(basic_data)\r\nsumnbars=0\r\nH_list=[]\r\nfor i in range(0,ne):\r\n\tnbars=nbars_col[i][0]\r\n\tH=basic_data[i][2]\r\n\tH_list.append(H)\r\n\tb=basic_data[i][0]\r\n\tdbmaxi=0\r\n\t\r\n\t# To determine the max rebar diameter on each\r\n\t# column - since the module numpy has not been imported\r\n\tfor mri in range(sumnbars,sumnbars+nbars):\r\n\t\tif typeRebar[mri][0]>=dbmaxi:\r\n\t\t\tdbmaxi=typeRebar[mri][0]\r\n\t\t\t\r\n\tdb=availableRebar[dbmaxi-1][1]\r\n\t\r\n\ts1=min(b/4,6*db)\r\n\ts1=min(s1,10)\r\n\t\r\n\ts2=min(850*db,480*dbe)\r\n\ts2=min(s2,b/2)\r\n\t\r\n\tsep1.append(s1)\r\n\tsep2.append(s2)\r\n\r\n\th1=max(b/0.4,H/6)\r\n\th1=max(h1,60)\r\n\t\r\n\thone.append(h1)\r\n\t\r\n\tsumnbars=sumnbars+nbars\r\n# The z coordinate location of each stirrup is to be computed\r\n# along each column's length\r\n\r\nz=[]\r\nfor i in range(0,ne):\r\n\tz0=5 # This is the lowest local level of a stirrup in a column \r\n\tze=[]\r\n\tj=0\r\n\twhile z0<float(hone[i]):\r\n\t\tze.append(z0)\r\n\t\tz0=z0+sep1[i]\r\n\t\tj=j+1\r\n\t\t\r\n\tk=0\r\n\twhile z0<float(H_list[i]-hone[i]):\r\n\t\tze.append(z0)\r\n\t\tz0=z0+sep2[i]\r\n\t\tk=k+1\r\n\t\r\n\tj=0\r\n\twhile z0<float(H_list[i]):\r\n\t\tze.append(z0)\r\n\t\tz0=z0+sep1[i]\r\n\t\tj=j+1\r\n\t\t\r\n\tz.append(ze)\r\n\t\r\n# The global location of each stirrup is now computed:\r\n\r\nn_elementos = len(ejes)\r\n\r\nlista_x = []\r\nlista_y = []\r\nlist_zc = []\r\nlist_points_cols = []\r\nfor j in range(0, n_elementos):\r\n\tne = len(z[j])\r\n\t\r\n\tx1 = ejes[j][0]\r\n\tlista_x.append(x1)\r\n\ty1 = ejes[j][1]\r\n\tlista_y.append(y1)\r\n\t\r\n\tlist_points = []\r\n\tlist_z = []\r\n\tfor i in range(0, ne):\r\n\t    ze = z[j][i] + ejes[j][2]\r\n\t    list_z.append(ze)\r\n\t    p = Point.ByCoordinates(x1, y1, ze*0.01)\r\n\t    list_points.append(p)\r\n\t    \r\n\tlist_zc.append(list_z)\r\n\r\n\tlist_points_cols.append(list_points)\r\n    \r\n# Now, each stirrup for each column is generated as a solid\r\n\r\ncentro_0=list_zc\r\ncentro_1=lista_x\r\ncentro_2=lista_y\r\n\r\nbasicos=basic_data\r\nrv=rest\r\n\r\n# Hook length (according to the stirrup's radius)\r\ndstirrup=2*rv\r\nlga=max(6*dstirrup,0.08)\r\n\r\nlista_dobleces=[]\r\nlista_ld=[]\r\n\r\nnelem=len(centro_2)\r\nfor j in range(0,nelem):\r\n\tne=len(centro_0[j])\r\n\tb=basicos[j][0]*0.01\r\n\th=basicos[j][1]*0.01\r\n\trec=basicos[j][3]*0.01;\r\n\tbp=b-2*rec-rd\r\n\thp=h-2*rec-rd\r\n\txa=centro_1[j]*0.01\r\n\tya=centro_2[j]*0.01\r\n\tx=xa+bp*0.5\r\n\ty=ya-0.5*hp-rd\r\n\tfor i in range(0,ne):\r\n\t\tz=centro_0[j][i]*0.01\r\n\t\t# lower-right corner -------------------------------------------\r\n\t\tesq=Point.ByCoordinates(x,y,z)\r\n\t\tn=Vector.ByCoordinates(1,0,0)\r\n\t\te=Circle.ByCenterPointRadiusNormal(esq,rv,n)\r\n\t\r\n\t\taxisOrigin=Point.ByCoordinates(x,y+rd,z)\r\n\t\taxisDir=Vector.ByCoordinates(0,0,1)\r\n\t\tdoblez=Solid.ByRevolve(e,axisOrigin,axisDir,0,90)\r\n\t\tlista_dobleces.append(doblez)\r\n\t\t\r\n\t\t# right side ---------------------------------------------------\r\n\t\tcld=Circle.ByCenterPointRadiusNormal(Point.ByCoordinates(x+rd,y+rd,z),rv,Vector.ByCoordinates(0,1,0))\r\n\t\tld=Curve.Extrude(cld,Vector.ByCoordinates(0,1,0),hp)\r\n\t\tlista_ld.append(ld)\r\n\t\t\r\n\t\t# top right corner ---------------------------------------------\r\n\t\tesq=Point.ByCoordinates(x+rd,hp+rd+y,z)\r\n\t\tn=Vector.ByCoordinates(0,1,0)\r\n\t\te=Circle.ByCenterPointRadiusNormal(esq,rv,n)\r\n\t\taxisOrigin=Point.ByCoordinates(x,hp+rd+y,z)\r\n\t\taxisDir=Vector.ByCoordinates(0,0,1)\r\n\t\tdoblez=Solid.ByRevolve(e,axisOrigin,axisDir,0,90)\r\n\t\tlista_dobleces.append(doblez)\r\n\t\t\r\n\t\t# top side -----------------------------------------------------\r\n\t\tcld=Circle.ByCenterPointRadiusNormal(Point.ByCoordinates(x,hp+2*rd+y,z),rv,Vector.ByCoordinates(1,0,0))\r\n\t\tld=Curve.Extrude(cld,Vector.ByCoordinates(-1,0,0),bp)\r\n\t\tlista_ld.append(ld)\r\n\t\t\r\n\t\t# top left corner ----------------------------------------------\r\n\t\tesq=Point.ByCoordinates(-bp+x,hp+2*rd+y,z)\r\n\t\tn=Vector.ByCoordinates(1,0,0)\r\n\t\te=Circle.ByCenterPointRadiusNormal(esq,rv,n)\r\n\t\taxisOrigin=Point.ByCoordinates(-bp+x,hp+rd+y,z)\r\n\t\taxisDir=Vector.ByCoordinates(0,0,1)\r\n\t\tdoblez=Solid.ByRevolve(e,axisOrigin,axisDir,0,90)\r\n\t\tlista_dobleces.append(doblez)\r\n\t\t\r\n\t\t# left side ----------------------------------------------------\r\n\t\tcld=Circle.ByCenterPointRadiusNormal(Point.ByCoordinates(x-bp-rd,rd+hp+y,z),rv,Vector.ByCoordinates(0,1,0))\r\n\t\tld=Curve.Extrude(cld,Vector.ByCoordinates(0,-1,2*rv/hp),hp)\r\n\t\tlista_ld.append(ld)\r\n\t\t\r\n\t\t# lower left corner ---------------------------------------------\r\n\t\tesq=Point.ByCoordinates(-bp+x-rd,rd+y,z+2*rv)\r\n\t\tn=Vector.ByCoordinates(0,1,0)\r\n\t\te=Circle.ByCenterPointRadiusNormal(esq,rv,n)\r\n\t\taxisOrigin=Point.ByCoordinates(-bp+x,rd+y,z+2*rv)\r\n\t\taxisDir=Vector.ByCoordinates(0,0,1)\r\n\t\tdoblez=Solid.ByRevolve(e,axisOrigin,axisDir,0,90)\r\n\t\tlista_dobleces.append(doblez)\r\n\t\t\r\n\t\t# lower side ----------------------------------------------------\r\n\t\tcld=Circle.ByCenterPointRadiusNormal(Point.ByCoordinates(x-bp,y,z+2*rv),rv,Vector.ByCoordinates(1,0,0))\r\n\t\tld=Curve.Extrude(cld,Vector.ByCoordinates(1,0,0),bp)\r\n\t\tlista_ld.append(ld)\r\n\t\t\r\n\t\t# outer lower right corner\r\n\t\tesq=Point.ByCoordinates(x,y,z+2*rv)\r\n\t\tn=Vector.ByCoordinates(1,0,0)\r\n\t\te=Circle.ByCenterPointRadiusNormal(esq,rv,n)\r\n\t\taxisOrigin=Point.ByCoordinates(x,y+rd,z+2*rv)\r\n\t\taxisDir=Vector.ByCoordinates(0,0,1)\r\n\t\tdoblez=Solid.ByRevolve(e,axisOrigin,axisDir,0,90)\r\n\t\tlista_dobleces.append(doblez)\r\n\t\t\r\n\t\t# right hook ----------------------------------------------------\r\n\t\tesq=Point.ByCoordinates(x+rd,rd+y,z+2*rv)\r\n\t\tn=Vector.ByCoordinates(0,1,0)\r\n\t\te=Circle.ByCenterPointRadiusNormal(esq,rv,n)\r\n\t\taxisOrigin=Point.ByCoordinates(x,rd+y,z+2*rv)\r\n\t\taxisDir=Vector.ByCoordinates(0,0,1)\r\n\t\tdoblez=Solid.ByRevolve(e,axisOrigin,axisDir,0,45)\r\n\t\tlista_dobleces.append(doblez)\r\n\t\t\r\n\t\tlg=Circle.ByCenterPointRadiusNormal(Point.ByCoordinates(0.7071*rd+x,y+1.7071*rd,z+2*rv),rv,Vector.ByCoordinates(-1,1,0))\r\n\t\tld=Curve.Extrude(lg,Vector.ByCoordinates(-1,1,0),lga)\r\n\t\tlista_ld.append(ld)\r\n\t\t\r\n\t\t# left hook ----------------------------------------------------\r\n\t\tesq=Point.ByCoordinates(x,y,z)\r\n\t\tn=Vector.ByCoordinates(-1,0,0)\r\n\t\te=Circle.ByCenterPointRadiusNormal(esq,rv,n)\r\n\t\taxisOrigin=Point.ByCoordinates(x,y+rd,z)\r\n\t\taxisDir=Vector.ByCoordinates(0,0,1)\r\n\t\tdoblez=Solid.ByRevolve(e,axisOrigin,axisDir,0,-45)\r\n\t\tlista_dobleces.append(doblez)\r\n\t\t\r\n\t\tlg=Circle.ByCenterPointRadiusNormal(Point.ByCoordinates(-0.7071*rd+x,y+(1-0.7071)*rd,z),rv,Vector.ByCoordinates(-1,1,0))\r\n\t\tld=Curve.Extrude(lg,Vector.ByCoordinates(-1,1,0),lga)\r\n\t\tlista_ld.append(ld)\r\n\r\nOUT = [lista_ld,lista_dobleces]\r\n",
+      "Engine": "IronPython2",
+      "VariableInputPorts": true,
+      "Id": "1c1a38cedf394a1aae828054f11067fe",
+      "Inputs": [
+        {
+          "Id": "94288b7cec764cb7a3f32b9a787cba82",
+          "Name": "IN[0]",
+          "Description": "Input #0",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "459de3fcc711460abc5e604e77cf0298",
+          "Name": "IN[1]",
+          "Description": "Input #1",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "6e22ef9af45640c88efb87bddc6732f6",
+          "Name": "IN[2]",
+          "Description": "Input #2",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "d1d3aa70907f4837b82491cdfccc7a46",
+          "Name": "IN[3]",
+          "Description": "Input #3",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "f5d5d26fb9df417690c84bc6b1f3f5b2",
+          "Name": "IN[4]",
+          "Description": "Input #4",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "d373bdf213ae4726b92cc8fcf0f53762",
+          "Name": "IN[5]",
+          "Description": "Input #5",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "203c35cc32a4457696a68f0f39d35951",
+          "Name": "OUT",
+          "Description": "Resultado de la secuencia de comandos de Python",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Ejecuta una secuencia de comandos de Python incrustada."
+    },
+    {
+      "ConcreteType": "Dynamo.Graph.Nodes.ZeroTouch.DSFunction, DynamoCore",
+      "NodeType": "FunctionNode",
+      "FunctionSignature": "Modifiers.GeometryColor.ByGeometryColor@Autodesk.DesignScript.Geometry.Geometry,DSCore.Color",
+      "Id": "2bce74bd7c03488dab2850e1687e60ad",
+      "Inputs": [
+        {
+          "Id": "25d139374e8d4ddcad89f96669c05224",
+          "Name": "geometry",
+          "Description": "La geometría a la que desea aplicar el color.\n\nGeometry",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "aa28f64ae1224a659c7bfa7ec380be60",
+          "Name": "color",
+          "Description": "El color.\n\nColor",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "829ff7e60cc84264b751f257e867ee31",
+          "Name": "GeometryColor",
+          "Description": "Un objeto de visualización.",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Auto",
+      "Description": "Visualice geometría mediante un color.\n\nGeometryColor.ByGeometryColor (geometry: Geometry, color: Color): GeometryColor"
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.ColorPalette, CoreNodeModels",
+      "InputValue": {
+        "R": 255,
+        "G": 0,
+        "B": 255,
+        "A": 255
+      },
+      "NodeType": "ColorInputNode",
+      "Id": "925fdfc56f2b467694733554a6ffe3ea",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "c3f93f6b9ca444b2a442dd7c81f7de38",
+          "Name": "Color",
+          "Description": "Selected Color.",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Seleccionar un color de la paleta"
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.DoubleInput, CoreNodeModels",
+      "NodeType": "NumberInputNode",
+      "NumberType": "Double",
+      "InputValue": 0.03,
+      "Id": "db0aa2c6db67478d910d19325914fda0",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "58a895db86b047dd80ff8e1bc7f6b42b",
+          "Name": "",
+          "Description": "Double",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Crea un número"
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Formula, CoreNodeModels",
+      "Formula": "3/8*2.54*0.01*0.5;",
+      "NodeType": "FormulaNode",
+      "Id": "7a2860417b9141cba5006aee1fb1c30e",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "6d5a5b8acf6743f09a4b67af7cc7a208",
+          "Name": "",
+          "Description": "Resultado de cálculo matemático",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Auto",
+      "Description": "Evalúa fórmulas matemáticas. Utiliza NCalc: http://ncalc.codeplex.com/"
+    }
+  ],
+  "Connectors": [
+    {
+      "Start": "59f91f68522e4aaf910a8f7a2df09dd1",
+      "End": "e61e919753624bb58741fbe2b6654e50",
+      "Id": "fd1cb968d2c349fdaf7b6eb73fc8eaf1"
+    },
+    {
+      "Start": "59f91f68522e4aaf910a8f7a2df09dd1",
+      "End": "d1d3aa70907f4837b82491cdfccc7a46",
+      "Id": "61bf918970d2488296380f8934910bcd"
+    },
+    {
+      "Start": "37a7d9153d1746bd960c3cc97f8ba8de",
+      "End": "b1eff6df30ff455f8e0b8f3642ff5dd4",
+      "Id": "84dd1a734ca341b598afe138684d4d2d"
+    },
+    {
+      "Start": "d9dd384534034f2783fe1bc8cbbd91e7",
+      "End": "2ec94f83d289417e9c1d577ab5932d1b",
+      "Id": "e8e88447656244db995ffc6bda098e16"
+    },
+    {
+      "Start": "c6fb4a7ae70048e58619167352edaa54",
+      "End": "4be008a30b784701b186d25e39ee0164",
+      "Id": "a999ae9c660948e5912a4acee84c4148"
+    },
+    {
+      "Start": "85f1b88600d649ffaa82d2549d07176a",
+      "End": "1f396fe42358430cba9a0d4ae295fcf8",
+      "Id": "83648fe3d98849c6ae5dc066b8bf405c"
+    },
+    {
+      "Start": "b834ba197eda4c31a997b20c4fb59ba9",
+      "End": "359fa5e5335d4687aa09236965a05ea5",
+      "Id": "8426377cd76b4e66aa973219dcc6e4fe"
+    },
+    {
+      "Start": "51208dd6fa0a438ba6cf057e8b64b201",
+      "End": "10bd44518ed54c6e934ea87e555bae4f",
+      "Id": "023b48a602e343738e2372cdf0014354"
+    },
+    {
+      "Start": "51208dd6fa0a438ba6cf057e8b64b201",
+      "End": "459de3fcc711460abc5e604e77cf0298",
+      "Id": "a2431529ed06424781e4726bcd50b135"
+    },
+    {
+      "Start": "51208dd6fa0a438ba6cf057e8b64b201",
+      "End": "ceaf4ff4663f45939a7a07a07d98030b",
+      "Id": "3f1ad524b97f4c6ba4e48aaa6929c616"
+    },
+    {
+      "Start": "1309586a1f504ee781602b05859e4c93",
+      "End": "2f78f1961b8043c88b81cfff5c161cf9",
+      "Id": "9050cd0e28634846ab005076ae128011"
+    },
+    {
+      "Start": "5a68c5bffbed41539b05fce08612715a",
+      "End": "75df8205c94c4dc8bd9f2fd18ae234ab",
+      "Id": "79c8d9482aec444898b1f0e37819c100"
+    },
+    {
+      "Start": "addd9f0f091949c296c827e8f2f9f75a",
+      "End": "0d3ffb1da2554d4aa97fb8869400a416",
+      "Id": "56bc36fbc23949fc9dc19397fc6d69d1"
+    },
+    {
+      "Start": "7805e8874207426d80eb1dd1a919150a",
+      "End": "9640cdbbbc134166a5c5a9e0383a7afe",
+      "Id": "c218b773a79d4413b13097b88366f7b3"
+    },
+    {
+      "Start": "8b4a34a5dcc8439592f7be7cf23196f6",
+      "End": "4932f46f7874409ea64ee0c4a90bee18",
+      "Id": "832971280cba483ea9bf454316b0914a"
+    },
+    {
+      "Start": "81fb72935e0f4f048d820d03e41d7398",
+      "End": "dba9fd283bfd42c2868a7979f7452d3f",
+      "Id": "4e697a2b153f4bb78d91bd45dbecce7d"
+    },
+    {
+      "Start": "bc4cede10f4b4fff8dfea76a1ab1b685",
+      "End": "c204a90e668a4c879a7fce2cc1495401",
+      "Id": "036d560c30cd45a984915085b7f9ac58"
+    },
+    {
+      "Start": "bc4cede10f4b4fff8dfea76a1ab1b685",
+      "End": "6e22ef9af45640c88efb87bddc6732f6",
+      "Id": "30ce80729733455cbe2370734e15204a"
+    },
+    {
+      "Start": "1b36f6e786a648259c31348f54226a47",
+      "End": "5153b6da5b1d4fadab36ab5f72a74c7a",
+      "Id": "8c2fbebbd1564788861b249aa541c8df"
+    },
+    {
+      "Start": "ca20b537b8154ab09b1eaec6022fa987",
+      "End": "aaa9abe17450484496ea3da5bad8cac4",
+      "Id": "2a88fb846d774a5c867e5e5e056a012e"
+    },
+    {
+      "Start": "e1981cad8ccb420c8de8f4786889ba77",
+      "End": "162bcd0737bd45c992424bcde2320123",
+      "Id": "4c0743749c5c43e7a648cf4c8cdab6c0"
+    },
+    {
+      "Start": "563f24f4304e4ae398581d990b240d17",
+      "End": "81a62d9951604a02b96de5cd0f7c7259",
+      "Id": "b39cc8f72d464429a18a6c31950e6205"
+    },
+    {
+      "Start": "f286a9c77191443dada285fb4ffe1dd8",
+      "End": "f650f6e88d1d42e8ac73b8f27ef4a0ca",
+      "Id": "8207af67db744db985ea671299831382"
+    },
+    {
+      "Start": "f286a9c77191443dada285fb4ffe1dd8",
+      "End": "94288b7cec764cb7a3f32b9a787cba82",
+      "Id": "e7c149b94809457f8a6b26a109293f28"
+    },
+    {
+      "Start": "f286a9c77191443dada285fb4ffe1dd8",
+      "End": "687ef2122930407d9a4436c54bde328a",
+      "Id": "91280c8b291d4e39959126f59669335e"
+    },
+    {
+      "Start": "948181a32fcf4d45b89d23a712f14fe2",
+      "End": "40cfb85f15d54a768bb0a2a00c82ea0b",
+      "Id": "0edf7b858bc444c1a759b02f2e4153e5"
+    },
+    {
+      "Start": "423a4bf8372c4e6c8e018e269ee3ef51",
+      "End": "4d8a1ba47e5b428e9e473b8b462c3528",
+      "Id": "5850ae72a4014ac3ace5afe837bc0acf"
+    },
+    {
+      "Start": "203c35cc32a4457696a68f0f39d35951",
+      "End": "25d139374e8d4ddcad89f96669c05224",
+      "Id": "a10b78f1ad19407299b836fa93ee1493"
+    },
+    {
+      "Start": "c3f93f6b9ca444b2a442dd7c81f7de38",
+      "End": "aa28f64ae1224a659c7bfa7ec380be60",
+      "Id": "38c4bba740ea409cadca8cb44e9adb5c"
+    },
+    {
+      "Start": "58a895db86b047dd80ff8e1bc7f6b42b",
+      "End": "d373bdf213ae4726b92cc8fcf0f53762",
+      "Id": "d16851d39a184783b7a0b5c1d3dc2b99"
+    },
+    {
+      "Start": "6d5a5b8acf6743f09a4b67af7cc7a208",
+      "End": "f5d5d26fb9df417690c84bc6b1f3f5b2",
+      "Id": "c1c8c4d211344f27b4acc1b9dd90c003"
+    }
+  ],
+  "Dependencies": [],
+  "NodeLibraryDependencies": [],
+  "Bindings": [],
+  "View": {
+    "Dynamo": {
+      "ScaleFactor": 1.0,
+      "HasRunWithoutCrash": true,
+      "IsVisibleInDynamoLibrary": true,
+      "Version": "2.10.1.3976",
+      "RunType": "Manual",
+      "RunPeriod": "1000"
+    },
+    "Camera": {
+      "Name": "Vista preliminar en segundo plano",
+      "EyeX": 7.4109377861022949,
+      "EyeY": 7.0700278282165527,
+      "EyeZ": -17.31214714050293,
+      "LookX": -5.3974437713623047,
+      "LookY": -2.2139534950256348,
+      "LookZ": 6.739232063293457,
+      "UpX": -0.02182435616850853,
+      "UpY": 0.99939060211181641,
+      "UpZ": 0.027241075411438942
+    },
+    "NodeViews": [
+      {
+        "Id": "19cbd858eae642f882d63697e6518594",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Name": "List.Transpose",
+        "ShowGeometry": true,
+        "Excluded": false,
+        "X": 1122.92060277903,
+        "Y": -4648.9784969245156
+      },
+      {
+        "Id": "0840b6cb9390408db90b5f31bceb2de2",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Name": "Color Palette",
+        "ShowGeometry": true,
+        "Excluded": false,
+        "X": 2191.8760534128974,
+        "Y": -4762.9838138881169
+      },
+      {
+        "Id": "9f6f05c6c9fc4218be5b811092a3183e",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Name": "Longitudinal rebar - Columns",
+        "ShowGeometry": true,
+        "Excluded": false,
+        "X": 1798.7640151797605,
+        "Y": -4871.17933739257
+      },
+      {
+        "Id": "954a310690554143bf20472b1c3299ef",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Name": "Data.ImportCSV",
+        "ShowGeometry": true,
+        "Excluded": false,
+        "X": 876.03622175861722,
+        "Y": -4538.7757297699973
+      },
+      {
+        "Id": "d784796831a4432d98ee82068cf38fb2",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Name": "Data.ImportCSV",
+        "ShowGeometry": true,
+        "Excluded": false,
+        "X": 869.77927575997944,
+        "Y": -4652.3812698762958
+      },
+      {
+        "Id": "04fff3c0c2c8495da6541e3fd3f26b72",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Name": "GeometryColor.ByGeometryColor",
+        "ShowGeometry": true,
+        "Excluded": false,
+        "X": 2404.8835474195221,
+        "Y": -4837.1271491783064
+      },
+      {
+        "Id": "3e1118e764ec4d609d4994e42c72fa9e",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Name": "Data.ImportCSV",
+        "ShowGeometry": true,
+        "Excluded": false,
+        "X": 869.094120507094,
+        "Y": -4921.4089998648524
+      },
+      {
+        "Id": "c445a997e17042d6b0db4df450affa40",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Name": "Column dimensions",
+        "ShowGeometry": true,
+        "Excluded": false,
+        "X": 1134.071033560743,
+        "Y": -4922.5327749139115
+      },
+      {
+        "Id": "38a4199ec6054a6db64474b95cbc37a2",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Name": "List.Transpose",
+        "ShowGeometry": true,
+        "Excluded": false,
+        "X": 1135.9163992310603,
+        "Y": -4550.7774526638377
+      },
+      {
+        "Id": "0321187d887d4210b3477543e05908f4",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Name": "Distribution of rebars in each column",
+        "ShowGeometry": true,
+        "Excluded": false,
+        "X": 383.38281706175769,
+        "Y": -4540.2762911311866
+      },
+      {
+        "Id": "5229a5eafb974c12b26e13849c3ea209",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Name": "Rebar diameter data of each column's rebar",
+        "ShowGeometry": true,
+        "Excluded": false,
+        "X": 401.14490590094476,
+        "Y": -4663.4217999688535
+      },
+      {
+        "Id": "26dac29d94c241c5aa67e16f5b819bd6",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Name": "Data.ImportCSV",
+        "ShowGeometry": true,
+        "Excluded": false,
+        "X": 864.66628779286441,
+        "Y": -4785.923488147434
+      },
+      {
+        "Id": "9bf4b5b7fbb44ffdb7a159d28e50bb4f",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Name": "Number of rebars of each column",
+        "ShowGeometry": true,
+        "Excluded": false,
+        "X": 413.985136257484,
+        "Y": -4788.9975845080244
+      },
+      {
+        "Id": "edd9053e8027473698cbc963c55d593e",
+        "IsSetAsInput": true,
+        "IsSetAsOutput": false,
+        "Name": "Geometry of columns",
+        "ShowGeometry": true,
+        "Excluded": false,
+        "X": 418.95251167662059,
+        "Y": -4902.9080321740366
+      },
+      {
+        "Id": "3c52df795dd0445da300efe3a0c39b0d",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Name": "Number of rebars of each column",
+        "ShowGeometry": true,
+        "Excluded": false,
+        "X": 1147.1702541699665,
+        "Y": -4785.0907236137473
+      },
+      {
+        "Id": "b68b47520dfa430880d9b5f4680d07dc",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Name": "Color.Divide",
+        "ShowGeometry": true,
+        "Excluded": false,
+        "X": 2223.7660809501713,
+        "Y": -5008.7119383061236
+      },
+      {
+        "Id": "8829e76c802845f4ac7ef51fae0c96f8",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Name": "Transparency of columns' solids",
+        "ShowGeometry": true,
+        "Excluded": false,
+        "X": 1888.1005462925816,
+        "Y": -4983.5060651389567
+      },
+      {
+        "Id": "d3cada6d2aaa44bda7016e315ebf3e08",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Name": "Location of columns",
+        "ShowGeometry": true,
+        "Excluded": false,
+        "X": 412.02114302960092,
+        "Y": -5079.4985064450129
+      },
+      {
+        "Id": "4d6c91f4685b4ce19e7c07e52d54eb8f",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Name": "Data.ImportCSV",
+        "ShowGeometry": true,
+        "Excluded": false,
+        "X": 865.12890924431167,
+        "Y": -5081.1535351979674
+      },
+      {
+        "Id": "4827c6e8a4774ff2b44ac576f0a1a058",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Name": "Column location",
+        "ShowGeometry": true,
+        "Excluded": false,
+        "X": 1141.1370711789457,
+        "Y": -5061.5565222958612
+      },
+      {
+        "Id": "e63aa17de8b44290a63cc7a5f4fd47c4",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Name": "Color Palette",
+        "ShowGeometry": true,
+        "Excluded": false,
+        "X": 2051.6519522999365,
+        "Y": -5080.0279651758347
+      },
+      {
+        "Id": "65645db289124c41ac5338ba7a6829d9",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Name": "Concrete column solid",
+        "ShowGeometry": false,
+        "Excluded": false,
+        "X": 1816.0669265548092,
+        "Y": -5142.9515562833631
+      },
+      {
+        "Id": "9db7d636c9854ea89e7feb0d9c3ce46e",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Name": "GeometryColor.ByGeometryColor",
+        "ShowGeometry": true,
+        "Excluded": false,
+        "X": 2417.5814878671622,
+        "Y": -5201.5902620720635
+      },
+      {
+        "Id": "1c1a38cedf394a1aae828054f11067fe",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Name": "Rectangular stirrups - Columns",
+        "ShowGeometry": true,
+        "Excluded": false,
+        "X": 1807.4763931988446,
+        "Y": -4631.5544368722667
+      },
+      {
+        "Id": "2bce74bd7c03488dab2850e1687e60ad",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Name": "GeometryColor.ByGeometryColor",
+        "ShowGeometry": true,
+        "Excluded": false,
+        "X": 2411.50030229749,
+        "Y": -4461.1650005686379
+      },
+      {
+        "Id": "925fdfc56f2b467694733554a6ffe3ea",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Name": "Color Palette",
+        "ShowGeometry": true,
+        "Excluded": false,
+        "X": 2183.34304468451,
+        "Y": -4393.9273369069524
+      },
+      {
+        "Id": "db0aa2c6db67478d910d19325914fda0",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Name": "Radius corner fold",
+        "ShowGeometry": true,
+        "Excluded": false,
+        "X": 1409.9125244412257,
+        "Y": -4283.0405291710294
+      },
+      {
+        "Id": "7a2860417b9141cba5006aee1fb1c30e",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Name": "Stirrup radius (m)",
+        "ShowGeometry": true,
+        "Excluded": false,
+        "X": 1420.9601218953665,
+        "Y": -4379.6392474244713
+      }
+    ],
+    "Annotations": [
+      {
+        "Id": "ebca542c6f1e41529da633743b55e387",
+        "Title": "Columns' concrete solids, longitudinal rebar and transversal reinforcement",
+        "Nodes": [
+          "19cbd858eae642f882d63697e6518594",
+          "0840b6cb9390408db90b5f31bceb2de2",
+          "9f6f05c6c9fc4218be5b811092a3183e",
+          "954a310690554143bf20472b1c3299ef",
+          "d784796831a4432d98ee82068cf38fb2",
+          "04fff3c0c2c8495da6541e3fd3f26b72",
+          "3e1118e764ec4d609d4994e42c72fa9e",
+          "c445a997e17042d6b0db4df450affa40",
+          "38a4199ec6054a6db64474b95cbc37a2",
+          "0321187d887d4210b3477543e05908f4",
+          "5229a5eafb974c12b26e13849c3ea209",
+          "26dac29d94c241c5aa67e16f5b819bd6",
+          "9bf4b5b7fbb44ffdb7a159d28e50bb4f",
+          "edd9053e8027473698cbc963c55d593e",
+          "3c52df795dd0445da300efe3a0c39b0d",
+          "b68b47520dfa430880d9b5f4680d07dc",
+          "8829e76c802845f4ac7ef51fae0c96f8",
+          "d3cada6d2aaa44bda7016e315ebf3e08",
+          "4d6c91f4685b4ce19e7c07e52d54eb8f",
+          "4827c6e8a4774ff2b44ac576f0a1a058",
+          "e63aa17de8b44290a63cc7a5f4fd47c4",
+          "65645db289124c41ac5338ba7a6829d9",
+          "9db7d636c9854ea89e7feb0d9c3ce46e",
+          "1c1a38cedf394a1aae828054f11067fe",
+          "2bce74bd7c03488dab2850e1687e60ad",
+          "925fdfc56f2b467694733554a6ffe3ea",
+          "db0aa2c6db67478d910d19325914fda0",
+          "7a2860417b9141cba5006aee1fb1c30e"
+        ],
+        "Left": 373.38281706175769,
+        "Top": -5254.5902620720635,
+        "Width": 2324.1986708054046,
+        "Height": 1039.5497329010341,
+        "FontSize": 36.0,
+        "InitialTop": -5201.5902620720635,
+        "InitialHeight": 1081.8996687299577,
+        "TextblockHeight": 43.0,
+        "Background": "#FFC1D676"
+      }
+    ],
+    "X": -32.36221273595288,
+    "Y": 1712.9966604847702,
+    "Zoom": 0.29410472057106629
+  }
+}
