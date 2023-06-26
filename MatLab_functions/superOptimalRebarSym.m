@@ -19,6 +19,11 @@ function [Mr_col,h,Inertia_xy_modif,bestArea,bestCost,bestdiagram,bestnv,...
 % over a rectangular column cross-section. Two options are available:
 % (1) only one rebar diameter, (2) two rebar diameters.
 % 
+% Note: The structural efficiency is computed with the Inverse Load method
+% (Bresler's formula) and the Contour Load method, that is, only one
+% interaction diagram is computed for all the given set of load
+% combinations.
+%
 % OUTPUT: Mr_col:               are the final resistant bending moment for
 %                               both axis directions of the optimal designed 
 %                               cross-section

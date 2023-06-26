@@ -20,6 +20,11 @@ function [Inertia_xy_modif,h,bestArea,bestEf,bestdiagram,bestdiagram2,...
 % symmetrical or asymmetrical over a column cross-section in individual
 % rebars.
 % 
+% NOTE: The structural efficiency of each rebar design is determined with
+% the Inverse Load method (Bresler's formula) and the Contour Load method.
+% Thus, only one interaction diagram is computed for the whole given set of
+% load conditions, for each rebar design.
+%
 % OUTPUT: bestMr:               are the final resistant bending moment for
 %                               both axis directions of the optimal designed 
 %                               cross-section
@@ -96,6 +101,7 @@ function [Inertia_xy_modif,h,bestArea,bestEf,bestdiagram,bestdiagram2,...
 %                Faculty of Engineering
 %                Autonomous University of Queretaro
 %------------------------------------------------------------------------
+fc=fdpc/0.85;
 iter=0;
 noptions=0;
 while noptions==0
@@ -166,7 +172,8 @@ while noptions==0
     [Mr_col3,h,Inertia_xy_modif3,bestArea3,bestCost3,bestdiagram31,...
     bestdiagram32,bestnv3,Ef_sec_col3,bestArrangement3,bestDisposition3,...
     nv43,bestcxy3,bestCP3]=Asym4Diam(b,h,rec,Ac_sec_elem,E,npdiag,fdpc,...
-    beta1,height,wac,load_conditions,pu_asym_cols,condition_cracking,ductility);
+    beta1,RebarAvailable,height,wac,load_conditions,pu_asym_cols,...
+    condition_cracking,ductility);
 
     if isempty(bestArea3)==0
         if bestArea3<bestArea

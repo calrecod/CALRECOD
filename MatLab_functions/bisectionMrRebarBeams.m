@@ -126,7 +126,11 @@ while(es>ea)
     raizc=fr-frt;
 
     es=abs((c-cu)/c);
-
+    if itdos>100
+        break;
+    elseif ituno>100
+        break;
+    end
 end
 mrt=eleMec(1,2)+eleMec(2,2);
 raiz=[c,frt,mrt];   

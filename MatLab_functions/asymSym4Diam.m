@@ -22,6 +22,11 @@ function [bestav4,relyEffList,bestArea,bestEf,bestdiagram,bestdiagram2,...
 % diameters. As many as four rebar diameters are allowed to be 
 % simulataneously placed.
 % 
+% Note: The structural efficiency for each rebar design is determined
+% with the Inverse Load method (Bresler's formula) and the Contour Load
+% method. Thus, only one interaction diagram is computed for the whole 
+% given set of load combinations.
+% 
 % OUTPUT: bestMr:               are the final resistant bending moment for
 %                               both axis directions of the optimal designed 
 %                               cross-section

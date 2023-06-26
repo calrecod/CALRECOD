@@ -17,6 +17,11 @@ function [Mr_col,h,Inertia_xy_modif,bestArea,lowestCost,ovMostEc,nvEc,...
 % PURPOSE: To determine an optimal symmetrical rebar design composed of
 %          only one type of rebar.
 % 
+% Note: The structural efficiency of each rebar design is determined with
+% the Inverse Load method (Bresler's formula) and the Contour Load method.
+% Thus, only one interaction diagram is computed for the whole set of given
+% load combinations.
+%
 % OUTPUT: Mr_col:               are the final resistant bending moment for
 %                               both axis directions of the optimal designed 
 %                               cross-section

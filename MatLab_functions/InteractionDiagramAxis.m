@@ -3,7 +3,6 @@ function [diagramIntAxis1,pot,poc,cvectorX,newdispositionRebar,...
     (npdiag,comborebar,b,h,fy,fdpc,beta1,E,number_rebars_sup,...
     number_rebars_inf,number_rebars_left,number_rebars_right,...
     rebarAvailable,dispositionRebar,Mux,Muy)
-
 %------------------------------------------------------------------------
 % Syntax:
 % [diagramIntAxis1,pot,poc,cvectorX,newdispositionRebar,...
@@ -71,6 +70,9 @@ function [diagramIntAxis1,pot,poc,cvectorX,newdispositionRebar,...
 %
 %         dispositionRebar:     is the vector containing the rebar local 
 %                               coordinates over the cross-section [x,y] 
+%
+%         Mux,Muy:              Bending moment components with respect to
+%                               each cross-section local axis
 %
 %------------------------------------------------------------------------
 % LAST MODIFIED: L.F.Veduzco    2023-01-31

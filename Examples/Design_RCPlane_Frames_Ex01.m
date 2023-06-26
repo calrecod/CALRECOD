@@ -269,7 +269,7 @@ for j=1:nbeams
     shear_beams(j,:)=es_bars_shear_right(:,nelem);
     load_conditions_beams(j,1)=es_bars_normal_right(1,nelem);
     load_conditions_beams(j,2)=es_bars_moment_right(1,nelem);
-    load_conditions_beams(j,3)=max(abs(es_bars_moment_right(2:6,nelem)));
+    load_conditions_beams(j,3)=-max(abs(es_bars_moment_right(2:6,nelem)));
     load_conditions_beams(j,4)=es_bars_moment_right(7,nelem);
 end
 

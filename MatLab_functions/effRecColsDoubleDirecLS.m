@@ -62,7 +62,7 @@ function [maxef,tableEff,cxy,Mr]=effRecColsDoubleDirecLS(diagrama1,...
 %------------------------------------------------------------------------
 
 %% RESISTANCE COMPUTATION 
-
+npdiag=length(diagrama1(:,1));
 nconditions=length(load_conditions(:,1));
 tableEff=zeros(nconditions,8);
 CX=[];
@@ -95,6 +95,9 @@ for sentido=1:2
                 if pendos<penu && pentres>penu
                     break;
                 end
+                if k==npdiag-1
+                    break;
+                end
             end
             cdos=c_vector_bar1(k,sentido);
             ctres=c_vector_bar1(k+1,sentido);
@@ -117,6 +120,9 @@ for sentido=1:2
                 pendos=ydos/xdos;
                 pentres=ytres/xtres;
                 if pendos>penu && pentres<penu
+                    break;
+                end
+                if k==npdiag-1
                     break;
                 end
             end

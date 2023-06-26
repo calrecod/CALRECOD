@@ -18,11 +18,11 @@ clc
 clear all
 
 %% Geometry
-b=25; % cross-section width
-h=50; % cross-section height
+b=15; % cross-section width
+h=30; % cross-section height
 
-b_rec=3; % concrete cover on each direction
-h_rec=3;
+b_rec=5; % concrete cover on each direction
+h_rec=5;
 
 d=h-h_rec; % effective cross-section height
 
@@ -37,12 +37,13 @@ fy=4200; % Yield stress of the reinforcing steel
 duct=3; % ductility demand level
 
 %% Loads
-load_conditions=[1 -5.26e5]; % [n-load, Mu] (Kg-cm)
+load_conditions=[1 -0.02e5]; % [n-load, Mu] (Kg-cm)
 
 %% Rebar data
 % Commercially available rebar diameters
                 %type diam  
-rebarAvailable=[4 4/8.*2.54;
+rebarAvailable=[3 3/8*2.54;
+                4 4/8*2.54;
                 5 5/8*2.54;
                 6 6/8*2.54;
                 8 8/8*2.54;
@@ -51,13 +52,12 @@ rebarAvailable=[4 4/8.*2.54;
                 12 12/8*2.54];
             
 % Distribution of rebars over the cross-section
-dispositionRebar=[-9 21;
-                    9 21;
-                    -9 -21;
-                    0 -21;
-                    9 -21];
+dispositionRebar=[-2.5 10;
+                    2.5 10;
+                    -2.5 -10;
+                    2.5 -10];
                 
-RebarIndexTen=[1;1;1]; % rebar diameters to use for the reinforcement
+RebarIndexTen=[1;1]; % rebar diameters to use for the reinforcement
                     % in tension (indices from the "rebarAvailable" array)
                     
 RebarIndexCom=[1;1]; % rebar diameters to use for the reinforcement
@@ -66,7 +66,8 @@ RebarIndexCom=[1;1]; % rebar diameters to use for the reinforcement
 %% Additional design information of interest
 ast=sum(rebarAvailable(RebarIndexTen,2).^2.*pi./4);
 
-astotal=ast+asc % Total rebar area
+astotal=ast % Total rebar area
+rho=astotal/(b*d) % Total percentage area
 amax=0.025*b*d % Max allowed rebar area by code
 
 %% Structural efficiency

@@ -23,6 +23,11 @@ function [Mr_col,h,Inertia_xy_modif,bestArea,bestCost,bestdiagram,...
 % be placed simultaneously asymmetrically, although symmetrically 
 % distributed in number for each cross-section boundary.
 % 
+% NOTE: The structural efficiency of each rebar design is determined with
+% the Inverse Load method (Bresler's formula) and the Contour Load method.
+% Thus, only one interaction diagram is computed for the whole given set of
+% load combinations for each rebar design.
+%
 % OUTPUT: Mr_col:               are the final resistant bending moment for
 %                               both axis directions of the optimal designed 
 %                               cross-section

@@ -20,6 +20,11 @@ function [Mr_col,h,Inertia_xy_modif,bestArea,bestCost,bestdiagram,...
 % distributed over a column cross-section in packages of two rebars. A max
 % of four rebar diameters are allowed.
 % 
+% NOTE: The structural efficiency of each rebar design is determined with
+% the Inverse Load method (Bresler's formula) and the Contour Load method.
+% Thus, only one interaction diagram is computed for the whole given set of
+% load conditions, for each rebar design.
+%
 % OUTPUT: Mr_col:               are the final resistant bending moment for
 %                               both axis directions of the optimal designed 
 %                               cross-section
@@ -113,6 +118,7 @@ function [Mr_col,h,Inertia_xy_modif,bestArea,bestCost,bestdiagram,...
 %                Faculty of Engineering
 %                Autonomous University of Queretaro
 %------------------------------------------------------------------------
+fc=fdpc/0.85;
 
 E=fy/0.0021; % yield stress of reinforcing steel
 pu_col_sym=[29.19, 29.06, 28.93, 28.93, 28.93, 28.93, 28.93];

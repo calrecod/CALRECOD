@@ -3,7 +3,6 @@ function [Mr_col,h,Inertia_xy_modif,bestArea,bestCost,bestdiagram,...
     bestcxy,bestCP]=Asym1Diam(b,h,rec,act,npdiag,fdpc,beta1,...
     load_conditions,pu_asym_cols,height,wac,RebarAvailable,...
     condition_cracking,ductility)
-
 %-------------------------------------------------------------------------
 % Syntax:
 % [Mr_col,h,Inertia_xy_modif,bestArea,bestCost,bestdiagram,...
@@ -21,6 +20,11 @@ function [Mr_col,h,Inertia_xy_modif,bestArea,bestCost,bestdiagram,...
 % symmetrical reinforcement option is assessed, from which the asymmetrical
 % design then takes place by taking off certain rebars on each
 % cross-section boundary.
+%
+% NOTE: The structural efficiency of each rebar design is determined with
+% the Inverse Load method (Bresler's formula) and the Contour Load method.
+% Thus, only one interaction diagram is computed for the whole given set of
+% load conditions, for each rebar design.
 % 
 % OUTPUT: Mr_col:               are the final resistant bending moment for
 %                               both axis directions of the optimal designed 
@@ -112,6 +116,7 @@ function [Mr_col,h,Inertia_xy_modif,bestArea,bestCost,bestdiagram,...
 %                Faculty of Engineering
 %                Autonomous University of Queretaro
 %------------------------------------------------------------------------
+fc=fdpc/0.85;
 
 pu_col_sym=[29.19, 29.06, 28.93, 28.93, 28.93, 28.93, 28.93];
 

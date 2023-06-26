@@ -1,12 +1,12 @@
 function [b,h,cost_elem_col,Ac_sec_elem,Ef_sec_col,Mr_col,t_value_x,...
-        t_value_y,cxy]=isrColumns(pu_cols,height,b,h,rec,fy,fc,load_conditions,...
-        wac,ductility,optimaConvPlot,plotISRResults)
+        t_value_y,cxy]=isrColumns(pu_cols,height,b,h,rec,fy,fc,...
+        load_conditions,wac,ductility,optimaConvPlot,plotISRResults)
 
 %------------------------------------------------------------------------
 % Syntax:
 % [b,h,cost_elem_col,Ac_sec_elem,Ef_sec_col,Mr_col,t_value_x,...
-%  t_value_y,cxy]=isrColumns(pu_cols,height,b,h,rec,fy,fc,load_conditions,...
-%  wac,ductility,optimaConvPlot,plotISRResults) 
+%  t_value_y,cxy]=isrColumns(pu_cols,height,b,h,rec,fy,fc,...
+%  load_conditions,wac,ductility,optimaConvPlot,plotISRResults) 
 %
 %-------------------------------------------------------------------------
 % SYSTEM OF UNITS: SI - (Kg,cm)
@@ -15,6 +15,11 @@ function [b,h,cost_elem_col,Ac_sec_elem,Ef_sec_col,Mr_col,t_value_x,...
 % PURPOSE: To determine an optimal ISR for a column cross-section given 
 % certain load conditions through the SGD method.
 % 
+% Note: The structural efficiency is determined with the Inverse Load
+% method (Bresler's formula) and the Contour Load method. Thus, only one
+% interaction diagram is computed for the whole set of given load
+% combinations.
+%
 % OUTPUT: b,h:              are the final cross-section dimensions in case 
 %                           of a need of modification to comply with the 
 %                           restrictions criteria
@@ -217,12 +222,12 @@ while Ac_sec_elem==0
         
         % Termination conditions
         if tk1<tmin && Eftk1<limEffInf
-            
             tk1=tmin;
             break;
         elseif tk1>tmax && Eftk1>limEffSup
-            
             tk1=tmax;
+            break;
+        elseif subiter>100
             break;
         end
     end

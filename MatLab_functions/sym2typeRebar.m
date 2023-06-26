@@ -18,6 +18,11 @@ function [bestav4,relyEffList,bestArea,bestEf,bestdiagram,bestArrangement,...
 % rectangular column cross-section. As many as two rebar diameters are
 % allowed. 
 % 
+% Note: To determine the structural efficiency of each rebar design the
+% Inverse Load method (Bresler's formula) and the Contour Load method are
+% used to make the 3D analysis based only on the biaxial load combinatios.
+% Thus, only one interaction diagram is computed for all load combinations.
+%
 % OUTPUT: bestMr:               are the final resistant bending moment for
 %                               both axis directions of the optimal designed 
 %                               cross-section
@@ -99,6 +104,10 @@ function [bestav4,relyEffList,bestArea,bestEf,bestdiagram,bestArrangement,...
 %                               ductility demand is reuired for the
 %                               reinforcement designs. A number between 1
 %                               to 3 (see Documentation).
+%
+%         pu_sym2_cols:         is the unit construction cost of rebar
+%                               assembly as an average of each unit
+%                               construction cost for each rebar available.
 %
 %------------------------------------------------------------------------
 % LAST MODIFIED: L.F.Veduzco    2022-06-21
@@ -186,9 +195,7 @@ if isempty(bestArea)==1
     bestDisposition=[];
     bestEf=[];
     bestdiagram=[];
-    bestnv=[];
     bestArrangement=[];
-    bestnv4=[];
     bestav4=[];
 
     bestCost=[];

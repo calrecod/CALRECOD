@@ -3,7 +3,6 @@ function [Mr_col,h,Inertia_xy_modif,bestArea,bestCost,bestdiagram,...
     bestcxy,bestCP]=Asym2packSym4Diam(b,h,rec,act,E,npdiag,fdpc,beta1,...
     load_conditions,pu_asym_cols,wac,height,RebarAvailable,condition_cracking,...
     ductility)
-
 %-------------------------------------------------------------------------
 % Syntax:
 % [Mr_col,h,Inertia_xy_modif,bestArea,bestCost,bestdiagram,...
@@ -21,6 +20,11 @@ function [Mr_col,h,Inertia_xy_modif,bestArea,bestCost,bestdiagram,...
 % are allowed. Their disitrubtion is symmetrical in quantity. As many as 
 % four different types of rebars can be placed simultaneously.
 % 
+% NOTE: The structural efficiency of each rebar design is determined with
+% the Inverse Load method (Bresler's formula) and the Contour Load method.
+% Thus, only one interaction diagram is computed for the whole given set of
+% load conditions, for each rebar design.
+%
 % OUTPUT: Mr_col:               are the final resistant bending moment for
 %                               both axis directions of the optimal designed 
 %                               cross-section
@@ -113,7 +117,7 @@ function [Mr_col,h,Inertia_xy_modif,bestArea,bestCost,bestdiagram,...
 %                Faculty of Engineering
 %                Autonomous University of Queretaro
 %------------------------------------------------------------------------
-
+fc=fdpc/0.85;
 fy=E*0.0021; % yield stress of reinforcing steel
 bp=b-2*rec(1);
 hp=h-2*rec(2);

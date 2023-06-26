@@ -125,7 +125,7 @@ end
 InertiaXYmodif=[InertiaXYmodif,Inertia_x_modif];
 Atransfxy=[Atransfxy,Atransx];
 
-% Inertia Y-axis
+%% Inertia Y-axis
 cp_values=cp;
 cp(1)=cp_values(2);
 cp(2)=cp_values(1);

@@ -91,6 +91,23 @@ function [displacements,reactions,Ex,Ey,esbarsnormal,esbarsshear,esbarsmoment]=.
 %                Faculty of Engineering
 %                Autonomous University of Queretaro
 %------------------------------------------------------------------------
+% Topology matrix 
+% Format:
+% ______________________________________________________________
+% [nbar, DOFxi, DOFyi, DOF(theta-i), DOFxf, DOFyf, DOF(theta-f)]
+% --------------------------------------------------------------
+Edof=zeros(nbars,7);
+for i=1:nbars
+    Edof(i,1)=i;
+    Edof(i,2)=ni(i)*3-2;
+    Edof(i,3)=ni(i)*3-1;
+    Edof(i,4)=ni(i)*3;
+    
+    Edof(i,5)=nf(i)*3-2;
+    Edof(i,6)=nf(i)*3-1;
+    Edof(i,7)=nf(i)*3;
+    
+end
 
 Kglobal=zeros(3*nnodes);
 collection_Ke_bars=zeros(6*nbars,6);
