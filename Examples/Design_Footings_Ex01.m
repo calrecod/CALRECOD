@@ -83,7 +83,7 @@ ductility,optimConv,PlotRebarDesign,typeFoot,sepMinRebar,wac);
 dimensionFootingCollection=[be,le,hmodif,rec]
 coordBaseFooting=[0,0,0]; % global position of the footing
 
-directionData='C:\Users\luizv\OneDrive\DynamoRevit\Dynamo_visualization\';
+directionData=[];
 ExportResultsIsolFootings(directionData,barDispositionFootings,...
     dimensionFootingCollection,nbars_footings,arrangement_bar_footings,...
     coordBaseFooting,cols_sym_asym_isr)

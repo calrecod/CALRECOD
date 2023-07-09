@@ -1,6 +1,5 @@
 function [dimb,acRebar,nv,s,arrangement]=RebarOptionsFootings(ac,dimb,...
                 RebarAvailable,sepMinCode)
-
 %------------------------------------------------------------------------
 % Syntax:
 % [dimb,acRebar,nv,s,arrangement]=RebarOptionsFootings(ac,dimb,...
@@ -48,7 +47,7 @@ function [dimb,acRebar,nv,s,arrangement]=RebarOptionsFootings(ac,dimb,...
 
 ndiam=length(RebarAvailable(:,1));
 matriz_best_rebar=zeros(ndiam,3);
-
+maxiter=20;
 opcion_amin=0;
 j=0;
 while opcion_amin==0
@@ -57,11 +56,9 @@ while opcion_amin==0
     amin_bar=inf;
     for i=1:ndiam
         trebar=i;
-        rebar_ov=RebarAvailable(trebar,1);
         dv=RebarAvailable(trebar,2); % rebar diameter
         av=(dv)^2*pi*0.25;
 
-        %------ Rebar -----%
         s=av*dimb/ac;
 
         nv=fix(ac/av+1);
@@ -92,29 +89,34 @@ while opcion_amin==0
             amin_bar=matriz_best_rebar(i,3);
             opcion_amin=i;
         end
-        
     end
     if opcion_amin==0
         fprintf('\nDimension not fit for the footing\n');
-        fprintf('\nIteration=%.0f\n',j);
         
-        dimb=dimb+5.0;
-        fprintf('\nNew transversal dimension=%.0f\n',dimb);
-        
+        if j <= maxiter
+            dimb=dimb+5.0;
+        else
+            acRebar=0;
+            nv=0;
+            s=0;
+            arrangement=[];
+            disp('No rebar design solution was reached for the footing!')
+            break;
+        end
     end
 end
+if opcion_amin>0
+    trebar=opcion_amin;
+    dv=RebarAvailable(trebar,2); % optimal rebar diameter
+    av=(dv)^2*pi*0.25;
 
-trebar=opcion_amin;
-rebar_ov=RebarAvailable(trebar,1);
-dv=RebarAvailable(trebar,2); % optimal rebar diameter
-av=(dv)^2*pi*0.25;
+    s=av*dimb/ac; % rebar nominal separation
 
-s=av*dimb/ac; % rebar nominal separation
+    nv=fix(ac/av+1); % number of rebars
+    if nv<2
+        nv=2;
+    end
+    acRebar=nv*av;
 
-nv=fix(ac/av+1); % number of rebars
-if nv<2
-    nv=2;
+    arrangement=zeros(nv,1)+trebar;
 end
-acRebar=nv*av;
-
-arrangement=zeros(nv,1)+trebar;

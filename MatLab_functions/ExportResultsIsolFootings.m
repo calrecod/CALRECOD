@@ -52,51 +52,52 @@ function ExportResultsIsolFootings(directionData,bestDispositionFootings,...
 %                Faculty of Engineering
 %                Autonomous University of Queretaro
 %------------------------------------------------------------------------
+if isempty(directionData)==0
+    % To export design results of isolated footings
+    nombre_archivo='nrebar_footings_collection.csv';
+    fileid_01=fopen([directionData,nombre_archivo],'w+t');
 
-% To export design results of isolated footings _______________________
-nombre_archivo='nrebar_footings_collection.csv';
-fileid_01=fopen([directionData,nombre_archivo],'w+t');
+    nombre_archivo='dim_footings_collection.csv';
+    fileid_02=fopen([directionData,nombre_archivo],'w+t');
 
-nombre_archivo='dim_footings_collection.csv';
-fileid_02=fopen([directionData,nombre_archivo],'w+t');
+    nombre_archivo='collection_type_bar_footings.csv';
+    fileid_03=fopen([directionData,nombre_archivo],'w+t');
 
-nombre_archivo='collection_type_bar_footings.csv';
-fileid_03=fopen([directionData,nombre_archivo],'w+t');
+    nombre_archivo='collection_disposition_rebar_footings.csv';
+    fileid_04=fopen([directionData,nombre_archivo],'w+t');
 
-nombre_archivo='collection_disposition_rebar_footings.csv';
-fileid_04=fopen([directionData,nombre_archivo],'w+t');
+    % To wirte .csv file for the exportation of results
+    nfoot=length(dimensionFootingCollection(:,1));
+    if cols_sym_asym_isr~="ISR"
+        fprintf(fileid_03,'%d\n',typesRebarFooting);
 
-% To wirte .csv file for the exportation of results____________________
-nfoot=length(dimensionFootingCollection(:,1));
-if cols_sym_asym_isr~="ISR"
-    fprintf(fileid_03,'%d\n',typesRebarFooting);
-
-    for j=1:length(bestDispositionFootings(:,1))
-        fprintf(fileid_04,'%.2f,%.2f\n',bestDispositionFootings(j,:));
-    end          
-    for i=1:nfoot
-        fprintf(fileid_01,'%d,%d,%d,%d\n',nbarsFootingsCollection(i,:));
-        fprintf(fileid_02,'%.2f,%.2f,%.2f,%.2f\n',...
-            dimensionFootingCollection(i,:));
+        for j=1:length(bestDispositionFootings(:,1))
+            fprintf(fileid_04,'%.2f,%.2f\n',bestDispositionFootings(j,:));
+        end          
+        for i=1:nfoot
+            fprintf(fileid_01,'%d,%d,%d,%d\n',nbarsFootingsCollection(i,:));
+            fprintf(fileid_02,'%.2f,%.2f,%.2f,%.2f\n',...
+                dimensionFootingCollection(i,:));
+        end
+    else
+        for i=1:nfoot
+            fprintf(fileid_02,'%.2f,%.2f,%.2f,%.2f\n',...
+                dimensionFootingCollection(i,:));
+        end
     end
-else
+
+    fclose(fileid_01);
+    fclose(fileid_02);
+    fclose(fileid_03);
+    fclose(fileid_04);
+
+    nombre_archivo='coord_base_footings.csv';
+
+    fileid_05=fopen([directionData,nombre_archivo],'w+t');
+
     for i=1:nfoot
-        fprintf(fileid_02,'%.2f,%.2f,%.2f,%.2f\n',...
-            dimensionFootingCollection(i,:));
+        fprintf(fileid_05,'%.2f,%.2f,%.2f\n',coordBaseFooting(i,:));
     end
+
+    fclose(fileid_05);
 end
-
-fclose(fileid_01);
-fclose(fileid_02);
-fclose(fileid_03);
-fclose(fileid_04);
-    
-nombre_archivo='coord_base_footings.csv';
-
-fileid_05=fopen([directionData,nombre_archivo],'w+t');
-
-for i=1:nfoot
-    fprintf(fileid_05,'%.2f,%.2f,%.2f\n',coordBaseFooting(i,:));
-end
-
-fclose(fileid_05);

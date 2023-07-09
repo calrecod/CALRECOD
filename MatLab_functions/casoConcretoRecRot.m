@@ -1,5 +1,4 @@
 function elemConc=casoConcretoRecRot(a,fdpc,b,h,RotCornerSec,rotCP,gamma)
-
 %------------------------------------------------------------------------
 % Syntax:
 % elemConc=casoConcretoRecRot(a,fdpc,b,h,RotCornerSec,rotCP,gamma)

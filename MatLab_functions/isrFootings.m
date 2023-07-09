@@ -132,43 +132,40 @@ elseif fc>280
     end
 end
 
-fdpc=0.85*fc;
+d=h-rec; % effective footing's height
+%% Distribution of contact soil pressures
+[qu01,qu02,qu03,qu04,qprom]=RealPressuresFoot(load_conditions,be,le,...
+                                              typeFooting,dimCol);
+%% Shear design and revision
+pu=load_conditions(1,2);
+% Punching shear and shear by flexure
+[d,qmax]=shearFootings(be,le,qprom,dimCol,pu,d,fc,typeFooting);
 
+hmodif=d+rec; % new footing's height dimension (in case it was 
+              % required by the shear design)
+                  
+fdpc=0.85*fc;
+niter=0;    
+maxiter=10;
 amax_condition=0;
 while amax_condition==0 % This loop stops until the max/min rebar
                         % area restriction is complied for both footing's
                         % cross-sections
-    
+    niter=niter+1; % counting number of iterations
     barDispositionFootings=[];
     arrangement_bar_footings=[];
     nbars_footings=zeros(1,4);
     bestCost_elem=0;
     AcBar=[];
 
-    d=h-rec; % effective footing's height
     dim_zap=[be le];
     
     %%% Note: the analysis starts with the local Y-axis
-    %% Distribution of contact soil pressures
-    [qu01,qu02,qu03,qu04,qprom]=RealPressuresFoot(load_conditions,be,le,...
-                                                  typeFooting,dimCol);
     mu_axis=zeros(1,2);
 
-    %% Shear design and revision
-    pu=load_conditions(1,2);
-    % Punching shear and shear by flexure
-    [d,qmax]=shearFootings(be,le,qprom,dimCol,pu,d,fc,typeFooting);
-    
-    hmodif=d+rec; % new footing's height dimension (in case it was 
-                  % required by the shear design)
-
-    %% Reinforcement along -be- (section Le)
+    %% Reinforcement along Be - (section Le)
     eje=1;
-    if eje==1
-        de=hmodif-rec;
-    elseif eje==2
-        de=hmodif-rec-0.7*rec;
-    end
+    d=hmodif-rec;
 
     list_ef_footings=zeros(1,2);
     Ac_elem=[];
@@ -201,30 +198,36 @@ while amax_condition==0 % This loop stops until the max/min rebar
     if p<pmin
         p=pmin;
         amax_condition=1;
-    elseif p>pmax
+    elseif p>=pmax
         p=pmax;
         amax_condition=0;
-        le=le+5;
-    
+        d=d+5;
+        hmodif=d+rec;
+        continue; % pass to the next while loop
     elseif p<=pmax && p>=pmin
         amax_condition=1;
     end
     
-    ac=p*le*de;
+    ac=p*le*d;
 
     if cols_sym_asym_isr~="ISR" % When it is required to design the rebar
         % Reinforcing steel in tension 
         [le,ac_tension,nv,s,arreglo_t1]=...
-            RebarOptionsFootings(ac,le,RebarAvailable,sepMin_01);
-
+         RebarOptionsFootings(ac,le,RebarAvailable,sepMin_01);
+        
+        if ac_tension==0
+            d=d+5;
+            hmodif=d+rec;
+            continue;
+        end
         [maxef,mr]=EfcriticalFootings(le,fdpc,...
-            ac_tension,de,fy,m);
+            ac_tension,d,fy,m);
 
         list_ef_footings(1)=maxef;    % section Le
         list_mr_footings(1)=mr;
     
         % Minimum reinforcing area in compression by temperature
-        acmin=pmin*le*de;
+        acmin=pmin*le*d;
 
         [le,ac_comp,nv_comp,s,arreglo_t2]=...
             RebarOptionsFootings(acmin,le,RebarAvailable,sepMin_01);
@@ -278,7 +281,7 @@ while amax_condition==0 % This loop stops until the max/min rebar
         arreglo_t2L=arreglo_t2;
         
     else
-        acmin=pmin*le*de;
+        acmin=pmin*le*d;
         areaBar=ac+acmin;
         AcBar=[AcBar,areaBar];
         
@@ -304,11 +307,7 @@ while amax_condition==0 % This loop stops until the max/min rebar
     
     %% Reinforcement along le (section Be)
     eje=2;
-    if eje==1
-        de=hmodif-rec;
-    elseif eje==2
-        de=hmodif-rec-12/8*2.54;
-    end
+    d=hmodif-rec-12/8*2.54;
     
     % -------------------------------------------------------------------
     % MOMENT DISTRIBUTION 
@@ -340,25 +339,30 @@ while amax_condition==0 % This loop stops until the max/min rebar
     elseif p>pmax
         p=pmax;
         amax_condition=0;
-        be=be+5;
-
+        d=d+5+12/8*2.54;
+        hmodif=d+rec;
+        continue; % pass to the next while loop
     elseif p<=pmax && p>=pmin
         amax_condition=1;
     end
     
-    ac=p*be*de;
+    ac=p*be*d;
     if cols_sym_asym_isr~="ISR"  % When the design of rebar is required
         [be,ac_tension,nv_tension,s,arreglo_t1]=...
-            RebarOptionsFootings(ac,be,RebarAvailable,sepMin_01);
-
+         RebarOptionsFootings(ac,be,RebarAvailable,sepMin_01);
+        if ac_tension==0
+            d=d+5+12/8*2.54;
+            hmodif=d+rec;
+            continue;
+        end
         [maxef,mr]=EfcriticalFootings(be,fdpc,...
-            ac_tension,de,fy,m);
+            ac_tension,d,fy,m);
 
         list_ef_footings(2)=maxef;
         list_mr_footings(2)=mr;
 
         % Minimum reinforcing steel by temperature in compression
-        acmin=pmin*be*de;
+        acmin=pmin*be*d;
         [be,a_comp,nv_comp,s,arreglo_t2]=...
             RebarOptionsFootings(acmin,be,RebarAvailable,sepMin_01);
 
@@ -408,7 +412,7 @@ while amax_condition==0 % This loop stops until the max/min rebar
         arreglo_t1B=arreglo_t1;
         arreglo_t2B=arreglo_t2;
     else
-        acmin=pmin*be*de;
+        acmin=pmin*be*d;
         areaBar=ac+acmin;
         AcBar=[AcBar,areaBar];
         

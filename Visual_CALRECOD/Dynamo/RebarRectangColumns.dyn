@@ -96,7 +96,7 @@
     {
       "ConcreteType": "PythonNodeModels.PythonNode, PythonNodeModels",
       "NodeType": "PythonScriptNode",
-      "Code": "import clr\nclr.AddReference('ProtoGeometry')\nfrom Autodesk.DesignScript.Geometry import *\ndataEnteringNode = IN\n\n# INPUT\ncoord_col=IN[0]\nbasic=IN[1]\nnbars_col=IN[2]\ntipovar=IN[3]\ncoordbars=IN[4]\n\navailableRebar=[[4,1.27,1.266768698],\n\t\t\t\t[5,1.5875,1.97932609],\n\t\t\t\t[6,1.905,2.85022957],\n\t\t\t\t[8,2.54,5.067074791],\n\t\t\t\t[9,2.8575,6.413016532],\n\t\t\t\t[10,3.175,7.917304361],\n\t\t\t\t[12,3.81,11.40091828]]\n# MAIN LOOP\nlist_bars=[]\nncols=len(coord_col)\nsumanv_col=0\nnvar=0\nfor i in range(0,ncols):\n\tnvar=nvar+nbars_col[i][0]\n\thc=float(basic[i][2])*0.01\n\tfor b in range(0+int(sumanv_col),int(nvar)):\n\t\txvar=coordbars[b][0]*0.01+float(coord_col[i][0])*0.01\n\t\tyvar=coordbars[b][1]*0.01+float(coord_col[i][1])*0.01\n\t\t\n\t\ttypeRebar=availableRebar[tipovar[b][0]][0]\n\t\trvar=float(typeRebar)/8*2.54*0.01*0.5\n\t\t\n\t\tcenter_point=Point.ByCoordinates(xvar,yvar,float(coord_col[i][2])*0.01+0.5*hc)\n\t\tmyColCirc=Circle.ByCenterPointRadius(center_point,rvar)\n\t\tpsur=Surface.ByPatch(myColCirc)\n\t\tptorre=Surface.Thicken(psur,hc)\n\t\tlist_bars.append(ptorre)\n\t\t\n\tsumanv_col=sumanv_col+nbars_col[i][0]\n\t\t\n\t\nOUT=list_bars\n",
+      "Code": "import clr\nclr.AddReference('ProtoGeometry')\nfrom Autodesk.DesignScript.Geometry import *\ndataEnteringNode = IN\n\n# INPUT\ncoord_col=IN[0]\nbasic=IN[1]\nnbars_col=IN[2]\ntipovar=IN[3]\ncoordbars=IN[4]\n\navailableRebar=[[4,1.27,1.266768698],\n\t\t\t\t[5,1.5875,1.97932609],\n\t\t\t\t[6,1.905,2.85022957],\n\t\t\t\t[8,2.54,5.067074791],\n\t\t\t\t[9,2.8575,6.413016532],\n\t\t\t\t[10,3.175,7.917304361],\n\t\t\t\t[12,3.81,11.40091828]]\n# MAIN LOOP\nlist_bars=[]\nncols=len(coord_col)\nsumanv_col=0\nnvar=0\nfor i in range(0,ncols):\n\tnvar=nvar+nbars_col[i][0]\n\thc=float(basic[i][2])*0.01\n\tfor b in range(0+int(sumanv_col),int(nvar)):\n\t\txvar=coordbars[b][0]*0.01+float(coord_col[i][0])*0.01\n\t\tyvar=coordbars[b][1]*0.01+float(coord_col[i][1])*0.01\n\t\t\n\t\ttv=tipovar[b][0]-1\n\t\ttypeRebar=availableRebar[tv][0]\n\t\trvar=float(typeRebar)/8*2.54*0.01*0.5\n\t\t\n\t\tcenter_point=Point.ByCoordinates(xvar,yvar,float(coord_col[i][2])*0.01+0.5*hc)\n\t\tmyColCirc=Circle.ByCenterPointRadius(center_point,rvar)\n\t\tpsur=Surface.ByPatch(myColCirc)\n\t\tptorre=Surface.Thicken(psur,hc)\n\t\tlist_bars.append(ptorre)\n\t\t\n\tsumanv_col=sumanv_col+nbars_col[i][0]\n\t\t\n\t\nOUT=list_bars\n",
       "Engine": "IronPython2",
       "VariableInputPorts": true,
       "Id": "9f6f05c6c9fc4218be5b811092a3183e",
@@ -1474,13 +1474,13 @@
         "Height": 1039.5497329010341,
         "FontSize": 36.0,
         "InitialTop": -5201.5902620720635,
-        "InitialHeight": 1081.8996687299577,
+        "InitialHeight": 1063.5497329010341,
         "TextblockHeight": 43.0,
         "Background": "#FFC1D676"
       }
     ],
-    "X": -32.36221273595288,
-    "Y": 1712.9966604847702,
-    "Zoom": 0.29410472057106629
+    "X": -3.4460269915754225,
+    "Y": 1872.0936801992573,
+    "Zoom": 0.32534995961142055
   }
 }

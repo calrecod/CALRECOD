@@ -113,10 +113,11 @@ puSym2cols=1.1*sum(pu_col_sym)/length(pu_col_sym); % average unit-cost of
                                                    % default
 bp=b-2*rec(1);
 hp=h-2*rec(2);
-            
+iter=0; maxiter=40;
 ndiam=length(RebarAvailable(:,1));
 nopciones=0;
 while nopciones==0
+    iter=iter+1;
     bestArea=inf;
     maxef=1.0;
     for i=1:ndiam % for each type of rebar
@@ -285,7 +286,7 @@ while nopciones==0
     end
 
     if nopciones==0
-        fprintf('\nThe cross-section is too small for rebar.\n');
+        fprintf('\nThe column cross-section is too small for rebar.\n');
         fprintf('The cross-section dimensions should be increased.\n');
         
         bestdiagram=[];
@@ -299,7 +300,16 @@ while nopciones==0
         bestnv=[];
         nv4=[];
         bestcxy=[]; 
-        break;
+        if iter <= maxiter
+            if fdpc<2000 % units: kg,cm
+                h=h+5;
+            else       % units: lb,in
+                h=h+2;
+            end
+            continue;
+        else
+            break;
+        end
     end
 end
 % Ploteo de Diagramas de Interacción y detallado de refuerzo .........

@@ -66,6 +66,8 @@ function [pbest,bestEf,bestMr,best_area]=SGD1tFootISR(b,h,rec,fdpc,fy,...
 %------------------------------------------------------------------------
 
 %%%%%%%%%%%%%%%%%%%%%%-------- geometry ----%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+maxEff=0.99;
+minEff=0.8;
 
 bp=b-2*rec;
 
@@ -105,7 +107,7 @@ tk2=tk1+alfa0*pk1;
 j=0;
 tk2_vector=[];
 Eftk2_vector=[];
-while (Eftk1>0.99 || Eftk1<0.85)
+while (Eftk1>maxEff || Eftk1<minEff)
     j=j+1;
     % Evaluate next function step
     [Eftk2,mrtk2]=EvaluateISR1tFoot(tk2,b,h,fy,fdpc,rec,betac,axis,mu_real_axis);
@@ -119,12 +121,12 @@ while (Eftk1>0.99 || Eftk1<0.85)
     dEfdt2=-abs((Eftdtk2-Eftk2)/(tdtk2-tk2));
 
     %direction vector next step
-    if Eftk1>1.0
+    if Eftk1>maxEff
         pk2=1;
 
         %step length
         alfak=alfa0*(dEfdt2*pk2)/(dEfdt1*pk1);
-    elseif Eftk1<0.8
+    elseif Eftk1<minEff
         pk2=-1;
 
         %step length
