@@ -60,9 +60,9 @@ function [eMecVar]=eleMecBarAsymRecRot(dispositionRebar,nv,number_rebars_sup,...
 %         gamma:                angle of rotation for the cross-section
 %
 %------------------------------------------------------------------------
-% LAST MODIFIED: L.F.Veduzco    2023-02-01
-%                Faculty of Engineering
-%                Autonomous University of Queretaro
+% LAST MODIFIED: L.F.Veduzco    2023-02-05
+% Copyright (c)  Faculty of Engineering
+%                Autonomous University of Queretaro, Mexico
 %------------------------------------------------------------------------
 
 coordyCP=max(RotCornerSec(:,2))-CP;

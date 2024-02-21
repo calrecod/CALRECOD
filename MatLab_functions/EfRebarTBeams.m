@@ -52,9 +52,9 @@ function [Eff,Mr,c]=EfRebarTBeams(load_conditions,bp,ht,ba,ha,Lb,fdpc,...
 %                          coordinates over the T-beam cross-section
 %
 %------------------------------------------------------------------------
-% LAST MODIFIED: L.F.Veduzco    2023-04-08
-%                Faculty of Engineering
-%                Autonomous University of Queretaro
+% LAST MODIFIED: L.F.Veduzco    2023-02-05
+% Copyright (c)  Faculty of Engineering
+%                Autonomous University of Queretaro, Mexico
 %------------------------------------------------------------------------
 
 if fc<2000 % units: (kg,cm)

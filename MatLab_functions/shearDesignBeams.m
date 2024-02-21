@@ -51,9 +51,9 @@ function [s1,s2,s3,d1,d2]=shearDesignBeams(span,b,h,rec,rho,fc,fy,...
 %                               steel.
 %
 %------------------------------------------------------------------------
-% LAST MODIFIED: L.F.Veduzco    2023-03-19
-%                Faculty of Engineering
-%                Autonomous University of Queretaro
+% LAST MODIFIED: L.F.Veduzco    2023-07-03
+% Copyright (c)  Faculty of Engineering
+%                Autonomous University of Queretaro, Mexico
 %------------------------------------------------------------------------
 
 np=length(shear_beam);

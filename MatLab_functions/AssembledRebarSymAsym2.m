@@ -1,16 +1,16 @@
 function [Inertia_xy_modif,h,bestArea,bestEf,bestdiagram,bestdiagram2,...
-    bestArrangement,bestDisposition,bestMr,bestcxy,bestCP,bestCost]=...
+    bestArrangement,bestDisposition,bestMr,bestcxy,bestCP,bestCost,bestCFA]=...
     AssembledRebarSymAsym2(b,h,rec,Ac_sec_elem,E,npdiag,fdpc,beta1,...
-    height,wac,pu_sym_cols,RebarAvailable,load_conditions,...
-    condition_cracking,ductility,plotRebarDesign)
+    height,wac,RebarAvailable,load_conditions,condition_cracking,...
+    ductility,puCostCardBuild,dataCFA,plotRebarDesign)
 
 %-------------------------------------------------------------------------
 % Syntax:
 % [Inertia_xy_modif,h,bestArea,bestEf,bestdiagram,bestdiagram2,...
-%  bestArrangement,bestDisposition,bestMr,bestcxy,bestCP,bestCost]=...
+%  bestArrangement,bestDisposition,bestMr,bestcxy,bestCP,bestCost,bestCFA]=...
 %  AssembledRebarSymAsym2(b,h,rec,Ac_sec_elem,E,npuntos,fdpc,beta1,...
-%  height,wac,pu_sym_cols,RebarAvailable,load_conditions,...
-%  condition_cracking,ductility,plotRebarDesign)
+%  height,wac,RebarAvailable,load_conditions,...
+%  condition_cracking,ductility,puCostCardBuild,dataCFA,plotRebarDesign)
 %
 %-------------------------------------------------------------------------
 % SYSTEM OF UNITS: SI - (Kg,cm)
@@ -78,13 +78,6 @@ function [Inertia_xy_modif,h,bestArea,bestEf,bestdiagram,bestdiagram2,...
 %         beta1:                is determined as specified by code (see 
 %                               Documentation)
 %
-%         pu_sym_cols:          is the database of reinforcement assembly
-%                               and construction unit cost: format by
-%                               default:
-%    -----------------------------------------------------------------
-%    pu_col=[PU{#4}, PU{#5}, PU{#6}, PU{#8}, PU{#9}, PU{#10}, PU{#12}]
-%    -----------------------------------------------------------------
-%
 %         condition_cracking:   parameter that indicates which cross-section
 %                               cracking mechanism will be consider, either 
 %                               Cracked or Non-cracked. If the condition 
@@ -96,10 +89,15 @@ function [Inertia_xy_modif,h,bestArea,bestEf,bestdiagram,bestdiagram2,...
 %                               Options are: (1) they are required, 
 %                               (2) they are not required
 %
+%         puCostCardBuild:      is a vector containing the parameters
+%                               required for the calculation of the unit
+%                               cost of a rebar design with a 
+%                               "unitCostCardColsRec"
+%
 %------------------------------------------------------------------------
-% LAST MODIFIED: L.F.Veduzco    2023-03-23
-%                Faculty of Engineering
-%                Autonomous University of Queretaro
+% LAST MODIFIED: L.F.Veduzco    2023-02-05
+% Copyright (c)  Faculty of Engineering
+%                Autonomous University of Queretaro, Mexico
 %------------------------------------------------------------------------
 fc=fdpc/0.85;
 iter=0;
@@ -110,15 +108,14 @@ while noptions==0
     % --------------------------------------------------------------------
     % RP-5 (Asym-Sym4Diam)
     % --------------------------------------------------------------------
-    pu_asym_cols=1/0.8*sum(pu_sym_cols)/length(pu_sym_cols);
-
+    
     % Optimal asymmetrical design in individual rebars (option avilable:
     % as many as four rebar diameters symmetrically distributed in number) 
     [Mr_col1,h,Inertia_xy_modif1,bestArea1,cost_elem_col1,bestdiagram1,...
     bestdiagram12,nv2,Ef_sec_col1,bestArrangement1,bestDisposition1,nv4,...
-    bestcxy1,bestCP1]=AsymmSym4Diam(b,h,rec,Ac_sec_elem,E,npdiag,fdpc,...
-    beta1,height,wac,RebarAvailable,load_conditions,pu_asym_cols,...
-    condition_cracking,ductility);
+    bestcxy1,bestCP1,bestCFA1]=AsymmSym4Diam(b,h,rec,Ac_sec_elem,E,npdiag,fdpc,...
+    beta1,height,wac,RebarAvailable,load_conditions,...
+    condition_cracking,ductility,puCostCardBuild,dataCFA);
 
     if isempty(bestArea1)==0
         if bestArea1<bestArea
@@ -133,19 +130,18 @@ while noptions==0
             bestCP=bestCP1;
             bestCost=cost_elem_col1;
             Inertia_xy_modif=Inertia_xy_modif1;
+            bestCFA=bestCFA1;
         end
     end
     % --------------------------------------------------------------------
     % RP-6 (Asym-1Diam)
     % --------------------------------------------------------------------
     
-    pu_asym_cols=1/0.8*sum(pu_sym_cols)/length(pu_sym_cols);
-    
     [Mr_col2,h,Inertia_xy_modif2,bestArea2,bestCost2,bestdiagram21,...
     bestdiagram22,bestnv2,Ef_sec_col2,bestArrangement2,bestDisposition2,...
-    nv42,bestcxy2,bestCP2]=Asym1Diam(b,h,rec,Ac_sec_elem,npdiag,fdpc,beta1,...
-    load_conditions,pu_asym_cols,height,wac,RebarAvailable,...
-    condition_cracking,ductility);
+    nv42,bestcxy2,bestCP2,bestCFA2]=Asym1Diam(b,h,rec,Ac_sec_elem,npdiag,fdpc,beta1,...
+    load_conditions,height,wac,RebarAvailable,...
+    condition_cracking,ductility,puCostCardBuild,dataCFA);
 
     if isempty(bestArea2)==0
         if bestArea2<bestArea
@@ -160,6 +156,7 @@ while noptions==0
             bestCP=bestCP2;
             bestCost=bestCost2;
             Inertia_xy_modif=Inertia_xy_modif2;
+            bestCFA=bestCFA2;
         end
     end
 
@@ -167,13 +164,11 @@ while noptions==0
     % RP-7 (Asym-4Diam)
     % --------------------------------------------------------------------
 
-    pu_asym_cols=1/0.7*sum(pu_sym_cols)/length(pu_sym_cols);
-
     [Mr_col3,h,Inertia_xy_modif3,bestArea3,bestCost3,bestdiagram31,...
     bestdiagram32,bestnv3,Ef_sec_col3,bestArrangement3,bestDisposition3,...
-    nv43,bestcxy3,bestCP3]=Asym4Diam(b,h,rec,Ac_sec_elem,E,npdiag,fdpc,...
-    beta1,RebarAvailable,height,wac,load_conditions,pu_asym_cols,...
-    condition_cracking,ductility);
+    nv43,bestcxy3,bestCP3,bestCFA3]=Asym4Diam(b,h,rec,Ac_sec_elem,E,npdiag,fdpc,...
+    beta1,RebarAvailable,height,wac,load_conditions,...
+    condition_cracking,ductility,puCostCardBuild,dataCFA);
 
     if isempty(bestArea3)==0
         if bestArea3<bestArea
@@ -188,6 +183,7 @@ while noptions==0
             bestCP=bestCP3;
             bestCost=bestCost3;
             Inertia_xy_modif=Inertia_xy_modif3;
+            bestCFA=bestCFA3;
         end
     end
     

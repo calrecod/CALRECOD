@@ -10,9 +10,9 @@
 %
 %----------------------------------------------------------------
 %
-% LAST MODIFIED: L.F.Veduzco    2023-06-20
-%                Faculty of Engineering
-%                Autonomous University of Queretaro
+% LAST MODIFIED: L.F.Veduzco    2023-07-03
+% Copyright (c)  Faculty of Engineering
+%                Autonomous University of Queretaro, Mexico
 %----------------------------------------------------------------
 
 clear all
@@ -75,68 +75,62 @@ t_value_y,cxp,bestLoad0]=isrColsInterSurf(pu_cols,height,b,h,rec,fy,fc,...
 load_conditions,0.0078,ductility,1,1);
 
 %% Optimization rebar design
+puCostCardBuild=[1.2,0.9,128,214.75,0.04,0.105,7];
 
 Es=fy/0.0021; % Moudulus of Elasticity of reinforcing steel
 npdiag=30; % number of points to be computed for the interaction diagrams
 OptionRP=10; % select the rebar prototype for optimal design
-
+rangeCFA=[0,1]; % Acceptable range of constructability for the rebar designs
 if OptionRP==1
     %% Asymmetrical rebar design
     % RP: (Asym-2pack-Sym4Diam)
 
-    pu_asym_cols=1/0.7*sum(pu_cols)/length(pu_cols); % asymmetrical
-                                                     % rebar
     [Mr_col,h,bestArea1,bestCost,bestdiagram,...
     bestnv,bestEf,bestArrangement,bestDisposition,nv4,bestcxy,bestCP,...
-    bestLoad]=Asym2packSym4DiamIntSurf(b,h,rec,AsISR,Es,npdiag,fc*0.85,...
-    beta1,load_conditions,pu_asym_cols,ws,height,RebarAvailable,ductility);
+    bestLoad,bestCFA1]=Asym2packSym4DiamIntSurf(b,h,rec,AsISR,Es,npdiag,fc*0.85,...
+    beta1,load_conditions,ws,height,RebarAvailable,ductility,...
+    puCostCardBuild,rangeCFA);
+
 elseif OptionRP==2
     % RP: (Asym-2pack-1Diam)
-
-    pu_asym_cols=1/0.7*sum(pu_cols)/length(pu_cols); % asymmetrical
-                                                     % rebar
+    
     [bestMr,h,bestArea2,bestCost,bestdiagram,bestnv,bestEf,bestArrangement,...
-    bestDisposition,nv4,bestcxy,bestCP,bestLoad2]=Asym2pack1DiamIntSurf(b,...
+    bestDisposition,nv4,bestcxy,bestCP,bestLoad2,bestCFA2]=Asym2pack1DiamIntSurf(b,...
     h,rec,AsISR,npdiag,fc*0.85,fy,beta1,load_conditions,RebarAvailable,...
-    height,ws,pu_asym_cols,ductility);
+    height,ws,pu_asym_cols,ductility,puCostCardBuild,rangeCFA);
 
 elseif OptionRP==3
     % RP: (Asym-2pack-4Diam)
-    pu_asym_cols=1/0.65*sum(pu_cols)/length(pu_cols); % asymmetrical
-                                                     % rebar
-
+    
     [Mr_col,h,bestArea3,bestCost,bestdiagram,bestnv,bestEf,bestArrangement,...
-    bestDisposition,nv4,estcxy,bestCP,bestLoad3]=Asym2pack4DiamIntSurf(b,h,...
+    bestDisposition,nv4,estcxy,bestCP,bestLoad3,bestCFA3]=Asym2pack4DiamIntSurf(b,h,...
     rec,AsISR,npdiag,fc*0.85,beta1,fy,load_conditions,pu_asym_cols,...
-    RebarAvailable,ws,height,ductility);
+    RebarAvailable,ws,height,ductility,puCostCardBuild,rangeCFA);
 
 elseif OptionRP==4
     % RP: (Asym-Sym-4Diam)
-    pu_asym_cols=1/0.9*sum(pu_cols)/length(pu_cols); % asymmetrical
-                                                     % rebar
-
+    
     [Mr_col,h,bestArea4,bestCost,bestdiagram,bestnv,bestEf,bestArrangement,...
-    bestDisposition,nv4,bestcxy,bestCP,bestLoad4]=AsymmSym4DiamIntSurf(b,h,...
+    bestDisposition,nv4,bestcxy,bestCP,bestLoad4,bestCFA4]=AsymmSym4DiamIntSurf(b,h,...
     rec,AsISR,Es,npdiag,fc*0.85,beta1,height,ws,RebarAvailable,...
-    load_conditions,pu_asym_cols,ductility);
+    load_conditions,pu_asym_cols,ductility,puCostCardBuild,rangeCFA);
 
 elseif OptionRP==5
     % RP: (Asym-4Diam)
-    pu_asym_cols=1/0.85*sum(pu_cols)/length(pu_cols); % asymmetrical
-                                                     % rebar
+    
     [Mr_col,h,bestArea5,bestCost,bestdiagram,bestnv,bestEf,bestArrangement,...
-    bestDisposition,nv4,bestcxy,bestCP,bestLoad5]=Asym4DiamIntSurf(b,h,rec,...
+    bestDisposition,nv4,bestcxy,bestCP,bestLoad5,bestCFA5]=Asym4DiamIntSurf(b,h,rec,...
     AsISR,Es,npdiag,fc*0.85,beta1,RebarAvailable,height,ws,load_conditions,...
-    pu_asym_cols,ductility);
+    pu_asym_cols,ductility,puCostCardBuild,rangeCFA);
 
 elseif OptionRP==6
     % RP: (Asym-1Diam)
     pu_asym_cols=1/0.75*sum(pu_cols)/length(pu_cols); % asymmetrical
                                                      % rebar
     [Mr_col,h,bestArea6,bestCost,bestdiagram,bestnv,bestEf,bestArrangement,...
-    bestDisposition,nv4,bestcxy,bestCP,bestLoad6]=Asym1DiamIntSurf(b,h,rec,...
+    bestDisposition,nv4,bestcxy,bestCP,bestLoad6,bestCFA6]=Asym1DiamIntSurf(b,h,rec,...
     AsISR,npdiag,fc*0.85,beta1,load_conditions,pu_asym_cols,height,ws,...
-    RebarAvailable,ductility);
+    RebarAvailable,ductility,puCostCardBuild,rangeCFA);
 
 elseif OptionRP<=6 && OptionRP>=1
     section=[0.5*b 0.5*h;
@@ -151,37 +145,34 @@ elseif OptionRP<=6 && OptionRP>=1
 elseif OptionRP==7
     %% Symmetrical rebar design
     % RP: (Sym-12Diam)
-    pu_col_sym=1/0.9*pu_cols; % symmetrical rebar
+    
     [Mr_col,h,bestArea7,bestCost,bestdiagram,bestnv,bestEf,bestArrangement,...
-    bestDisposition,nv4,bestcxy,bestLoad7]=supOptimRebarSymIntSurf(b,h,rec,...
-    AsISR,Es,npdiag,fc*0.85,beta1,pu_col_sym,load_conditions,ws,height,...
-    ductility,RebarAvailable,1);
+    bestDisposition,nv4,bestcxy,bestLoad7,bestCFA7]=supOptimRebarSymIntSurf...
+    (b,h,rec,AsISR,Es,npdiag,fc*0.85,beta1,load_conditions,ws,height,...
+    ductility,RebarAvailable,puCostCardBuild,rangeCFA,1);
 
 elseif OptionRP==8
     % RP: (Sym-1Diam)
-    pu_col_sym=pu_cols; % symmetrical rebar
+    
     [Mr_col,h,bestArea8,lowestCost,ovMostEc,nvEc,maxEfEc,bestArrangement,...
-    bestDisposition,nvxy,bestdiagram,bestLoad8]=optrebarColsSymIntSurf(b,h,...
-    rec,AsISR,Es,npdiag,fc*0.85,beta1,pu_col_sym,RebarAvailable,ws,height,...
-    load_conditions,1);
+    bestDisposition,nvxy,bestdiagram,bestLoad8,bestCFA8]=optrebarColsSymIntSurf(b,h,...
+    rec,AsISR,Es,npdiag,fc*0.85,beta1,RebarAvailable,ws,height,...
+    load_conditions,puCostCardBuild,rangeCFA,1);
 
 elseif OptionRP==9
     % RP: (Sym-2pack-1Diam)
-    pu_col_sym=1/0.85*pu_cols; % symmetrical rebar
-
+    
     [Mr_col,h,bestArea9,lowestCost,ovMostEc,nvEc,maxEfEc,bestArrangement,...
-    bestDisposition,nvxy,bestdiagram,bestLoad9]=optRebarColsSym2PackIntSurf...
-    (b,h,rec,AsISR,Es,npdiag,fc*0.85,beta1,pu_col_sym,RebarAvailable,ws,...
-    height,load_conditions,1);
+    bestDisposition,nvxy,bestdiagram,bestLoad9,bestCFA9]=optRebarColsSym2PackIntSurf...
+    (b,h,rec,AsISR,Es,npdiag,fc*0.85,beta1,RebarAvailable,ws,...
+    height,load_conditions,puCostCardBuild,rangeCFA,1);
 
 elseif OptionRP==10
     % RP: (Sym-2pack-2Diam)
-    pu_col_sym=pu_cols; % symmetrical rebar
-
+    
     [Mr_col,h,bestArea10,bestCost,bestdiagram,bestnv,bestEf,bestArrangement,...
-    bestDisposition,nv4,bestcxy,bestLoad10]=supOptRebarSym2PackIntSurf(b,h,...
-    rec,AsISR,Es,npdiag,fc*0.85,beta1,pu_col_sym,load_conditions,ws,height,...
-    RebarAvailable,ductility,1);
+    bestDisposition,nv4,bestcxy,bestLoad10,bestCFA10]=supOptRebarSym2PackIntSurf(b,h,...
+    rec,AsISR,Es,npdiag,fc*0.85,beta1,load_conditions,ws,height,...
+    RebarAvailable,ductility,puCostCardBuild,rangeCFA,1);
 
 end
-

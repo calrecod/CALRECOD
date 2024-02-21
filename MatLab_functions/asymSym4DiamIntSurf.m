@@ -1,15 +1,15 @@
 function [bestav4,bestArea,bestEf,bestdiagram,bestArrangement,...
-    bestDisposition,bestMr,bestcxy,bestCP,bestCost,maxLoad]=...
+    bestDisposition,bestMr,bestcxy,bestCP,bestCost,maxLoad,bestCFA]=...
     asymSym4DiamIntSurf(OriginalDisposition,op,arrayOriginal,...
-    RebarAvailable,b,h,fy,fdpc,beta1,E,pu_asym_cols,height,wac,...
-    load_conditions,npdiag,ductility)
+    RebarAvailable,b,h,fy,fdpc,beta1,E,height,wac,...
+    load_conditions,npdiag,ductility,puCostCardBuild,dataCFA)
 %-------------------------------------------------------------------------
 % Syntax:
 % [bestav4,bestArea,bestEf,bestdiagram,bestArrangement,...
-%  bestDisposition,bestMr,bestcxy,bestCP,bestCost,maxLoad]=...
+%  bestDisposition,bestMr,bestcxy,bestCP,bestCost,maxLoad,bestCFA]=...
 %  asymSym4DiamIntSurf(OriginalDisposition,op,arrayOriginal,...
-%  RebarAvailable,b,h,fy,fdpc,beta1,E,pu_asym_cols,height,wac,...
-%  load_conditions,npdiag,ductility)
+%  RebarAvailable,b,h,fy,fdpc,beta1,E,height,wac,...
+%  load_conditions,npdiag,ductility,puCostCardBuild,dataCFA)
 %
 %-------------------------------------------------------------------------
 % SYSTEM OF UNITS: SI - (Kg,cm)
@@ -98,10 +98,15 @@ function [bestav4,bestArea,bestEf,bestdiagram,bestArrangement,...
 %                               reinforcement designs. A number between 1
 %                               to 3 (see documentation)
 %
+%         puCostCardBuild:      is a vector containing the parameters
+%                               required for the calculation of the unit
+%                               cost of a rebar design with a 
+%                               "unitCostCardColsRec"
+%
 %------------------------------------------------------------------------
-% LAST MODIFIED: L.F.Veduzco    2022-06-21
-%                Faculty of Engineering
-%                Autonomous University of Queretaro
+% LAST MODIFIED: L.F.Veduzco    2023-02-05
+% Copyright (c)  Faculty of Engineering
+%                Autonomous University of Queretaro, Mexico
 %------------------------------------------------------------------------
 
 bestDisposition=OriginalDisposition;
@@ -156,10 +161,20 @@ for i=1:op
                 fy,fdpc,beta1,E,arrayOriginal(1),arrayOriginal(2),...
                 arrayOriginal(3),arrayOriginal(4),RebarAvailable,...
                 bestDisposition);
-
+                
+                Wunb=dataCFA(3);
+                Wnd=dataCFA(4);
+                [BS,CFA]=BuildabilityScoreRebarCols(typeArray,arrayOriginal,...
+                    Wunb,Wnd);
+            
+                pccb=puCostCardBuild;
+                pu_asym_cols=unitCostCardColsRec(pccb(1),pccb(2),pccb(3),...
+                                    pccb(4)*CFA,pccb(5),pccb(6),pccb(7));
+            
                 maxef=eficiencia(iloadmax,5);
-
-                if maxef<1.0 && ast<amin && ast>=aminCode
+                
+                if maxef<1.0 && ast<amin && ast>=aminCode && ...
+                        dataCFA(1)<=CFA && CFA<=dataCFA(2)
                     amin=ast;
                     bestArea=amin;
                     bestav4=[ab1,ab2,ab3,ab4];
@@ -197,8 +212,8 @@ for i=1:op
 
                     bestcxy=cxy;
                     bestCP=cp;
-
-                    bestMr=eficiencia(1,4);
+                    bestCFA=CFA;
+                    bestMr=eficiencia(iloadmax,4);
                 end
             end
         end
@@ -217,4 +232,5 @@ if isempty(bestArea)==1 % when no feasible rebar option is found
     bestCP=[];
     bestMr=[];
     maxLoad=[];
+    bestCFA=[];
 end

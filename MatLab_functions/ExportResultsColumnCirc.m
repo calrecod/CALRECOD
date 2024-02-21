@@ -35,12 +35,12 @@ function ExportResultsColumnCirc(directionData,dimColumnsCollection,...
 %                                   design
 %
 %------------------------------------------------------------------------
-% LAST MODIFIED: L.F.Veduzco    2023-03-21
-%                Faculty of Engineering
-%                Autonomous University of Queretaro
+% LAST MODIFIED: L.F.Veduzco    2023-02-05
+% Copyright (c)  Faculty of Engineering
+%                Autonomous University of Queretaro, Mexico
 %------------------------------------------------------------------------
 
-% To export design results __________________________________________
+% To export design results 
 nombre_archivo='nrebar_cols_circ_collection.csv';
 fileid_01=fopen([directionData,nombre_archivo],'w+t');
 
@@ -53,7 +53,7 @@ fileid_03=fopen([directionData,nombre_archivo],'w+t');
 nombre_archivo='collection_disposition_rebar_cols_circ.csv';
 fileid_04=fopen([directionData,nombre_archivo],'w+t');
 
-% Writing the .txt file for the exportation of results______________
+% Writing the .txt file for the exportation of results
 ncols=length(dimColumnsCollection(:,1));
 if cols_sym_asym_isr~="ISR"
     for i=1:ncols

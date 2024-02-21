@@ -1,6 +1,5 @@
 function [maxef,tabEff,cxy]=effRecColsLinearSearch(diagrama,...
-                                    load_conditions,pot,poc,c_vector_bar)
-                            
+                            load_conditions,pot,poc,c_vector_bar)
 %------------------------------------------------------------------------
 % Syntax:
 % [maxef,tabEff,cxy]=effRecColsLinearSearch(diagrama,...
@@ -47,9 +46,9 @@ function [maxef,tabEff,cxy]=effRecColsLinearSearch(diagrama,...
 %                               points: size = (npoints+2) x 2
 %
 %------------------------------------------------------------------------
-% LAST MODIFIED: L.F.Veduzco    2022-02-05
-%                Faculty of Engineering
-%                Autonomous University of Queretaro
+% LAST MODIFIED: L.F.Veduzco    2023-02-05
+% Copyright (c)  Faculty of Engineering
+%                Autonomous University of Queretaro, Mexico
 %------------------------------------------------------------------------
 
 %% RESISTANCE COMPUTATION 
@@ -85,27 +84,34 @@ for sentido=1:2
                 break;
             end
         end
-        cdos=c_vector_bar(k,sentido);
-        ctres=c_vector_bar(k+1,sentido);
         
         mr=(((ydos-ytres)/(xtres-xdos))*xtres+ytres)/...
             (pu/mu-((ytres-ydos)/(xtres-xdos)));
+        if mr>max(diagrama(:,4*sentido))
+            [mr,k]=max(diagrama(:,4*sentido));
+        end
+        cdos=c_vector_bar(k,sentido);
+        ctres=c_vector_bar(k+1,sentido);
+        
         c=(cdos+ctres)*0.5;
         if sentido==1
             cx=[cx;c];
         elseif sentido==2
             cy=[cy;c];
         end
+        if mr==0
+            mr=0.00001;
+        end
         pr=pu/mu*mr;
 
         tabEff(j,2+2*sentido)=pr;
         tabEff(j,3+2*sentido)=mr;
-        
     end
 end
+
 %% EFFICIENCY COMPUTATION
 maxef=-inf;
-
+imax=1;
 for j=1:nconditions
     prx=tabEff(j,4);
     pry=tabEff(j,6);
@@ -117,9 +123,9 @@ for j=1:nconditions
     % Breler's formula
     % Inverse load equation
     prR=1/(1/abs(prx)+1/abs(pry)-1/pot);
-    efpr=prR/poc;
+    efpr=abs(prR/poc);
     % Countour load equation
-    efmr=(mux/mrx)+(muy/mry);
+    efmr=(abs(mux/mrx))^0.8+(abs(muy/mry))^0.8;
     if (efpr<0.1)
         ef=efmr;
     else

@@ -85,9 +85,9 @@ function [root]=bisectionMrVarAsymRot(cUno,cDos,fr,E,h,b,fdpc,beta1,...
 %                               column cross-section
 %
 %------------------------------------------------------------------------
-% LAST MODIFIED: L.F.Veduzco    2023-02-01
-%                Faculty of Engineering
-%                Autonomous University of Queretaro
+% LAST MODIFIED: L.F.Veduzco    2023-02-05
+% Copyright (c)  Faculty of Engineering
+%                Autonomous University of Queretaro, Mexico
 %------------------------------------------------------------------------
 
 %%%%%%%%%%%%%%%%%%%%%%% f(l) %%%%%%%%%%%%%%%%%%%%%
@@ -155,7 +155,7 @@ while(es>ea)
     cu=c;
 
     c=cDos-(raizDos*(cUno-cDos)/(raizUno-raizDos));
-    if c==0
+    if c==0 || isnan(c)==1
         c=0.00001;
     end
     [eMecVar]=eleMecBarAsymRecRot(dispositionRebar,nv,number_rebars_sup,...

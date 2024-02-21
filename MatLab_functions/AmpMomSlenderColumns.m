@@ -50,8 +50,8 @@ function [Mcx]=AmpMomSlenderColumns(b,h,fc,Pu,Wu,...
 %
 %------------------------------------------------------------------------
 % LAST MODIFIED: L.F.Veduzco    2022-02-05
-%                Faculty of Engineering
-%                Autonomous University of Queretaro
+% Copyright (c)  Faculty of Engineering
+%                Autonomous University of Queretaro, Mexico
 %------------------------------------------------------------------------
 
 %%% Amplified moment in the direction in question

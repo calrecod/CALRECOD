@@ -1,14 +1,14 @@
 function [Mr_col,h,Inertia_xy_modif,bestArea,lowestCost,ovMostEc,nvEc,...
     maxEfEc,bestArrangement,best_disposicion,nvxy,bestdiagrama]=optimRebarColsSym2Pack...
-    (b,h,rec,act,E,npuntos,fdpc,beta1,pu_col_sym,RebarAvailable,wac,height,...
-    load_conditions,condition_cracking,plotRebarDesign)
+    (b,h,rec,act,E,npuntos,fdpc,beta1,RebarAvailable,wac,height,...
+    load_conditions,condition_cracking,puCostCardBuild,plotRebarDesign)
 
 %------------------------------------------------------------------------
 % Syntax:
 % [Mr_col,h,Inertia_xy_modif,bestArea,lowestCost,ovMostEc,nvEc,...
 %  maxEfEc,bestArrangement,best_disposicion,nvxy]=optimRebarColsSym2Pack...
-%  (b,h,rec,act,E,npuntos,fdpc,beta1,pu_col_sym,RebarAvailable,wac,height,...
-%  load_conditions,condition_cracking,plotRebarDesign)
+%  (b,h,rec,act,E,npuntos,fdpc,beta1,RebarAvailable,wac,height,...
+%  load_conditions,condition_cracking,puCostCardBuild,plotRebarDesign)
 %
 %-------------------------------------------------------------------------
 % SYSTEM OF UNITS: SI - (Kg,cm)
@@ -84,13 +84,6 @@ function [Mr_col,h,Inertia_xy_modif,bestArea,lowestCost,ovMostEc,nvEc,...
 %         beta1:                is determined as specified by code (see 
 %                               Documentation)
 %
-%         pu_col:               is the database of reinforcement assembly
-%                               and construction unit cost: format by
-%                               default:
-%    -----------------------------------------------------------------
-%    pu_col=[PU{#4}, PU{#5}, PU{#6}, PU{#8}, PU{#9}, PU{#10}, PU{#12}]
-%    -----------------------------------------------------------------
-%
 %         condition_cracking:   parameter that indicates which cross-section
 %                               cracking mechanism will be consider, either 
 %                               Cracked or Non-cracked. If the condition 
@@ -102,12 +95,19 @@ function [Mr_col,h,Inertia_xy_modif,bestArea,lowestCost,ovMostEc,nvEc,...
 %                               Options are: (1) they are required, 
 %                               (2) they are not required
 %
+%         puCostCardBuild:      is a vector containing the parameters
+%                               required for the calculation of the unit
+%                               cost of a rebar design with a 
+%                               "unitCostCardColsRec"
+%
 %------------------------------------------------------------------------
-% LAST MODIFIED: L.F.Veduzco    2022-02-05
-%                Faculty of Engineering
-%                Autonomous University of Queretaro
+% LAST MODIFIED: L.F.Veduzco    2023-07-03
+% Copyright (c)  Faculty of Engineering
+%                Autonomous University of Queretaro, Mexico
 %------------------------------------------------------------------------
-
+pucb=puCostCardBuild;
+pu_col_sym=unitCostCardColsRec(pucb(1),pucb(2),pucb(3),pucb(4),pucb(5),...
+                               pucb(6),pucb(7));
 bp=b-2*rec(1);
 hp=h-2*rec(2);
 
@@ -158,7 +158,7 @@ while noptions==0
             continue;
         else
             
-            costo=nv*av*height*wac*pu_col_sym(i);
+            costo=nv*av*height*wac*pu_col_sym;
             for nvsup=minVarillasSup:maxVarillasSup
                 varSup=nvsup;
                 varCos=0.5*(nv-2*varSup);

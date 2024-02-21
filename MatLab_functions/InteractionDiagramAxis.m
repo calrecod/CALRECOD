@@ -75,9 +75,9 @@ function [diagramIntAxis1,pot,poc,cvectorX,newdispositionRebar,...
 %                               each cross-section local axis
 %
 %------------------------------------------------------------------------
-% LAST MODIFIED: L.F.Veduzco    2023-01-31
-%                Faculty of Engineering
-%                Autonomous University of Queretaro
+% LAST MODIFIED: L.F.Veduzco    2023-02-05
+% Copyright (c)  Faculty of Engineering
+%                Autonomous University of Queretaro, Mexico
 %------------------------------------------------------------------------
 if npdiag<3
     disp('Error: the number of points for any axis of the Interaction') 
@@ -91,7 +91,7 @@ op3=comborebar(3);
 op4=comborebar(4);
 
 diagramIntAxis1=zeros(npdiag,5);
-cvectorX=zeros(npdiag,2);
+cvectorX=zeros(npdiag,1);
 
 dimensionesColumna=[b h];
 
@@ -121,8 +121,8 @@ for sentido=1:2
     if (sentido==2)
        h=dimensionesColumna(1);
        b=dimensionesColumna(2);
-       dispositionRebar(:,1)=-rebar(:,2);
-       dispositionRebar(:,2)=rebar(:,1);
+       dispositionRebar(:,1)=rebar(:,2);
+       dispositionRebar(:,2)=-rebar(:,1);
     end
     % Plastic Center 
     [cp]=PlastiCenterAxis(fy,fdpc,b,h,dispositionRebar,arregloVar,...
@@ -157,8 +157,8 @@ diagramIntAxis1(1,3)=0.65*-poc;
 diagramIntAxis1(1,2)=1e-7;
 diagramIntAxis1(1,4)=1e-7;
 
-cvectorX(1,:)=4*max(newCoordCorners(:,2));
-cvectorX(npdiag,:)=0;
+cvectorX(1,1)=4*max(newCoordCorners(:,2));
+cvectorX(npdiag,1)=0;
 
 ea=0.001;
 for i=1:npdiag-1

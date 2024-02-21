@@ -32,9 +32,9 @@ function [maxef,mr]=EfcriticalFootings(bz,fdpc,actension,d,fy,mu_real_axis)
 %         mu_real_axis:         is the demanding bending moment
 %
 %------------------------------------------------------------------------
-% LAST MODIFIED: L.F.Veduzco    2022-02-05
-%                Faculty of Engineering
-%                Autonomous University of Queretaro
+% LAST MODIFIED: L.F.Veduzco    2023-02-05
+% Copyright (c)  Faculty of Engineering
+%                Autonomous University of Queretaro, Mexico
 %------------------------------------------------------------------------
 
 c=actension*fy/(0.85*bz*fdpc);

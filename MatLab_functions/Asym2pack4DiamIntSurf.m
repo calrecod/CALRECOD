@@ -1,15 +1,15 @@
 function [Mr_col,h,bestArea,bestCost,bestdiagram,bestnv,bestEf,...
-    bestArrangement,bestDisposition,nv4,bestcxy,bestCP,bestLoad]=...
-    Asym2pack4DiamIntSurf(b,h,rec,act,npdiag,fdpc,beta1,fy,...
-    load_conditions,pu_asym_cols,pu_col_sym,RebarAvailable,wac,height,...
-    ductility)
+    bestArrangement,bestDisposition,nv4,bestcxy,bestCP,bestLoad,...
+    bestCFA]=Asym2pack4DiamIntSurf(b,h,rec,act,npdiag,fdpc,beta1,fy,...
+    load_conditions,RebarAvailable,wac,height,ductility,puCostCardBuild,...
+    dataCFA)
 %-------------------------------------------------------------------------
 % Syntax:
 % [Mr_col,h,bestArea,bestCost,bestdiagram,bestnv,bestEf,...
-% bestArrangement,bestDisposition,nv4,bestcxy,bestCP,bestLoad]=...
+% bestArrangement,bestDisposition,nv4,bestcxy,bestCP,bestLoad,bestCFA]=...
 % Asym2pack4DiamIntSurf(b,h,rec,act,npdiag,fdpc,beta1,fy,...
-% load_conditions,pu_asym_cols,pu_col_sym,RebarAvailable,wac,height,...
-% ductility)
+% load_conditions,RebarAvailable,wac,height,ductility,puCostCardBuild,...
+% dataCFA)
 %
 %-------------------------------------------------------------------------
 % SYSTEM OF UNITS: SI - (Kg,cm)
@@ -95,24 +95,25 @@ function [Mr_col,h,bestArea,bestCost,bestdiagram,bestnv,bestEf,...
 %         pu_asym_cols:         is the average construction unit cost for 
 %                               this rebar prototype
 %
-%         pu_sym_cols:          is the database of reinforcement assembly
-%                               and construction unit cost for the most
-%                               symmetrical design prototype: format by
-%                               default:
-%    -----------------------------------------------------------------
-%    pu_col=[PU{#4}, PU{#5}, PU{#6}, PU{#8}, PU{#9}, PU{#12}, ...]
-%    -----------------------------------------------------------------
-%
 %         ductility:            is a parameter that indicates which 
 %                               ductility demand is required for the 
 %                               reinforcement designs. A number between 
 %                               1 to 3 (see Documentation)
 %
+%         puCostCardBuild:      is a vector containing the parameters
+%                               required for the calculation of the unit
+%                               cost of a rebar design with a 
+%                               "unitCostCardColsRec"
+%
 %------------------------------------------------------------------------
-% LAST MODIFIED: L.F.Veduzco    2023-03-25
-%                Faculty of Engineering
-%                Autonomous University of Queretaro
+% LAST MODIFIED: L.F.Veduzco    2023-02-05
+% Copyright (c)  Faculty of Engineering
+%                Autonomous University of Queretaro, Mexico
 %------------------------------------------------------------------------
+pccb=puCostCardBuild;
+pu_col_sym=unitCostCardColsRec(pccb(1),pccb(2),pccb(3),...
+                                 pccb(4),pccb(5),pccb(6),pccb(7));
+
 fc=fdpc/0.85;
 E=fy/0.0021; % yield stress of reinforcing steel
 bp=b-2*rec(1);
@@ -161,7 +162,7 @@ while noptions==0
         elseif (2*maxVarillasSup<nv)
             continue;
         else
-            costSym=nv*av*wac*height*pu_col_sym(i);  % This cost is just to 
+            costSym=nv*av*wac*height*pu_col_sym;  % This cost is just to 
                                                    % estimate the cost
                                                    % savings with the
                                                    % asymmetrical designs
@@ -183,19 +184,20 @@ while noptions==0
                 % in packs of two
                 [av4_1,nv4_1,arregloVar1,bestDisposition1,bestnv1,bestMr1,...
                  bestEf1,bestcxy1,bestCP1,bestasbar1,bestdiagram11,...
-                 bestCost1,maxLoad1]=asym1typeRebar2packIntSurf(fdpc,fy,...
+                 bestCost1,maxLoad1,bestCFA1]=asym1typeRebar2packIntSurf(fdpc,fy,...
                  nvxy,arraySymOriginal,b,h,rec,RebarAvailable,op,av,...
-                 npdiag,costSym,pu_asym_cols,height,wac,load_conditions,...
-                 ductility,beta1);
+                 npdiag,height,wac,load_conditions,...
+                 ductility,beta1,puCostCardBuild,dataCFA);
             
                 if isempty(nv4_1)==0
                     % Asymmetrical design with as many as 4 types of rebar
                     % asymmetrical also in number of rebars:
                     [av4_2,bestasbar2,bestEf2,bestdiagram21,arregloVar2,...
                     bestDisposition2,bestMr2,bestcxy2,bestCP2,bestCost2,...
-                    maxLoad2]=asymSym4DiamIntSurf(bestDisposition1,op,...
-                    nv4_1,RebarAvailable,b,h,fy,fdpc,beta1,E,pu_asym_cols,...
-                    height,wac,load_conditions,npdiag,ductility);
+                    maxLoad2,bestCFA2]=asymSym4DiamIntSurf(bestDisposition1,op,...
+                    nv4_1,RebarAvailable,b,h,fy,fdpc,beta1,E,height,wac,...
+                    load_conditions,npdiag,ductility,puCostCardBuild,...
+                    dataCFA);
 
                     bestnv2=bestnv1;
                     nv4_2=nv4_1;
@@ -221,6 +223,7 @@ while noptions==0
                             av4=av4_2;
                             bestcxy=bestcxy2;
                             bestCP=bestCP2;
+                            bestCFA=bestCFA2;
                             
                             vx1Ec=nv4(1);
                             vx2Ec=nv4(2); 
@@ -249,6 +252,7 @@ while noptions==0
                             av4=av4_1;
                             bestcxy=bestcxy1;
                             bestCP=bestCP1;
+                            bestCFA=bestCFA1;
                             
                             vx1Ec=nv4(1);
                             vx2Ec=nv4(2); 
@@ -279,7 +283,7 @@ while noptions==0
                         av4=av4_1;
                         bestcxy=bestcxy1;
                         bestCP=bestCP1;
-
+                        bestCFA=bestCFA1;
                         vx1Ec=nv4(1);
                         vx2Ec=nv4(2); 
                         vy1Ec=nv4(3);
@@ -314,6 +318,7 @@ while noptions==0
         bestcxy=[];
         bestCP=[];
         bestLoad=[];
+        bestCFA=[];
         break;
     end
 end

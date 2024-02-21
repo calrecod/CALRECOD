@@ -45,9 +45,9 @@ function [maxef,Mrt,c]=Efrec2tBeamsT(load_conditions,fc,factor_fc,E,bp,ht,ba,...
 %         E:               is the Elasticity Modulus of reinforcing steel
 %
 %------------------------------------------------------------------------
-% LAST MODIFIED: L.F.Veduzco    2023-01-20
-%                Faculty of Engineering
-%                Autonomous University of Queretaro
+% LAST MODIFIED: L.F.Veduzco    2023-02-05
+% Copyright (c)  Faculty of Engineering
+%                Autonomous University of Queretaro, Mexico
 %------------------------------------------------------------------------
 
 fdpc=fc*factor_fc;

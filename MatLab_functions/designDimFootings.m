@@ -1,9 +1,9 @@
-function [be,le,contact_pressure]=designDimFootings(pu,qmax,dimCol,...
+function [be,le,contactPressure]=designDimFootings(pu,qmax,dimCol,...
     hfooting,rec,typeFooting)
 
 %------------------------------------------------------------------------
 % Syntax:
-% [be,le,contact_pressure]=designDimFootings(pu,qadm,dimCol,...
+% [be,le,contactPressure]=designDimFootings(pu,qadm,dimCol,...
 %   hfooting,rec,typeFooting)
 %
 %-------------------------------------------------------------------------
@@ -12,23 +12,23 @@ function [be,le,contact_pressure]=designDimFootings(pu,qmax,dimCol,...
 %------------------------------------------------------------------------
 % PURPOSE: To design the transversal dimensions of a rectangular isolated 
 % footing, based on the acting vertical reaction from the intersecting 
-% column and the admissible load of soil considering the cross-section 
+% column and the admissible load of soil by considering the cross-section 
 % dimensions of the intersecting column, so that the footing dimension 
 % may be at least 40 cm wider than such column cross-section dimensions.
 % 
 % OUTPUT: be,le:                transversal isolated footing dimensions
 %
-%         contact_pressure:     is the resulting contact pressure from the
+%         contactPressure:      is the resulting contact pressure from the
 %                               soil (less or equal than qu)
 %
-% INPUT:  pu:                   is the vertical reaction from he supporting 
+% INPUT:  pu:                   is the vertical reaction from the supporting 
 %                               column onto the footing
 %
 %         qmax                  The max bearing soil capacity
 %
 %         dimCol:               column cross-section dimensions [b,h]
 %
-%         hfooting:             is the height or width of the isolated
+%         hfooting:             is the height or thickness of the isolated
 %                               footing
 %
 %         rec:                  is the concrete cover
@@ -38,9 +38,9 @@ function [be,le,contact_pressure]=designDimFootings(pu,qmax,dimCol,...
 %                               3 - Corner Isolated footing
 %
 %------------------------------------------------------------------------
-% LAST MODIFIED: L.F.Veduzco    2023-03-13
-%                Faculty of Engineering
-%                Autonomous University of Queretaro
+% LAST MODIFIED: L.F.Veduzco    2023-02-05
+% Copyright (c)  Faculty of Engineering
+%                Autonomous University of Queretaro, Mexico
 %------------------------------------------------------------------------
 
 % Dimensions of the column ----------------------------------------------
@@ -80,4 +80,4 @@ end
 be=be-mod(be,5)+5; % The dimensions are rounded to a multply of 5
 le=le-mod(le,5)+5;
 
-contact_pressure=abs(pu)/(be*le);
+contactPressure=abs(pu)/(be*le);

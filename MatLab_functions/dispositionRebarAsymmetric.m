@@ -1,14 +1,14 @@
-function [disposition_rebar,separation_hor1,separation_hor2,...
-    separation_ver1,separation_ver2]=dispositionRebarAsymmetric(b,...
-    h,rec,nv,number_rebars_sup,number_rebars_inf,number_rebars_left,...
-    number_rebars_right,RebarAvailable,op1,op2,op3,op4)
+function [dispositionRebar,sephor1,sephor2,...
+    sepver1,sepver2]=dispositionRebarAsymmetric(b,...
+    h,rec,nv,nRebarsSup,nRebarsInf,nRebarsLeft,...
+    nRebarsRight,RebarAvailable,op1,op2,op3,op4)
 
 %------------------------------------------------------------------------
 % Syntax:
-% [disposition_rebar,separation_hor1,separation_hor2,...
-%   separation_ver1,separation_ver2]=dispositionRebarAsymmetric(b,...
-%   h,rec,nv,number_rebars_sup,number_rebars_inf,number_rebars_left,...
-%   number_rebars_right,RebarAvailable,op1,op2,op3,op4)
+% [dispositionRebar,sephor1,sephor2,...
+%  sepver1,sepver2]=dispositionRebarAsymmetric(b,...
+%  h,rec,nv,nRebarsSup,nRebarsInf,nRebarsLeft,...
+%  nRebarsRight,RebarAvailable,op1,op2,op3,op4)
 %
 %-------------------------------------------------------------------------
 % SYSTEM OF UNITS: Any.
@@ -16,12 +16,13 @@ function [disposition_rebar,separation_hor1,separation_hor2,...
 %------------------------------------------------------------------------
 % PURPOSE: To compute the local coordinates of an asymmetric rebar option.
 % 
-% OUTPUT: disposition_rebar:    are the local coordinates of the optimal rebar option
+% OUTPUT: dispositionRebar:     are the local coordinates of the optimal 
+%                               rebar option
 %
-%         separation_hor1,
-%         separation_hor2,
-%         separation_ver1,
-%         separation_ver2:      resultant rebar separation to be compared 
+%         sephor1,
+%         sephor2,
+%         sepver1,
+%         sepver2:              resultant rebar separation to be compared 
 %                               with the minimum one (upper, lower, left
 %                               right boundary), respectively
 %
@@ -31,13 +32,13 @@ function [disposition_rebar,separation_hor1,separation_hor2,...
 %                               direction of the cross-section
 %
 %         RebarAvailable:       rebar database consisting of an array of 
-%                               size: n# x 3, by default in format: 
-%                               [#rebar,diam,unit-weight]
+%                               size: n# x 2, by default in format: 
+%                               [#rebar, diam]
 %
-%         number_rebars_sup,
-%         number_rebars_inf,
-%         number_rebars_left,
-%         number_rebars_right:  number of rebars to placed on each of the 
+%         nRebarsSup,
+%         nRebarsInf,
+%         nRebarsLeft,
+%         nRebarsRight:         number of rebars to placed on each of the 
 %                               cross-section boundaries
 %
 %         op1,op2,op3,op4:      resultant types of rebar for each of the 
@@ -46,9 +47,9 @@ function [disposition_rebar,separation_hor1,separation_hor2,...
 %                               right side, respectively)
 %
 %------------------------------------------------------------------------
-% LAST MODIFIED: L.F.Veduzco    2022-02-05
-%                Faculty of Engineering
-%                Autonomous University of Queretaro
+% LAST MODIFIED: L.F.Veduzco    2023-02-05
+% Copyright (c)  Faculty of Engineering
+%                Autonomous University of Queretaro, Mexico
 %------------------------------------------------------------------------
 
 bprima=b-2*rec(1);
@@ -60,110 +61,103 @@ dv3=RebarAvailable(op3,2);
 dv4=RebarAvailable(op4,2);
 
 ndiam=length(RebarAvailable(:,1));
-disposition_rebar=zeros(nv,2);
+dispositionRebar=zeros(nv,2);
 dv=RebarAvailable(ndiam,2);
-if number_rebars_sup>=2
+if nRebarsSup>=2
     
-    separation_hor1=round((bprima-((number_rebars_sup)*dv1))/...
-        (number_rebars_sup-1),1);
+    sephor1=round((bprima-((nRebarsSup)*dv1))/...
+        (nRebarsSup-1),1);
     
-    separation_ver2=round(((hprima)-((number_rebars_right+2)*dv4))/...
-    (number_rebars_right+1),1);
+    sepver2=round(((hprima)-((nRebarsRight+2)*dv4))/...
+    (nRebarsRight+1),1);
 
-    % Rebar disposition-----------------------------------------------
+    % REBAR DISTRIBUTION-----------------------------------------------
     % rebars disposition horizontally (superior)
-    for j=1:number_rebars_sup
-
-        % rebar coordinates in the superior part
-        disposition_rebar(j,1)=-bprima*0.5+(dv)*0.5+(j-1)*...
-            (separation_hor1+dv1);
-        disposition_rebar(j,2)=hprima*0.5-(dv*0.25);
+    for j=1:nRebarsSup
+        dispositionRebar(j,1)=-bprima*0.5+(dv)*0.5+(j-1)*...
+            (sephor1+dv1);
+        dispositionRebar(j,2)=hprima*0.5-(dv*0.25);
     end
     
     % rebar disposition in the vertical right part
-    for j=1:number_rebars_right
+    for j=1:nRebarsRight
+        dispositionRebar(j+nRebarsSup+nRebarsInf+...
+            nRebarsLeft,2)=hprima*0.5-(dv4)*0.5-(sepver2+dv4*0.5)-(j-1)*(sepver2+dv4);
 
-        % right side
-        disposition_rebar(j+number_rebars_sup+number_rebars_inf+...
-            number_rebars_left,2)=hprima*0.5-(dv4)*0.5-(separation_ver2+dv4*0.5)-(j-1)*(separation_ver2+dv4);
-
-        disposition_rebar(j+number_rebars_sup+number_rebars_inf+...
-            number_rebars_left,1)=bprima*0.5-(dv*0.5);
+        dispositionRebar(j+nRebarsSup+nRebarsInf+...
+            nRebarsLeft,1)=bprima*0.5-(dv*0.5);
     end
 
 else
-    separation_ver2=round((hprima-((number_rebars_right+1)*dv4))/...
-    (number_rebars_right),1);
+    sepver2=round((hprima-((nRebarsRight+1)*dv4))/...
+    (nRebarsRight),1);
 
-    % REBAR DISPOSITION-----------------------------------------------
+    % REBAR DISTRIBUTION-----------------------------------------------
     % rebar disposition horizontally (superior) only one rebar
-    for j=1:number_rebars_sup
-
-        % rebar coordinates in the superior part
-        disposition_rebar(j,1)=-bprima*0.5+(dv)*0.5;
-        disposition_rebar(j,2)=hprima*0.5-(dv*0.5);
+    for j=1:nRebarsSup
+        dispositionRebar(j,1)=-bprima*0.5+(dv)*0.5;
+        dispositionRebar(j,2)=hprima*0.5-(dv*0.5);
     end
     
     % rebar disposition over right side
-    for j=1:number_rebars_right
-        % right side
-        disposition_rebar(j+number_rebars_sup+number_rebars_inf+...
-            number_rebars_left,2)=hprima*0.5-(j-1)*(separation_ver2+dv4);
+    for j=1:nRebarsRight
+        dispositionRebar(j+nRebarsSup+nRebarsInf+...
+            nRebarsLeft,2)=hprima*0.5-(j-1)*(sepver2+dv4);
 
-        disposition_rebar(j+number_rebars_sup+number_rebars_inf+...
-            number_rebars_left,1)=bprima*0.5-(dv*0.5);
+        dispositionRebar(j+nRebarsSup+nRebarsInf+...
+            nRebarsLeft,1)=bprima*0.5-(dv*0.5);
     end
 end
 
-if number_rebars_inf>=2
-    separation_hor2=round((bprima-((number_rebars_inf)*dv2))/...
-        (number_rebars_inf-1),1);
+if nRebarsInf>=2
+    sephor2=round((bprima-((nRebarsInf)*dv2))/...
+        (nRebarsInf-1),1);
     
-    separation_ver1=round((hprima-((number_rebars_left+2)*dv3))/...
-    (number_rebars_left+1),1);
+    sepver1=round((hprima-((nRebarsLeft+2)*dv3))/...
+    (nRebarsLeft+1),1);
     
-    % REBAR DISPOSITION-----------------------------------------------
+    % REBAR DISTRIBUTION-----------------------------------------------
     % rebar coordinates on the inferior part
-    for j=1:number_rebars_inf
+    for j=1:nRebarsInf
         
-        disposition_rebar(number_rebars_sup+j,1)=-bprima*0.5+...
-            (dv)*0.5+(j-1)*(separation_hor2+dv2);
-        disposition_rebar(number_rebars_sup+j,2)=-hprima*0.5+...
+        dispositionRebar(nRebarsSup+j,1)=-bprima*0.5+...
+            (dv)*0.5+(j-1)*(sephor2+dv2);
+        dispositionRebar(nRebarsSup+j,2)=-hprima*0.5+...
             (dv*0.25);
 
     end
     
-    % left side
-    for j=1:number_rebars_left
+    % rebar coordinates on the left side
+    for j=1:nRebarsLeft
 
-        disposition_rebar(j+number_rebars_sup+number_rebars_inf,2)=...
-            hprima*0.5-(dv3)*0.5-(separation_ver1+dv3*0.5)-(j-1)*(separation_ver1+dv3);
+        dispositionRebar(j+nRebarsSup+nRebarsInf,2)=...
+            hprima*0.5-(dv3)*0.5-(sepver1+dv3*0.5)-(j-1)*(sepver1+dv3);
 
-        disposition_rebar(j+number_rebars_sup+number_rebars_inf,1)=...
+        dispositionRebar(j+nRebarsSup+nRebarsInf,1)=...
             -bprima*0.5+(dv*0.5);
     end
 else
-    separation_ver1=round((hprima-((number_rebars_left+1)*dv3))/...
-    (number_rebars_left),1);
+    sepver1=round((hprima-((nRebarsLeft+1)*dv3))/...
+    (nRebarsLeft),1);
 
-    % REBAR DISPOSITION-----------------------------------------------
+    % REBAR DISTRIBUTION-----------------------------------------------
     % rebar coordinates over the inferior part
-    for j=1:number_rebars_inf
+    for j=1:nRebarsInf
         
-        disposition_rebar(number_rebars_sup+j,1)=bprima*0.5-...
+        dispositionRebar(nRebarsSup+j,1)=bprima*0.5-...
             (dv)*0.5;
-        disposition_rebar(number_rebars_sup+j,2)=-hprima*0.5+...
+        dispositionRebar(nRebarsSup+j,2)=-hprima*0.5+...
             (dv*0.25);
 
     end
     
-    % left side
-    for j=1:number_rebars_left
+    % rebar coordinates over the left side
+    for j=1:nRebarsLeft
 
-        disposition_rebar(j+number_rebars_sup+number_rebars_inf,2)=...
-            -hprima*0.5+(dv3)*0.5+(j-1)*(separation_ver1+dv3);
+        dispositionRebar(j+nRebarsSup+nRebarsInf,2)=...
+            -hprima*0.5+(dv3)*0.5+(j-1)*(sepver1+dv3);
 
-        disposition_rebar(j+number_rebars_sup+number_rebars_inf,1)=...
+        dispositionRebar(j+nRebarsSup+nRebarsInf,1)=...
             -bprima*0.5+(dv*0.5);
 
     end

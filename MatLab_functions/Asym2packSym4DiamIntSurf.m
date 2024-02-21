@@ -1,13 +1,15 @@
 function [bestMr,h,bestArea,bestCost,bestdiagram,bestnv,bestEf,...
-    bestArrangement,bestDisposition,nv4,bestcxy,bestCP,bestLoad]=...
+    bestArrangement,bestDisposition,nv4,bestcxy,bestCP,bestLoad,bestCFA]=...
     Asym2packSym4DiamIntSurf(b,h,rec,act,E,npdiag,fdpc,beta1,...
-    load_conditions,pu_asym_cols,wac,height,RebarAvailable,ductility)
+    load_conditions,wac,height,RebarAvailable,ductility,puCostCardBuild,...
+    dataCFA)
 %-------------------------------------------------------------------------
 % Syntax:
 % [bestMr,h,bestArea,bestCost,bestdiagram,bestnv,bestEf,...
-%  bestArrangement,bestDisposition,nv4,bestcxy,bestCP,bestLoad]=...
+%  bestArrangement,bestDisposition,nv4,bestcxy,bestCP,bestLoad,bestCFA]=...
 %  Asym2packSym4DiamIntSurf(b,h,rec,act,E,npdiag,fdpc,beta1,...
-%  load_conditions,pu_asym_cols,wac,height,RebarAvailable,ductility)
+%  load_conditions,wac,height,RebarAvailable,ductility,puCostCardBuild,...
+%  dataCFA)
 %
 %-------------------------------------------------------------------------
 % SYSTEM OF UNITS: SI - (Kg,cm)
@@ -90,18 +92,20 @@ function [bestMr,h,bestArea,bestCost,bestdiagram,bestnv,bestEf,...
 %         beta1:                is determined as specified by code (see 
 %                               Documentation)
 %
-%         pu_asym_cols:         is the average construction unit cost for 
-%                               this rebar prototype
-%
 %         ductility:            is a parameter that indicates which 
 %                               ductility demand is required for the 
 %                               reinforcement designs. A number between 
 %                               1 to 3 (see Documentation)
 %
+%         puCostCardBuild:      is a vector containing the parameters
+%                               required for the calculation of the unit
+%                               cost of a rebar design with a 
+%                               "unitCostCardColsRec"
+%
 %------------------------------------------------------------------------
-% LAST MODIFIED: L.F.Veduzco    2022-06-21
-%                Faculty of Engineering
-%                Autonomous University of Queretaro
+% LAST MODIFIED: L.F.Veduzco    2023-02-05
+% Copyright (c)  Faculty of Engineering
+%                Autonomous University of Queretaro, Mexico
 %------------------------------------------------------------------------
 fc=fdpc/0.85;
 fy=E*0.0021; % yield stress of reinforcing steel
@@ -165,10 +169,11 @@ while noptions==0
                 % Asymmetrical design with as many as 4 types of rebar
                 % in packs of two---------------------------------------
                 [av4_2,bestasbar2,bestEf2,bestdiagrama1,arregloVar2,...
-                bestDisposition2,bestMr2,bestcxy2,bestCP2,bestCost2,maxLoad]=...
-                asymSym4DiamIntSurf(disposicion_varillado,op,...
+                bestDisposition2,bestMr2,bestcxy2,bestCP2,bestCost2,...
+                maxLoad,bestCFA2]=asymSym4DiamIntSurf(disposicion_varillado,op,...
                 arraySymOriginal,RebarAvailable,b,h,fy,fdpc,beta1,E,...
-                pu_asym_cols,height,wac,load_conditions,npdiag,ductility);
+                height,wac,load_conditions,npdiag,ductility,puCostCardBuild,...
+                dataCFA);
                 
                 bestnv2=nv;
                 nv4_2=arraySymOriginal;
@@ -189,6 +194,7 @@ while noptions==0
                     bestcxy=bestcxy2;
                     bestCP=bestCP2;
                     bestLoad=maxLoad;
+                    bestCFA=bestCFA2;
                     
                     vx1Ec=nv4(1);
                     vx2Ec=nv4(2); 
@@ -224,6 +230,7 @@ while noptions==0
         bestcxy=[];
         bestCP=[];
         bestLoad=[];
+        bestCFA=[];
         
         break;
     end

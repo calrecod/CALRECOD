@@ -1,15 +1,15 @@
 function [Mr_col,h,Inertia_xy_modif,bestArea,bestCost,bestdiagram,...
     bestdiagram2,bestnv,bestEf,bestArrangement,bestDisposition,nv4,...
-    bestcxy,bestCP]=Asym4Diam(b,h,rec,act,E,npdiag,fdpc,beta1,...
-    RebarAvailable,height,wac,load_conditions,pu_asym_cols,...
-    condition_cracking,ductility)
+    bestcxy,bestCP,bestCFA]=Asym4Diam(b,h,rec,act,E,npdiag,fdpc,beta1,...
+    RebarAvailable,height,wac,load_conditions,...
+    condition_cracking,ductility,puCostCardBuild,dataCFA)
 %-------------------------------------------------------------------------
 % Syntax:
 % [Mr_col,h,Inertia_xy_modif,bestArea,bestCost,bestdiagram,...
 %  bestdiagram2,bestnv,bestEf,bestArrangement,bestDisposition,nv4,...
-%  bestcxy,bestCP]=Asym4Diam(b,h,rec,act,E,npdiag,fdpc,beta1,...
-%  RebarAvailable,height,wac,load_conditions,pu_asym_cols,...
-%  condition_cracking,ductility)
+%  bestcxy,bestCP,bestCFA]=Asym4Diam(b,h,rec,act,E,npdiag,fdpc,beta1,...
+%  RebarAvailable,height,wac,load_conditions,...
+%  condition_cracking,ductility,puCostCardBuild,dataCFA)
 %
 %-------------------------------------------------------------------------
 % SYSTEM OF UNITS: SI - (Kg,cm)
@@ -115,14 +115,21 @@ function [Mr_col,h,Inertia_xy_modif,bestArea,bestCost,bestdiagram,...
 %                               reinforcement designs. A number between 1
 %                               to 3 (see Documentation)
 %
+%         puCostCardBuild:      is a vector containing the parameters
+%                               required for the calculation of the unit
+%                               cost of a rebar design with a 
+%                               "unitCostCardColsRec"
+%
 %------------------------------------------------------------------------
-% LAST MODIFIED: L.F.Veduzco    2022-06-21
-%                Faculty of Engineering
-%                Autonomous University of Queretaro
+% LAST MODIFIED: L.F.Veduzco    2023-02-05
+% Copyright (c)  Faculty of Engineering
+%                Autonomous University of Queretaro, Mexico
 %------------------------------------------------------------------------
 fc=fdpc/0.85;
 fy=E*0.0021; % Yield stress of reinforcing steel
-pu_col_sym=[29.19, 29.06, 28.93, 28.93, 28.93, 28.93, 28.93];
+pccb=puCostCardBuild;
+pu_col_sym=unitCostCardColsRec(pccb(1),pccb(2),pccb(3),...
+                                 pccb(4),pccb(5),pccb(6),pccb(7));
 
 bp=b-2*rec(1);
 hp=h-2*rec(2);
@@ -172,7 +179,7 @@ while noptions==0
             continue;
         else
             
-            costo=nv*av*height*wac*pu_col_sym(i);
+            costo=nv*av*height*wac*pu_col_sym;
             
             for type=minVarillasSup:maxVarillasSup
                 varSup=type;
@@ -190,10 +197,10 @@ while noptions==0
                 % Asymmetrical design with only one type of rebar
                 [av4_1,nv4_1,relyEffList,arregloVar1,bestDisposition1,...
                 bestnv1,bestMr1,bestEf1,bestcxy1,bestCP1,bestasbar1,...
-                bestdiagram11,bestdiagram12,bestCost1]=asym1typeRebar...
+                bestdiagram11,bestdiagram12,bestCost1,bestCFA1]=asym1typeRebar...
                 (fdpc,nvxy,arraySymOriginal,b,h,rec,RebarAvailable,op,av,...
-                npdiag,costo,pu_asym_cols,wac,height,load_conditions,...
-                ductility,beta1);
+                npdiag,wac,height,load_conditions,...
+                ductility,beta1,puCostCardBuild,dataCFA);
                 
                 if isempty(nv4_1)==0
                     noptions=noptions+1;
@@ -201,10 +208,10 @@ while noptions==0
                     % also asymmetrical in number of rebars
                     [av4_2,relyEffList,bestasbar2,bestEf2,bestdiagram21,...
                     bestdiagram22,arregloVar2,bestDisposition2,bestMr2,...
-                    bestcxy2,bestCP2,bestCost2]=asymSym4Diam...
+                    bestcxy2,bestCP2,bestCost2,bestCFA2]=asymSym4Diam...
                     (bestDisposition1,op,nv4_1,RebarAvailable,rec,b,h,...
-                    fy,fdpc,beta1,E,pu_asym_cols,height,wac,load_conditions,...
-                    npdiag,ductility);
+                    fy,fdpc,beta1,E,height,wac,load_conditions,...
+                    npdiag,ductility,puCostCardBuild,dataCFA);
                 
                     bestnv2=bestnv1;
                     nv4_2=nv4_1;
@@ -229,6 +236,7 @@ while noptions==0
                             av4=av4_2;
                             bestcxy=bestcxy2;
                             bestCP=bestCP2;
+                            bestCFA=bestCFA2;
                             
                             vx1Ec=nv4(1);
                             vx2Ec=nv4(2); 
@@ -251,6 +259,7 @@ while noptions==0
                             bestEf=bestEf1;
                             bestMr=bestMr1;
                             bestnv=bestnv1;
+                            bestCFA=bestCFA1;
                             nv4=nv4_1;
                             av4=av4_1;
                             bestcxy=bestcxy1;
@@ -284,7 +293,8 @@ while noptions==0
                         av4=av4_1;
                         bestcxy=bestcxy1;
                         bestCP=bestCP1;
-
+                        bestCFA=bestCFA1;
+                        
                         vx1Ec=nv4(1);
                         vx2Ec=nv4(2); 
                         vy1Ec=nv4(3);
@@ -320,7 +330,7 @@ while noptions==0
         bestcxy=[];
         bestCP=[];
         Inertia_xy_modif=[];
-        
+        bestCFA=[];
         break;
     else
         Mr_col=bestMr;

@@ -41,9 +41,9 @@ function [raiz]=bisectionMr4t(cUno,cDos,fr,E,t1,t2,t3,t4,h,b,rec,fdpc,beta1,ea)
 %         ea:                 is the approximation root error (close to 0)
 %
 %------------------------------------------------------------------------
-% LAST MODIFIED: L.F.Veduzco    2022-02-05
-%                Faculty of Engineering
-%                Autonomous University of Queretaro
+% LAST MODIFIED: L.F.Veduzco    2023-02-05
+% Copyright (c)  Faculty of Engineering
+%                Autonomous University of Queretaro, Mexico
 %------------------------------------------------------------------------
 
 %%%%%%%%%%%%%%%%%%%%%%% f(l) %%%%%%%%%%%%%%%%%%%%%

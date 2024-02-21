@@ -47,9 +47,9 @@ function [maxef,mr]=EvaluateISR1tFoot(t_tension,b,h,...
 %                               Documentation)
 %
 %------------------------------------------------------------------------
-% LAST MODIFIED: L.F.Veduzco    2022-02-05
-%                Faculty of Engineering
-%                Autonomous University of Queretaro
+% LAST MODIFIED: L.F.Veduzco    2023-02-05
+% Copyright (c)  Faculty of Engineering
+%                Autonomous University of Queretaro, Mexico
 %------------------------------------------------------------------------
 
 bp=b-2*rec;

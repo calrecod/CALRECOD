@@ -57,9 +57,9 @@ function [raiz]=bisectionMrRebarTBeams(c1,c2,fr,E,ha,ba,bp,ht,Lb,cover,fdpc,...
 %                        column, from the smallest to the biggest diameter
 %
 %------------------------------------------------------------------------
-% LAST MODIFIED: L.F.Veduzco    2023-04-08
-%                Faculty of Engineering
-%                Autonomous University of Queretaro
+% LAST MODIFIED: L.F.Veduzco    2023-02-05
+% Copyright (c)  Faculty of Engineering
+%                Autonomous University of Queretaro, Mexico
 %------------------------------------------------------------------------
 
 d1=ht-cover;

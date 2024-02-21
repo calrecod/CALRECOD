@@ -48,9 +48,9 @@ function [root]=bisectionMrRebarColsCir(cUno,cDos,fr,E,diam,fdpc,beta1,...
 %                               the cross-section
 %
 %------------------------------------------------------------------------
-% LAST MODIFIED: L.F.Veduzco    2023-01-26
-%                Faculty of Engineering
-%                Autonomous University of Queretaro
+% LAST MODIFIED: L.F.Veduzco    2023-02-05
+% Copyright (c)  Faculty of Engineering
+%                Autonomous University of Queretaro, Mexico
 %------------------------------------------------------------------------
 
 %%%%%%%%%%%%%%%%%%%%%%% f(l) %%%%%%%%%%%%%%%%%%%%%

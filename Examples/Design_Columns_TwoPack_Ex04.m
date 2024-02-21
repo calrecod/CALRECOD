@@ -11,9 +11,9 @@
 %
 %----------------------------------------------------------------
 %
-% LAST MODIFIED: L.F.Veduzco    2022-07-27
-%                Faculty of Engineering
-%                Autonomous University of Queretaro
+% LAST MODIFIED: L.F.Veduzco    2023-07-03
+% Copyright (c)  Faculty of Engineering
+%                Autonomous University of Queretaro, Mexico
 %----------------------------------------------------------------
 
 clear all
@@ -63,7 +63,7 @@ npdiag=30; % number of points to compute for the interaction diagram
 
 pu_cols=[29.19,29.06,28.93,28.93,28.93,28.93,28.93]; % symmetrical 
                                                      % rebar
-pu_cols_isr=[28.93];
+pu_cols_isr=[28.93]./18;
     
 condition_cracking="Cracked"; % "Cracked" or "Non-cracked"
 
@@ -76,13 +76,15 @@ isrColumns(pu_cols_isr,height,b,h,rec,fy,fc,load_conditions,ws,ductility,...
 0,0);
     
 %% Optimization rebar design - RP: (Asym-2pack-Sym4Diam)
-
-pu_sym_cols=1/0.9*pu_cols; % symmetrical
-                           % rebar in packages of two
-                            
+puColBuild=[1.2,0.9,128,214.75,0.04,0.105,7];
+dataCFA=[0,1,1,2]; % Data required for the computation of the 
+                   % constructability factor for the rebar designs of columns
+                   % Lower and upper values for the range of the CFA and 
+                   % weight factors for the uniformity of rebars and rebar 
+                   % diameters
 [Mr_col,h,Inertia_xy_modif,bestArea,bestCost,bestdiagram,bestnv,...
-bestEf,bestArrangement,bestDisposition,nv4,bestcxy]=superOptimalRebarSym2Pack...
-(b,h,rec,Ac_sec_elem,Es,npdiag,fdpc,beta1,pu_sym_cols,load_conditions,...
-ws,height,RebarAvailable,condition_cracking,ductility,1);
+bestEf,bestArrangement,bestDisposition,nv4,bestcxy,bestCFA]=superOptimalRebarSym2Pack...
+(b,h,rec,Ac_sec_elem,Es,npdiag,fdpc,beta1,load_conditions,...
+ws,height,RebarAvailable,condition_cracking,ductility,puColBuild,dataCFA,1);
 
 % ----------------------------- End ----------------------------------

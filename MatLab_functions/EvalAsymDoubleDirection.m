@@ -65,9 +65,9 @@ function [diagramaInteraccion1,diagramaInteraccion2,pot,poc,cp_axis,cvector1,...
 %                               coordinates over the cross-section [x,y] 
 %
 %------------------------------------------------------------------------
-% LAST MODIFIED: L.F.Veduzco    2022-08-02
-%                Faculty of Engineering
-%                Autonomous University of Queretaro
+% LAST MODIFIED: L.F.Veduzco    2023-02-05
+% Copyright (c)  Faculty of Engineering
+%                Autonomous University of Queretaro, Mexico
 %------------------------------------------------------------------------
 if npdiag<3
     disp('Error: the number of points for the Interaction Diagram must be 3 or higher');

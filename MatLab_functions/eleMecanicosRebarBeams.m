@@ -39,9 +39,9 @@ function eleMec=eleMecanicosRebarBeams(c,a,fdpc,h,b,h_rec,E,arreglo_t1,...
 %         fdpc=0.85f'c:     according to ACI 318
 %
 %------------------------------------------------------------------------
-% LAST MODIFIED: L.F.Veduzco    2022-02-05
-%                Faculty of Engineering
-%                Autonomous University of Queretaro
+% LAST MODIFIED: L.F.Veduzco    2023-02-05
+% Copyright (c)  Faculty of Engineering
+%                Autonomous University of Queretaro, Mexico
 %------------------------------------------------------------------------
                         
 arreglo_total=[arreglo_t1;arreglo_t2];

@@ -48,9 +48,9 @@ function [ISReMec]=eleMecISRSymRecRot(discreteISRcoord,ndt,da4,b,h,c,...
 %         c:                    is the neutral axis's depth
 %
 %------------------------------------------------------------------------
-% LAST MODIFIED: L.F.Veduzco    2023-06-22
-%                Faculty of Engineering
-%                Autonomous University of Queretaro
+% LAST MODIFIED: L.F.Veduzco    2023-02-05
+% Copyright (c)  Faculty of Engineering
+%                Autonomous University of Queretaro, Mexico
 %------------------------------------------------------------------------
 
 coordyCP=max(RotCornerSec(:,2))-CP;

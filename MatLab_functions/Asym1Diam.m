@@ -1,15 +1,15 @@
 function [Mr_col,h,Inertia_xy_modif,bestArea,bestCost,bestdiagram,...
     bestdiagram2,bestnv,bestEf,bestArrangement,bestDisposition,nv4,...
-    bestcxy,bestCP]=Asym1Diam(b,h,rec,act,npdiag,fdpc,beta1,...
-    load_conditions,pu_asym_cols,height,wac,RebarAvailable,...
-    condition_cracking,ductility)
+    bestcxy,bestCP,bestCFA]=Asym1Diam(b,h,rec,act,npdiag,fdpc,beta1,...
+    load_conditions,height,wac,RebarAvailable,...
+    condition_cracking,ductility,puCostCardBuild,dataCFA)
 %-------------------------------------------------------------------------
 % Syntax:
 % [Mr_col,h,Inertia_xy_modif,bestArea,bestCost,bestdiagram,...
 %   bestdiagram2,bestnv,bestEf,bestArrangement,bestDisposition,nv4,...
-%   bestcxy,bestCP]=Asym1Diam(b,h,rec,act,npdiag,fdpc,beta1,...
-%   load_conditions,pu_asym_cols,height,wac,RebarAvailable,...
-%   condition_cracking,ductility)
+%   bestcxy,bestCP,bestCFA]=Asym1Diam(b,h,rec,act,npdiag,fdpc,beta1,...
+%   load_conditions,height,wac,RebarAvailable,...
+%   condition_cracking,ductility,puCostCardBuild,dataCFA)
 %
 %-------------------------------------------------------------------------
 % SYSTEM OF UNITS: SI - (Kg,cm)
@@ -112,13 +112,14 @@ function [Mr_col,h,Inertia_xy_modif,bestArea,bestCost,bestdiagram,...
 %                               to 3 (see Documentation)
 %
 %------------------------------------------------------------------------
-% LAST MODIFIED: L.F.Veduzco    2022-06-21
-%                Faculty of Engineering
-%                Autonomous University of Queretaro
+% LAST MODIFIED: L.F.Veduzco    2023-02-05
+% Copyright (c)  Faculty of Engineering
+%                Autonomous University of Queretaro, Mexico
 %------------------------------------------------------------------------
 fc=fdpc/0.85;
-
-pu_col_sym=[29.19, 29.06, 28.93, 28.93, 28.93, 28.93, 28.93];
+pccb=puCostCardBuild;
+pu_col_sym=unitCostCardColsRec(pccb(1),pccb(2),pccb(3),...
+                               pccb(4),pccb(5),pccb(6),pccb(7));
 
 bp=b-2*rec(1);
 hp=h-2*rec(2);
@@ -166,7 +167,7 @@ while noptions==0
         elseif 2*maxVarillasSup>nv
             continue;
         else
-            costo=nv*av*height*wac*pu_col_sym(i); % This cost is used to
+            costo=nv*av*height*wac*pu_col_sym; % This cost is used to
                                                    % estimate the cost
                                                    % savings of each
                                                    % asymmetrical rebar
@@ -188,10 +189,10 @@ while noptions==0
                 % Asymmetrical design with only one type of rebar
                 [av4_1,nv4_1,relyEffList,arregloVar1,bestDisposition1,...
                 bestnv1,bestMr1,bestEf1,bestcxy1,bestCP1,bestasbar1,...
-                bestdiagram1,bestdiagrama2,bestCost1]=asym1typeRebar...
+                bestdiagram1,bestdiagrama2,bestCost1,bestCFA1]=asym1typeRebar...
                 (fdpc,nvxy,arraySymOriginal,b,h,rec,RebarAvailable,op,av,...
-                npdiag,costo,pu_asym_cols,wac,height,load_conditions,...
-                ductility,beta1);
+                npdiag,wac,height,load_conditions,ductility,beta1,...
+                puCostCardBuild,dataCFA);
                 
                 if isempty(bestasbar1)==0
                     noptions=noptions+1;
@@ -209,7 +210,8 @@ while noptions==0
                         av4=av4_1;
                         bestcxy=bestcxy1;
                         bestCP=bestCP1;
-                    
+                        bestCFA=bestCFA1;
+                        
                         vx1Ec=nv4(1);
                         vx2Ec=nv4(2); 
                         vy1Ec=nv4(3);
@@ -245,6 +247,7 @@ while noptions==0
         bestcxy=[];
         bestCP=[];
         Mr_col=[];
+        bestCFA=[];
         
         break;
     else

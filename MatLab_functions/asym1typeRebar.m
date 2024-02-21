@@ -1,16 +1,16 @@
 function [bestav4,bestnv4,relyEffList,bestArrangement,bestDisposition,...
     bestnv,bestMr,bestEf,bestcxy,bestCP,bestArea,bestdiagram,bestdiagram2,...
-    bestCost]=asym1typeRebar(fdpc,nvxy,arraySymOriginal,b,h,rec,...
-    RebarAvailable,op,av,npdiag,symCost,pu_asym_cols,wac,height,...
-    load_conditions,ductility,beta1)
+    bestCost,bestCFA]=asym1typeRebar(fdpc,nvxy,arraySymOriginal,b,h,rec,...
+    RebarAvailable,op,av,npdiag,wac,height,load_conditions,ductility,...
+    beta1,puCostCardBuild,dataCFA)
 
 %-------------------------------------------------------------------------
 % Syntax:
 % [bestav4,bestnv4,relyEffList,bestArrangement,bestDisposition,...
 %  bestnv,bestMr,bestEf,bestcxy,bestCP,bestArea,bestdiagram,bestdiagram2,...
-%  bestCost]=asym1typeRebar(fdpc,nvxy,arraySymOriginal,b,h,rec,...
-%  RebarAvailable,op,av,npdiag,symCost,pu_asym_cols,wac,height,...
-%  load_conditions,ductility,beta1)
+%  bestCost,bestCFA]=asym1typeRebar(fdpc,nvxy,arraySymOriginal,b,h,rec,...
+%  RebarAvailable,op,av,npdiag,wac,height,...
+%  load_conditions,ductility,beta1,puCostCardBuild,dataCFA)
 %
 %-------------------------------------------------------------------------
 % SYSTEM OF UNITS: SI - (Kg,cm)
@@ -88,16 +88,15 @@ function [bestav4,bestnv4,relyEffList,bestArrangement,bestDisposition,...
 %                               reinforcement designs. A number between 1
 %                               to 3 (see Documentation).
 %
-%         symCost:              is the original construction cost of the
-%                               symmetrical rebar design from which the
-%                               designs here generated take place. Is used
-%                               to calculate the cost savings of the
-%                               asymmetrical designs here generated
+%         puCostCardBuild:      is a vector containing the parameters
+%                               required for the calculation of the unit
+%                               cost of a rebar design with a 
+%                               "unitCostCardColsRec"
 %
 %------------------------------------------------------------------------
-% LAST MODIFIED: L.F.Veduzco    2023-03-24
-%                Faculty of Engineering
-%                Autonomous University of Queretaro
+% LAST MODIFIED: L.F.Veduzco    2023-02-05
+% Copyright (c)  Faculty of Engineering
+%                Autonomous University of Queretaro, Mexico
 %------------------------------------------------------------------------
 fc=fdpc/0.85;
 if fc<2000 % units: kg,cm - Mexican NTC-17
@@ -159,6 +158,15 @@ for i=0:(nvxy(1)-2)
                     fy,fdpc,beta1,E,arrayAsym(1),arrayAsym(2),arrayAsym(3),...
                     arrayAsym(4),RebarAvailable,disposition_rebar,rec);
                     
+                    Wnb=dataCFA(3);
+                    Wnd=dataCFA(4);
+                    [BS,CFA]=BuildabilityScoreRebarCols([op,op,op,op],...
+                        arrayAsym,Wnb,Wnd);
+
+                    pccb=puCostCardBuild;
+                    pu_asym_cols=unitCostCardColsRec(pccb(1),pccb(2),pccb(3),...
+                                 pccb(4)*CFA,pccb(5),pccb(6),pccb(7));
+                              
                     % Analyse the resistance efficiency of the cross-
                     % section, given the load conditions ----------------
                     [maxef,eficiencia,cxy]=effRecColsDoubleDirecLS(diagrama,...
@@ -167,7 +175,8 @@ for i=0:(nvxy(1)-2)
                     list_efficiencies=[list_efficiencies;
                                         maxef];
                                     
-                    if maxef<1.0 && ast<amin && ast>=aminCode
+                    if maxef<1.0 && ast<amin && ast>=aminCode && ...
+                            dataCFA(1)<=CFA && CFA<=dataCFA(2)
                         amin=ast;
                         bestArea=amin;
                         
@@ -181,7 +190,7 @@ for i=0:(nvxy(1)-2)
                         bestav4=[ab1,ab2,ab3,ab4];
                         
                         bestCost=bestArea*height*wac*pu_asym_cols;
-                        CostSaving=symCost-bestCost;
+                        bestCFA=CFA;
                         bestcxy=cxy;
                         bestCP=cp;
                         
@@ -199,7 +208,7 @@ for i=0:(nvxy(1)-2)
 end
 if isempty(bestArea)==1 % if no reliable option was found
     bestArea=[];
-
+    bestCFA=[];
     bestDisposition=[];
     bestEf=[];
     bestdiagram=[];

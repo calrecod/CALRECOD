@@ -44,9 +44,9 @@ function [diagrama,mexef,eficiencia,cxy]=diagramasDisposicion(As,b,h,E,...
 %         fdpc:                 equal to 0.85f'c according to code
 %
 %------------------------------------------------------------------------
-% LAST MODIFIED: L.F.Veduzco    2022-02-05
-%                Faculty of Engineering
-%                Autonomous University of Queretaro
+% LAST MODIFIED: L.F.Veduzco    2023-02-05
+% Copyright (c)  Faculty of Engineering
+%                Autonomous University of Queretaro, Mexico
 %------------------------------------------------------------------------
 
 if npuntos<3

@@ -2,7 +2,8 @@
 %----------------------------------------------------------------
 % PURPOSE 
 %    To determine the structural resistance efficiency of a symmetrical
-%    rebar design of a rectangular column subject to biaxial bending
+%    rebar design of a rectangular column subject to biaxial bending. The
+%    Bresler's formula is used.
 %
 %    Note: function diagramasDisposicion is the only one required to
 %          determine such structural efficiency and function 
@@ -10,9 +11,9 @@
 %          diagrams and the rebar cross-section design
 %----------------------------------------------------------------
 
-% LAST MODIFIED: L.F.Veduzco    2022-07-27
-%                Faculty of Engineering
-%                Autonomous University of Queretaro
+% LAST MODIFIED: L.F.Veduzco    2023-07-03
+% Copyright (c)  Faculty of Engineering
+%                Autonomous University of Queretaro, Mexico
 %----------------------------------------------------------------
 
 clear all

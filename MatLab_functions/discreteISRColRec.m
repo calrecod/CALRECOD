@@ -32,9 +32,9 @@ function [da4,coordISRdisc]=discreteISRColRec(t,b,h,rec,ndt)
 %                             to be divided for each of its four boundaries
 %
 %------------------------------------------------------------------------
-% LAST MODIFIED: L.F.Veduzco    2023-06-22
-%                Faculty of Engineering
-%                Autonomous University of Queretaro
+% LAST MODIFIED: L.F.Veduzco    2023-02-05
+% Copyright (c)  Faculty of Engineering
+%                Autonomous University of Queretaro, Mexico
 %------------------------------------------------------------------------
 
 bp=b-2*rec(1);

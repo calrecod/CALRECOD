@@ -42,9 +42,9 @@ function [raiz]=bisectionMrAnalytISR(cUno,cDos,fr,E,t,h,b,rec,fdpc,beta1,ea)
 %         ea:                 is the approximation root error (close to 0)
 %
 %------------------------------------------------------------------------
-% LAST MODIFIED: L.F.Veduzco    2023-03-20
-%                Faculty of Engineering
-%                Autonomous University of Queretaro
+% LAST MODIFIED: L.F.Veduzco    2023-02-05
+% Copyright (c)  Faculty of Engineering
+%                Autonomous University of Queretaro, Mexico
 %------------------------------------------------------------------------
 
 %%%%%%%%%%%%%%%%%%%%%%% f(l) %%%%%%%%%%%%%%%%%%%%%

@@ -19,9 +19,9 @@ function plotdiagramCircISR(diagramInteraction,conditions)
 %                               (see Documentation)
 %
 %------------------------------------------------------------------------
-% LAST MODIFIED: L.F.Veduzco    2023-03-20
-%                Faculty of Engineering
-%                Autonomous University of Queretaro
+% LAST MODIFIED: L.F.Veduzco    2023-07-03
+% Copyright (c)  Faculty of Engineering
+%                Autonomous University of Queretaro, Mexico
 %------------------------------------------------------------------------
 
 npdiag=length(diagramInteraction(:,1));

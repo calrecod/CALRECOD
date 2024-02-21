@@ -12,9 +12,9 @@
 %                Faculty of Engineering
 %                Autonomous University of Queretaro
 %
-% LAST MODIFIED: L.F.Veduzco    2023-04-16
-%                Faculty of Engineering
-%                Autonomous University of Queretaro
+% LAST MODIFIED: L.F.Veduzco    2023-07-03
+% Copyright (c)  Faculty of Engineering
+%                Autonomous University of Queretaro, Mexico
 %----------------------------------------------------------------
 
 clc
@@ -37,7 +37,7 @@ plots=1; % for reinforced cross-section plotts (0-No,1-Yes)
 graphConvergencePlot=0; % for optimal ISR area convergence (0-No,1-Yes)
 
 %% Additional data
-pu_cols=[28.93];
+pu_cols=[28.93]./18;
 
 % Ductility demand
 ductility=3;

@@ -29,7 +29,12 @@ function [Delta,Mamp]=MomAmpColsGeomNL(fc,k,I,L,V,P,M,b,h,plotdef)
 %         M:        is the acting bending moment:
 %           
 %         k:        is the slenderness factor, according to the boundary
-%                   conditions
+%                   conditions. Two options are available:
+%
+%                       k > 2 :     Column in cantiliver (free suport at
+%                                   the top)
+%
+%                       1 < k < 2 : Column articulated at both ends
 %
 %         I:        Momentum of inertia of the cross-section in the current
 %                   axis of reference
@@ -41,9 +46,9 @@ function [Delta,Mamp]=MomAmpColsGeomNL(fc,k,I,L,V,P,M,b,h,plotdef)
 %                   considering the slenderness factor)
 %
 %------------------------------------------------------------------------
-% LAST MODIFIED: L.F.Veduzco    2022-07-23
-%                Faculty of Engineering
-%                Autonomous University of Queretaro
+% LAST MODIFIED: L.F.Veduzco    2023-02-05
+% Copyright (c)  Faculty of Engineering
+%                Autonomous University of Queretaro, Mexico
 %------------------------------------------------------------------------
 
 %% Topology -----------------------------------------------------------
@@ -52,7 +57,7 @@ Edof=[1  1  2  3  4  5  6];
 
 %% Element properties and global coordinates -------------------------- 
 if fc<2000 % units: (kg,cm)
-    E=14000*sqrt(fc);  
+    E=12000*sqrt(fc);  
 else       % units: (lb,in)
     E=57000*sqrt(fc);  
 end
@@ -72,15 +77,18 @@ QX01=1;
 %% Boundary conditions -----------------------------------------------
 
 % Restricted DODF in function of the slenderness factor
-if k==2 
+
+if k>=2  % in cantiliver
     bc=[1 0;2 0;3 0];	
-elseif k==0.5
-    bc=[1 0;2 0;3 0;6 0];
-elseif k==1
+elseif k>=1 && k<2 % articulated at both ends
     bc=[1 0;2 0;4 0];
+elseif k>0.1 && k<1  % fixed at both ends. Only works when there are
+    bc=[1 0;2 0;3 0; % lateral loads at the top
+                6 0];
 end
 
 %% Iteration for convergence -----------------------------------------
+
 ecc=abs(M/P);
 eps=1e-6;		
 n=0;			
@@ -89,30 +97,32 @@ while(abs((QX1-QX01)/QX01)>eps)
 
     K=zeros(3*nnodes,3*nnodes);
     f=zeros(3*nnodes,1);	
-    f(4)=V; f(5)=P; f(6)=abs(P*ecc);
+    f(4)=V; f(5)=P; f(6)=abs(M);
 
     [Ke1,fe1]=beam2ge(ex1,ey1,ep1,QX1,eq1); % element stiffness matrix
 
     [K,f]=assem(Edof(1,:),K,Ke1,f,fe1); % assembles stiffness matrix
-
+    
     [displacements_Nonlinear,r]=solveq(K,f,bc);
+    
     EdNonlin=extract_ed(Edof,displacements_Nonlinear);
     QX01=QX1; 
     [esNonlinear,QX1,ediNonLin]=beam2gs(ex1,ey1,ep1,EdNonlin(1,:),QX1,eq1,7);
+    
     if(n==1)
         edilin=ediNonLin;
         eslinear=esNonlinear;
         Edlinear=EdNonlin;
         displacements_linear=displacements_Nonlinear;
     end  
-
+    
     if(n>20)
-        disp('The solution does not converge')
+        disp('The solution did not converge')
         break
     end
 end
 Mamp=max(abs(esNonlinear(:,3)));
-Delta=Mamp/abs(P)-ecc;
+Delta=(Mamp)/abs(P)-ecc;
 
 %% Draw deformed frame ---------------------------------------------
 if plotdef==1

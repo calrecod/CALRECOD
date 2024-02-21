@@ -1,14 +1,15 @@
 function [Mr_col,h,Inertia_xy_modif,bestArea,bestCost,bestdiagram,bestnv,...
-    bestEf,bestArrangement,bestDisposition,nv4,bestcxy]=superOptimalRebarSym...
-    (b,h,rec,act,E,npdiag,fdpc,beta1,pu_col_sym,load_conditions,...
-    wac,height,condition_cracking,ductility,RebarAvailable,plotRebarDesign)
+    bestEf,bestArrangement,bestDisposition,nv4,bestcxy,bestCFA]=superOptimalRebarSym...
+    (b,h,rec,act,E,npdiag,fdpc,beta1,load_conditions,wac,height,...
+    condition_cracking,ductility,RebarAvailable,puCostCardBuild,...
+    dataCFA,plotRebarDesign)
 
 %-------------------------------------------------------------------------
 % Syntax:
 % [Mr_col,h,Inertia_xy_modif,bestArea,bestCost,bestdiagram,bestnv,...
-%  bestEf,bestArrangement,bestDisposition,nv4,bestcxy]=superOptimalRebarSym...
-%  (b,h,rec,act,E,npdiag,fdpc,beta1,pu_col_sym,load_conditions,...
-%  wac,height,condition_cracking,ductility,plotRebarDesign)
+%  bestEf,bestArrangement,bestDisposition,nv4,bestcxy,bestCFA]=superOptimalRebarSym...
+%  (b,h,rec,act,E,npdiag,fdpc,beta1,load_conditions,wac,height,...
+%  condition_cracking,ductility,puCostCardBuild,dataCFA,plotRebarDesign)
 %
 %-------------------------------------------------------------------------
 % SYSTEM OF UNITS: SI - (Kg,cm)
@@ -86,13 +87,6 @@ function [Mr_col,h,Inertia_xy_modif,bestArea,bestCost,bestdiagram,bestnv,...
 %         beta1:                is determined as specified by code (see 
 %                               Documentation)
 %
-%         pu_col:               is the database of reinforcement assembly
-%                               and construction unit cost: format by
-%                               default:
-%    -----------------------------------------------------------------
-%    pu_col=[PU{#4}, PU{#5}, PU{#6}, PU{#8}, PU{#9}, PU{#10}, PU{#12}]
-%    -----------------------------------------------------------------
-%
 %         condition_cracking:   parameter that indicates which cross-section
 %                               cracking mechanism will be consider, either 
 %                               Cracked or Non-cracked. If the condition 
@@ -108,16 +102,21 @@ function [Mr_col,h,Inertia_xy_modif,bestArea,bestCost,bestdiagram,bestnv,...
 %                               of ductility demand to desing the rebar, 
 %                               according to code specifications
 %
+%         puCostCardBuild:      is a vector containing the parameters
+%                               required for the calculation of the unit
+%                               cost of a rebar design with a 
+%                               "unitCostCardColsRec" 
+%
 %------------------------------------------------------------------------
-% LAST MODIFIED: L.F.Veduzco    2022-06-21
-%                Faculty of Engineering
-%                Autonomous University of Queretaro
+% LAST MODIFIED: L.F.Veduzco    2023-07-03
+% Copyright (c)  Faculty of Engineering
+%                Autonomous University of Queretaro, Mexico
 %------------------------------------------------------------------------
-
+pucb=puCostCardBuild;
+pu_col_sym=unitCostCardColsRec(pucb(1),pucb(2),pucb(3),pucb(4),pucb(5),...
+                               pucb(6),pucb(7));
 fy=E*0.0021; % yield stress of reinforcing steel
-puSym2cols=1.1*sum(pu_col_sym)/length(pu_col_sym); % average unit-cost of 
-                                                   % rebar assembly, by 
-                                                   % default
+
 bp=b-2*rec(1);
 hp=h-2*rec(2);
             
@@ -165,7 +164,7 @@ while nopciones==0
         elseif (2*maxVarillasSup)>nv
             continue;
         else
-            bestCost1=nv*av*wac*height*pu_col_sym(i);
+            bestCost1=nv*av*wac*height*pu_col_sym;
             
             for type=minVarillasSup:maxVarillasSup
                 varSup=type;
@@ -196,10 +195,10 @@ while nopciones==0
                 
                 % Symmetrical design with as many as 2 types of rebar
                 [av4_2,relyEffList,bestasbar2,bestEf2,bestdiagram2,arregloVar2,...
-                bestDisposition2,bestMr2,bestcxy2,bestCost2]=sym2typeRebar...
+                bestDisposition2,bestMr2,bestcxy2,bestCost2,bestCFA2]=sym2typeRebar...
                 (disposicion_varillado,op,arraySymOriginal,RebarAvailable,b,h,...
                 fy,fdpc,beta1,E,load_conditions,wac,height,npdiag,ductility,...
-                puSym2cols);
+                puCostCardBuild,dataCFA);
                 
                 bestnv2=nv;
                 nv4_2=arraySymOriginal;
@@ -215,7 +214,7 @@ while nopciones==0
                             bestArrangement=arregloVar2;
                             bestArea=bestasbar2;
                             bestCost=bestCost2;
-                            
+                            bestCFA=bestCFA2;
                             bestEf=bestEf2;
                             bestMr=bestMr2;
                             bestnv=bestnv2;
@@ -230,7 +229,7 @@ while nopciones==0
                             bestArrangement=arregloVar1;
                             bestArea=bestasbar1;
                             bestCost=bestCost1;
-                            
+                            bestCFA=1;
                             bestEf=bestEf1;
                             bestMr=bestMr1;
                             bestnv=bestnv1;
@@ -258,7 +257,7 @@ while nopciones==0
                         bestArrangement=arregloVar1;
                         bestArea=bestasbar1;
                         bestCost=bestCost1;
-                        
+                        bestCFA=1;
                         bestEf=bestEf1;
                         bestMr=bestMr1;
                         bestnv=bestnv1;
@@ -294,7 +293,7 @@ while nopciones==0
         bestArrangement=[];
         bestArea=[];
         bestCost=[];
-
+        bestCFA=[];
         bestEf=[];
         Mr_col=[];
         bestnv=[];

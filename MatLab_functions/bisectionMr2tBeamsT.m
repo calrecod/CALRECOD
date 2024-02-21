@@ -52,9 +52,9 @@ function [raiz]=bisectionMr2tBeamsT(cUno,cDos,fr,E,t1,t2,bp,ht,ba,ha,Lb,...
 %         ea:           is the approximation root error
 %
 %------------------------------------------------------------------------
-% LAST MODIFIED: L.F.Veduzco    2023-01-20
-%                Faculty of Engineering
-%                Autonomous University of Queretaro
+% LAST MODIFIED: L.F.Veduzco    2023-02-05
+% Copyright (c)  Faculty of Engineering
+%                Autonomous University of Queretaro, Mexico
 %------------------------------------------------------------------------
 
 d1=ht-cover;

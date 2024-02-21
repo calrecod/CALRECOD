@@ -1,6 +1,5 @@
 function [newdispositionRebar,newCoordCorners,newDepthCP]=rotReCol2(Mux,...
                         Muy,dispositionRebar,b,h,CPaxis)
-                            
 %------------------------------------------------------------------------
 % Syntax:
 % [newdispositionRebar,newCoordCorners,newDepthCP]=rotReCol2(Mux,...
@@ -39,9 +38,9 @@ function [newdispositionRebar,newCoordCorners,newDepthCP]=rotReCol2(Mux,...
 %                               cross-section Plastic Center
 %
 %------------------------------------------------------------------------
-% LAST MODIFIED: L.F.Veduzco    2023-02-05
-%                Faculty of Engineering
-%                Autonomous University of Queretaro
+% LAST MODIFIED: L.F.Veduzco    2023-07-03
+% Copyright (c)  Faculty of Engineering
+%                Autonomous University of Queretaro, Mexico
 %------------------------------------------------------------------------
 
 alpha=rad2deg(atan(Mux/Muy));

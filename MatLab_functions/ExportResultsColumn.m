@@ -34,12 +34,12 @@ function ExportResultsColumn(directionData,dimColumnsCollection,...
 %                                   indices used in the element
 %
 %------------------------------------------------------------------------
-% LAST MODIFIED: L.F.Veduzco    2022-02-05
-%                Faculty of Engineering
-%                Autonomous University of Queretaro
+% LAST MODIFIED: L.F.Veduzco    2023-02-05
+% Copyright (c)  Faculty of Engineering
+%                Autonomous University of Queretaro, Mexico
 %------------------------------------------------------------------------
 
-% To export design results __________________________________________
+% To export design results 
 nombre_archivo='coord_base_columns.csv';
 fileid=fopen([directionData,nombre_archivo],'w+t');
 
@@ -55,7 +55,7 @@ fileid_03=fopen([directionData,nombre_archivo],'w+t');
 nombre_archivo='collection_disposition_rebar_cols.csv';
 fileid_04=fopen([directionData,nombre_archivo],'w+t');
 
-% Writing the .csv file for the exportation of results______________
+% Writing the .csv file for the exportation of results
 ncols=length(dimColumnsCollection(:,1));
 if cols_sym_asym_isr~="ISR"
     for i=1:ncols

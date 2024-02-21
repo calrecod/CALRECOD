@@ -1,14 +1,14 @@
 function [bestav4,relyEffList,bestArea,bestEf,bestdiagram,bestArrangement,...
-    bestDisposition,bestMr,bestcxy,bestCost]=sym2typeRebar(ObarDisposition,...
+    bestDisposition,bestMr,bestcxy,bestCost,bestCFA]=sym2typeRebar(ObarDisposition,...
     op,arraySym,RebarAvailable,b,h,fy,fdpc,beta1,E,load_conditions,wac,...
-    height,npdiag,ductility,pu_sym2_cols)
+    height,npdiag,ductility,puCostCardBuild,dataCFA)
 
 %-------------------------------------------------------------------------
 % Syntax:
 % [bestav4,relyEffList,bestArea,bestEf,bestdiagram,bestArrangement,...
-%  bestDisposition,bestMr,bestcxy,bestCost]=sym2typeRebar(ObarDisposition,...
+%  bestDisposition,bestMr,bestcxy,bestCost,bestCFA]=sym2typeRebar(ObarDisposition,...
 %  op,arraySym,RebarAvailable,b,h,fy,fdpc,beta1,E,load_conditions,wac,...
-%  height,npdiag,ductility,pu_sym2_cols)
+%  height,npdiag,ductility,puCostCardBuild,dataCFA)
 %
 %-------------------------------------------------------------------------
 % SYSTEM OF UNITS: SI - (Kg,cm)
@@ -105,14 +105,15 @@ function [bestav4,relyEffList,bestArea,bestEf,bestdiagram,bestArrangement,...
 %                               reinforcement designs. A number between 1
 %                               to 3 (see Documentation).
 %
-%         pu_sym2_cols:         is the unit construction cost of rebar
-%                               assembly as an average of each unit
-%                               construction cost for each rebar available.
+%         puCostCardBuild:      is a vector containing the parameters
+%                               required for the calculation of the unit
+%                               cost of a rebar design with a 
+%                               "unitCostCardColsRec"           
 %
 %------------------------------------------------------------------------
-% LAST MODIFIED: L.F.Veduzco    2022-06-21
-%                Faculty of Engineering
-%                Autonomous University of Queretaro
+% LAST MODIFIED: L.F.Veduzco    2023-07-03
+% Copyright (c)  Faculty of Engineering
+%                Autonomous University of Queretaro, Mexico
 %------------------------------------------------------------------------
 
 bestArea=[];
@@ -160,11 +161,12 @@ for i=1:op
             E,arraySym(1),arraySym(2),arraySym(3),arraySym(4),...
             RebarAvailable,ObarDisposition);
         
-            if maxef<1.0 && ast<amin && ast>=aminCode
+            if maxef<1.0 && ast<amin && ast>=aminCode && ...
+                    dataCFA(1)<=CFA && CFA<=dataCFA(2)
                 amin=ast;
                 bestArea=amin;
                 bestav4=[ab1,ab2,ab3,ab4];
-
+                bestCFA=CFA;
                 bestEf=maxef;
                 bestdiagram=diagrama;
                 bestArrangement=zeros(1,Originalnv);
@@ -175,7 +177,16 @@ for i=1:op
                 bestArrangement(1+2*arraySym(1):2*arraySym(1)+2*arraySym(3))=...
                     bestArrangement(1+2*arraySym(1):2*arraySym(1)+2*...
                     arraySym(3))+j;
-
+                
+                wnb=dataCFA(3);
+                wnd=dataCFA(4);
+                [BS,CFA]=BuildabilityScoreRebarCols(typeArray,arraySym,wnb,...
+                    wnd);
+                
+                pccb=puCostCardBuild;
+                pu_sym2_cols=unitCostCardColsRec(pccb(1),pccb(2),pccb(3),...
+                                     pccb(4)*CFA,pccb(5),pccb(6),pccb(7));
+            
                 bestCost=bestArea*height*wac*pu_sym2_cols;
 
                 bestcxy=cxy;
@@ -197,7 +208,7 @@ if isempty(bestArea)==1
     bestdiagram=[];
     bestArrangement=[];
     bestav4=[];
-
+    bestCFA=[];
     bestCost=[];
     bestcxy=[];
 

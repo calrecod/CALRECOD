@@ -10,9 +10,9 @@
 %
 %----------------------------------------------------------------
 %
-% LAST MODIFIED: L.F.Veduzco    2023-03-24
-%                Faculty of Engineering
-%                Autonomous University of Queretaro
+% LAST MODIFIED: L.F.Veduzco    2023-07-03
+% Copyright (c)  Faculty of Engineering
+%                Autonomous University of Queretaro, Mexico
 %----------------------------------------------------------------
 
 clc 
@@ -174,6 +174,12 @@ rebarAvailable=[4 4/8*2.54;
                 10 10/8*2.54;
                 12 12/8*2.54];
             
+dataCFA=[0,1,1,2]; % Data required for the computation of the 
+                   % constructability factor for the rebar designs of columns
+                   % Lower and upper values for the range of the CFA and 
+                   % weight factors for the uniformity of rebars and rebar 
+                   % diameters
+                % rebar designs in columns
 %% Optimization design process of reinforced concrete elements
 
 fprintf('\nRC FRAME OPTIMIZATION DESIGN\n\n');
@@ -328,12 +334,8 @@ pu_steel_footings=26.75;
 
 colsSymAsymISR="Symmetric"; % To choose which type of rebar design
                                % is required
-if colsSymAsymISR=="Symmetric" || colsSymAsymISR=="Asymmetric"
-    puCols=[29.19, 29.06, 28.93, 28.93, 28.93, 28.93, 28.93]; 
-    
-elseif  colsSymAsymISR=="ISR"
-    puCols=[29.1];
-end
+
+puColsISR=[29.1];
 
 %% ----------------------------------------------------------------------
 %                  OPTIMAL DESIGN OF REBAR ON ELEMENTS
@@ -388,7 +390,7 @@ optimaColConvPlot=0;
 plotISRColResults=0;
 plotRebarDesign=0;
 
-
+puCostCardBuild=[1.2,0.9,128,214.75,0.04,0.105,7];
 nlf=length(load_conditions_columns(:,1))/ncols; % This variable is to
                                                 % to know how many loads
                                                 % take place for each 
@@ -404,9 +406,10 @@ for i=1:ncols
     loadCol=load_conditions_columns(nlf*i-(nlf-1):nlf*i,:);
     
     [Inertia_xy_modif,b,h,bestArrangement,bestdisposicionRebar,costCol,...
-    AcSecCols,EfsecCol,Mr_col]=isrColumnsSymAsym(puCols,height,b,h,recCols,...
-    fy,fc,loadCol,colsSymAsymISR,conditionCracking,duct,wac,rebarAvailable,...
-    optimaColConvPlot,plotISRColResults,plotRebarDesign);
+    AcSecCols,EfsecCol,Mr_col,bestCFA]=isrColumnsSymAsym(puColsISR,height,...
+    b,h,recCols,fy,fc,loadCol,colsSymAsymISR,conditionCracking,duct,wac,...
+    rebarAvailable,puCostCardBuild,dataCFA,optimaColConvPlot,...
+    plotISRColResults,plotRebarDesign);
     
     MrColumnsCollection(i,:)=Mr_col;
     
@@ -417,16 +420,9 @@ end
 
 %% NODE REVISION
 % Shear resistance
-[VcrxNode,VuxNode,VxEfNodes,hnodeMin]=shearNodes2DFrames(ni,nf,...
+[VcrxNode,VuxNode,VxEfNodes,hnodeMin]=shearNodes2DFramesSI(ni,nf,...
  elembeams,elemcols,fccols,fy,MrbeamsCollection,areaSteelbeams3sec,...
  dimensions,nnodes,coordBaseCols,lenElem);
-
-% Bending resistance - "Strong Column Weak Beam" criteria
-disp(' ')
-disp(' ')
-disp('``Strong Column Weak Beam´´ efficiency of each node')
-[EffMcb]=strongColweakBeam(Mp,elemcols,elembeams,ni,nf,nnodes);
-disp(EffMcb)
 
 disp('Final dimensions of the elements (symmetrical rebar in columns)')
 disp(dimensions)

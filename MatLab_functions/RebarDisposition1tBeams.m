@@ -41,9 +41,9 @@ function [disposicion_varillado]=RebarDisposition1tBeams(b,h,b_rec,h_rec,...
 %
 %
 %------------------------------------------------------------------------
-% LAST MODIFIED: L.F.Veduzco    2022-02-05
-%                Faculty of Engineering
-%                Autonomous University of Queretaro
+% LAST MODIFIED: L.F.Veduzco    2023-07-03
+% Copyright (c)  Faculty of Engineering
+%                Autonomous University of Queretaro, Mexico
 %------------------------------------------------------------------------
 
 disposicion_varillado=zeros(nv_t(1)+nv_t(2),2);

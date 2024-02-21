@@ -13,9 +13,9 @@
 %          center for each cross-section's axis direction (X,Y) separately
 %----------------------------------------------------------------
 
-% LAST MODIFIED: L.F.Veduzco    2022-07-27
-%                Faculty of Engineering
-%                Autonomous University of Queretaro
+% LAST MODIFIED: L.F.Veduzco    2023-07-03
+% Copyright (c)  Faculty of Engineering
+%                Autonomous University of Queretaro, Mexico
 %----------------------------------------------------------------
 
 clear all
@@ -57,12 +57,13 @@ RebarTypeIndex4=3;
 % Total number of rebars placed over the cross-section
 nv=numberRebars1+numberRebars2+numberRebars3+numberRebars4; % number of 
                                                             % rebars 
-% Rebar distribution
+%% Rebar distribution
 [dispositionRebar,separacion_hor1,separacion_hor2,...
 separacion_ver1,separacion_ver2]=dispositionRebarAsymmetric(b,...
 h,concreteCover,nv,numberRebars1,numberRebars2,...
 numberRebars3,numberRebars4,rebarAvailable,RebarTypeIndex1,...
 RebarTypeIndex2,RebarTypeIndex3,RebarTypeIndex4);
+
 
 %% Computation of the Plastic Center with respect to the X-axis
 rebarTypeslist(1:numberRebars1)=RebarTypeIndex1;
@@ -77,14 +78,15 @@ rebarTypeslist(numberRebars1+numberRebars2+numberRebars3+1:nv)=RebarTypeIndex4;
 %% Computation of the Plastic Center with respect to the Y-axis
 rebar=dispositionRebar; 
 
-% Invert rebar local coordinates (the cross-section is rotated 90°)
-dispositionRebar(:,1)=-rebar(:,2);
-dispositionRebar(:,2)=rebar(:,1);
+% Invert rebar local coordinates (the cross-section is rotated 90°
+% clockwise)
+dispositionRebar(:,1)=rebar(:,2);
+dispositionRebar(:,2)=-rebar(:,1);
 
 % Invert cross-section dimensions
-dimensionesColumna=[b h];
-h=dimensionesColumna(1);
-b=dimensionesColumna(2);  
+dimensionsCol=[b h];
+h=dimensionsCol(1);
+b=dimensionsCol(2);  
 
 % Invert rebar diameters
 rebarTypeslist(1:numberRebars3)=RebarTypeIndex3;
@@ -104,16 +106,19 @@ barTypes2(1:numberRebars3)=RebarTypeIndex3;
 barTypes2(numberRebars3+1:numberRebars3+numberRebars4)=RebarTypeIndex4;
 
 % Calling function "beamReinforcedSection"
-beamReinforcedSection(h,b,rebar,barTypes1,barTypes2)
+beamReinforcedSection(h,b,rebarAvailable,rebar,barTypes1,barTypes2)
+
+h=dimensionsCol(2);
+b=dimensionsCol(1);
 
 % Coordinates of the Plastic Center
-xpc=h/2-PCX;
-ypc=b/2-PCY;
+xpc=h/2-PCX; % note that
+ypc=PCY-b/2;
 
 % Ploting the Plastic Center location
 PCXText=num2str(xpc); % To convert the numerical values in strings
 PCYText=num2str(ypc);
-PCXY=strcat('( ',PCXText,', ',PCYText,' )'); % To concatenate strings
+PCXY=strcat('( ',PCYText,', ',PCXText,' )'); % To concatenate strings
 figure(2)
-plot(ypc+2.5,xpc-2.5,'o','MarkerFaceColor','magenta','DisplayName','PC')
-text(ypc,xpc,PCXY) % To plot the coordinates as text
+plot(ypc,xpc,'o','MarkerFaceColor','magenta','DisplayName','PC')
+text(ypc+2.5,xpc-2.5,PCXY) % To plot the coordinates as text

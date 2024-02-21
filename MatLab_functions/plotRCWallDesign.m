@@ -32,9 +32,9 @@ function plotRCWallDesign(H,m1,m2,toe,heel,hf,b,D,alfa,beta)
 %         alfa:                 is the back fill soil's upper-grade angle
 %
 %------------------------------------------------------------------------
-% LAST MODIFIED: L.F.Veduzco    2023-04-29
-%                Faculty of Engineering
-%                Autonomous University of Queretaro
+% LAST MODIFIED: L.F.Veduzco    2023-07-03
+% Copyright (c)  Faculty of Engineering
+%                Autonomous University of Queretaro, Mexico
 %------------------------------------------------------------------------
 
 %% Wall's cross-section

@@ -60,9 +60,9 @@ function [pbest,bestEf,bestMr,best_area]=SGD1tFootISR(b,h,rec,fdpc,fy,...
 %                               according to ACI code (see Documentation)
 %
 %------------------------------------------------------------------------
-% LAST MODIFIED: L.F.Veduzco    2022-02-05
-%                Faculty of Engineering
-%                Autonomous University of Queretaro
+% LAST MODIFIED: L.F.Veduzco    2023-07-03
+% Copyright (c)  Faculty of Engineering
+%                Autonomous University of Queretaro, Mexico
 %------------------------------------------------------------------------
 
 %%%%%%%%%%%%%%%%%%%%%%-------- geometry ----%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

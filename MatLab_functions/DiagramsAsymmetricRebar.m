@@ -1,13 +1,13 @@
-function [diagramaInteraccion,c_vector,poc,pot]=DiagramsAsymmetricRebar...
-    (npoints,rebarcombo,b,h,fy,fdpc,beta,E,number_rebars_sup,...
-    number_rebars_inf,number_rebars_left,number_rebars_right,rebarAvailable,...
+function [diagramaInteraccion,cvector,poc,pot]=DiagramsAsymmetricRebar...
+    (npoints,rebarcombo,b,h,fy,fdpc,beta,E,nRebarsTop,...
+    nRebarsBot,nRebarsLeft,nRebarsRight,rebarAvailable,...
     dispositionRebar)
 
 %------------------------------------------------------------------------
 % Syntax:
-% [diagramaInteraccion,c_vector,poc,pot]=DiagramsAsymmetricRebar...
-% (npoints,rebarcombo,b,h,fy,fdpc,beta,E,number_rebars_sup,...
-% number_rebars_inf,number_rebars_left,number_rebars_right,rebarAvailable,...
+% [diagramaInteraccion,cvector,poc,pot]=DiagramsAsymmetricRebar...
+% (npoints,rebarcombo,b,h,fy,fdpc,beta,E,nRebarsTop,...
+% nRebarsBot,nRebarsLeft,nRebarsRight,rebarAvailable,...
 % dispositionRebar)
 %
 %-------------------------------------------------------------------------
@@ -22,7 +22,7 @@ function [diagramaInteraccion,c_vector,poc,pot]=DiagramsAsymmetricRebar...
 %
 %                  [P,MRx,FR*P,FR*MRx,ec-x,MRy,FR*P,FR*MRy,ecc-y]
 %
-%         c_vector:             are neutral axis depth values for each axis 
+%         cvector:              are neutral axis depth values for each axis 
 %                               direction of the cross-section corresponding 
 %                               to each of the interaction diagram points
 %
@@ -36,10 +36,10 @@ function [diagramaInteraccion,c_vector,poc,pot]=DiagramsAsymmetricRebar...
 %                               size [7,3] by default in format: 
 %                               [#rebar,diam,unit-weight]
 %
-%         number_rebars_sup,
-%         number_rebars_inf,
-%         number_rebars_left,
-%         number_rebars_right:  number of rebars to placed on each of the 
+%         nRebarsTop,
+%         nRebarsBot,
+%         nRebarsLeft,
+%         nRebarsRight:         number of rebars to placed on each of the 
 %                               cross-section boundaries
 %
 %         dispositionRebar:     are the local rebar coordinates
@@ -58,16 +58,16 @@ function [diagramaInteraccion,c_vector,poc,pot]=DiagramsAsymmetricRebar...
 %                               definition of the interaction diagram
 %
 %------------------------------------------------------------------------
-% LAST MODIFIED: L.F.Veduzco    2022-06-20
-%                Faculty of Engineering
-%                Autonomous University of Queretaro
+% LAST MODIFIED: L.F.Veduzco    2023-02-05
+% Copyright (c)  Faculty of Engineering
+%                Autonomous University of Queretaro, Mexico
 %------------------------------------------------------------------------
 if npoints<3
     disp('Error: the number of points for the Interaction Diagram must be 3 or higher');
     return;
 end
 
-cp_axis=[];
+cpaxis=[];
 
 op1=rebarcombo(1);
 op2=rebarcombo(2);
@@ -75,22 +75,22 @@ op3=rebarcombo(3);
 op4=rebarcombo(4);
 
 diagramaInteraccion=zeros(npoints,9);
-c_vector=zeros(npoints,2);
+cvector=zeros(npoints,2);
 
 dimensionesColumna=[b h];
 
 h=dimensionesColumna(2);
 b=dimensionesColumna(1);
 
-act=number_rebars_sup*(rebarAvailable(op1,2)^2*pi/4)+...
-    number_rebars_inf*(rebarAvailable(op2,2)^2*pi/4)+...
-    number_rebars_left*(rebarAvailable(op3,2)^2*pi/4)+...
-    number_rebars_right*(rebarAvailable(op4,2)^2*pi/4);
+act=nRebarsTop*(rebarAvailable(op1,2)^2*pi/4)+...
+    nRebarsBot*(rebarAvailable(op2,2)^2*pi/4)+...
+    nRebarsLeft*(rebarAvailable(op3,2)^2*pi/4)+...
+    nRebarsRight*(rebarAvailable(op4,2)^2*pi/4);
 
-nv1=number_rebars_sup;
-nv2=number_rebars_inf;
-nv3=number_rebars_left;
-nv4=number_rebars_right;
+nv1=nRebarsTop;
+nv2=nRebarsBot;
+nv3=nRebarsLeft;
+nv4=nRebarsRight;
 
 nv=nv1+nv2+nv3+nv4;
 
@@ -125,8 +125,8 @@ diagramaInteraccion(npoints,1)=pot;
 diagramaInteraccion(1,2)=0;
 diagramaInteraccion(1,6)=0;
 
-c_vector(1,:)=4*h;
-c_vector(npoints,:)=0;
+cvector(1,:)=4*h;
+cvector(npoints,:)=0;
 
 ea=0.001;
 
@@ -134,13 +134,13 @@ for sentido=1:2
     if (sentido==2)
        h=dimensionesColumna(1);
        b=dimensionesColumna(2);
-       dispositionRebar(:,1)=-rebar(:,2);
-       dispositionRebar(:,2)=rebar(:,1);
+       dispositionRebar(:,1)=rebar(:,2);
+       dispositionRebar(:,2)=-rebar(:,1);
     end
-    % Plastic Center ____________________________________
+    % Plastic Center 
     [cp]=PlastiCenterAxis(fy,fdpc,b,h,dispositionRebar,arregloVar,...
                             rebarAvailable);
-    cp_axis=[cp_axis,cp];
+    cpaxis=[cpaxis,cp];
     diagramaInteraccion(1,4*sentido-1)=0.65*-poc;
     diagramaInteraccion(1,4*sentido)=0;
     for i=1:npoints-1
@@ -150,12 +150,12 @@ for sentido=1:2
         fr=diagramaInteraccion(i+1,1);
 
         [raiz]=bisectionMrVarAsymm(cUno,cDos,fr,E,h,b,fdpc,beta,ea,nv,...
-            number_rebars_sup,number_rebars_inf,number_rebars_left,...
-            number_rebars_right,rebarAvailable,op1,op2,op3,op4,...
+            nRebarsTop,nRebarsBot,nRebarsLeft,...
+            nRebarsRight,rebarAvailable,op1,op2,op3,op4,...
             dispositionRebar,cp);
 
         diagramaInteraccion(i+1,4*sentido-2)=raiz(3);
-        c_vector(i+1,sentido)=raiz(1);
+        cvector(i+1,sentido)=raiz(1);
 
         %%%%%%%%%%%%%%% Reduced diagramas %%%%%%%%%%%%%%%%%%%%
         diagramaInteraccion(i+1,4*sentido-1)=(0.65+i*dfi)*diagramaInteraccion(i+1,1);

@@ -67,9 +67,9 @@ function [root]=bisectionMrSymISRRot(cUno,cDos,fr,E,h,b,fdpc,beta1,...
 %                               column cross-section's boundaries
 %
 %------------------------------------------------------------------------
-% LAST MODIFIED: L.F.Veduzco    2023-06-22
-%                Faculty of Engineering
-%                Autonomous University of Queretaro
+% LAST MODIFIED: L.F.Veduzco    2023-02-05
+% Copyright (c)  Faculty of Engineering
+%                Autonomous University of Queretaro, Mexico
 %------------------------------------------------------------------------
 
 %%%%%%%%%%%%%%%%%%%%%%% f(l) %%%%%%%%%%%%%%%%%%%%%

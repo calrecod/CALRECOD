@@ -56,9 +56,9 @@ function [cost_elem_col,Ac_sec_elem,Ef_sec_col,Mr_col,t_value,c]=isrCircCols...
 %                           are not required
 %
 %------------------------------------------------------------------------
-% LAST MODIFIED: L.F.Veduzco    2023-01-24
-%                Faculty of Engineering
-%                Autonomous University of Queretaro
+% LAST MODIFIED: L.F.Veduzco    2023-02-05
+% Copyright (c)  Faculty of Engineering
+%                Autonomous University of Queretaro, Mexico
 %------------------------------------------------------------------------
 
 npdiag=30; % number of points to compute for the interaction diagram

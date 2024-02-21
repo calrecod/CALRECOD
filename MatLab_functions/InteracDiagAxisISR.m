@@ -63,9 +63,9 @@ function [diagramIntAxis1,pot,poc,cvectorX,newcoordISRdisc,...
 %                             each cross-section local axis
 %
 %------------------------------------------------------------------------
-% LAST MODIFIED: L.F.Veduzco    2023-06-22
-%                Faculty of Engineering
-%                Autonomous University of Queretaro
+% LAST MODIFIED: L.F.Veduzco    2023-02-05
+% Copyright (c)  Faculty of Engineering
+%                Autonomous University of Queretaro, Mexico
 %------------------------------------------------------------------------
 
 ea=0.001; % approximation error for each point of the interaction diagram
@@ -92,10 +92,13 @@ elseif Muy>=0 && Mux<=0 || Muy>=0 && Mux>=0
     gamma=90-alpha; % This is the angle for the section to be rotated at
                     % so that the resultant moment of Mx and My is now Mx'
 end
-
 [newcoordISRdisc,newCoordCorners,newCP]=rotReCol2(Mux,Muy,...
                            coordISRdisc,b,h,[0.5*h,0.5*b]);
-                                        
+                       
+% The Plastic Center remain at the center of the cross-section
+% regardless of the rotation - That is at the location of Geometric Center
+newCP=[max(newCoordCorners(:,2)) max(newCoordCorners(:,1))];
+
 %% Interaction diagram - Direction X'
 cvectorX=zeros(npdiag,1);
 diagramIntAxis1=zeros(npdiag,5);

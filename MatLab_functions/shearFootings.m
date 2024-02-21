@@ -36,9 +36,9 @@ function [d,qprom]=shearFootings(be,le,qprom,dimCol,pu,d,fc,typeFooting)
 %                          2 - Bordering Isolated footing
 %                          3 - Corner Isolated footing
 %------------------------------------------------------------------------
-% LAST MODIFIED: L.F.Veduzco    2022-02-05
-%                Faculty of Engineering
-%                Autonomous University of Queretaro
+% LAST MODIFIED: L.F.Veduzco    2023-07-03
+% Copyright (c)  Faculty of Engineering
+%                Autonomous University of Queretaro, Mexico
 %------------------------------------------------------------------------
 
 % -----------------------------------------------------------------------

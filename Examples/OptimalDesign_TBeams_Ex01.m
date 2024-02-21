@@ -6,9 +6,9 @@
 %
 %------------------------------------------------------------------------
 
-% LAST MODIFIED: L.F.Veduzco    2023-01-20
-%                Faculty of Engineering
-%                Autonomous University of Queretaro
+% LAST MODIFIED: L.F.Veduzco    2023-07-03
+% Copyright (c)  Faculty of Engineering
+%                Autonomous University of Queretaro, Mexico
 %------------------------------------------------------------------------
 clc
 clear all

@@ -24,9 +24,9 @@ function eleMec=eleMecanicos2tBeams(c,a,fdpc,h,b,b_rec,h_rec,E,t1,t2)
 %         fdpc:         Is the reduced f'c as 0.85f'c according to ACI 318
 %
 %------------------------------------------------------------------------
-% LAST MODIFIED: L.F.Veduzco    2022-02-05
-%                Faculty of Engineering
-%                Autonomous University of Queretaro
+% LAST MODIFIED: L.F.Veduzco    2023-02-05
+% Copyright (c)  Faculty of Engineering
+%                Autonomous University of Queretaro, Mexico
 %------------------------------------------------------------------------
 
 bp=b-2*b_rec;

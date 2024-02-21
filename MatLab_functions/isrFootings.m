@@ -116,9 +116,9 @@ function [hmodif,mu_axis,barDispositionFootings,arrangement_bar_footings,...
 %                                   2 - Bordering Isolated footing
 %
 %------------------------------------------------------------------------
-% LAST MODIFIED: L.F.Veduzco    2023-03-13
-%                Faculty of Engineering
-%                Autonomous University of Queretaro
+% LAST MODIFIED: L.F.Veduzco    2023-02-05
+% Copyright (c)  Faculty of Engineering
+%                Autonomous University of Queretaro, Mexico
 %------------------------------------------------------------------------
 
 %%%%%%%%%%%%%%%%%%%%%%%% ISR1t-Beams - SGD %%%%%%%%%%%%%%%%%%%%%%%%%

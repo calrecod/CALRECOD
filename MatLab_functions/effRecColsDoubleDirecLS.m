@@ -56,9 +56,9 @@ function [maxef,tableEff,cxy,Mr]=effRecColsDoubleDirecLS(diagrama1,...
 %                               "EvalAsymDoubleDirection"
 %
 %------------------------------------------------------------------------
-% LAST MODIFIED: L.F.Veduzco    2022-08-02
-%                Faculty of Engineering
-%                Autonomous University of Queretaro
+% LAST MODIFIED: L.F.Veduzco    2023-02-05
+% Copyright (c)  Faculty of Engineering
+%                Autonomous University of Queretaro, Mexico
 %------------------------------------------------------------------------
 
 %% RESISTANCE COMPUTATION 
@@ -99,10 +99,14 @@ for sentido=1:2
                     break;
                 end
             end
-            cdos=c_vector_bar1(k,sentido);
-            ctres=c_vector_bar1(k+1,sentido);
             mr=(((ydos-ytres)/(xtres-xdos))*xtres+ytres)/...
                 (pu/mu-((ytres-ydos)/(xtres-xdos)));
+            if mr>max(diagrama1(:,4*sentido))
+                [mr,k]=max(diagrama1(:,4*sentido));
+            end
+            cdos=c_vector_bar1(k,sentido);
+            ctres=c_vector_bar1(k+1,sentido);
+            
         elseif mu<0
             k=1;
             ydos=diagrama2(k,4*sentido-1);
@@ -126,10 +130,14 @@ for sentido=1:2
                     break;
                 end
             end
-            cdos=c_vector_bar2(k,sentido);
-            ctres=c_vector_bar2(k+1,sentido);
             mr=(((ydos-ytres)/(xtres-xdos))*xtres+ytres)/...
                 (pu/mu-((ytres-ydos)/(xtres-xdos)));
+            if mr>max(diagrama2(:,4*sentido))
+                [mr,k]=max(diagrama2(:,4*sentido));
+            end
+            cdos=c_vector_bar2(k,sentido);
+            ctres=c_vector_bar2(k+1,sentido);
+            
         end
         c=(cdos+ctres)*0.5;
         if sentido==1
@@ -148,7 +156,8 @@ for sentido=1:2
 end
 
 %% STRUCTURAL EFFICIENCY COMPUTATION
-maxef=0;
+maxef=-inf;
+imax=1;
 for j=1:nconditions
     prx=tableEff(j,4);
     pry=tableEff(j,6);
@@ -172,9 +181,9 @@ for j=1:nconditions
     % When only subject to uniaxial bending-compression then
     % the euclidean distance formula is used for the 
     % computation of the resistance efficiency
-    if abs(muy)<0.1
+    if abs(muy)<10
         ef=sqrt(pu^2+mux^2)/sqrt(prx^2+mrx^2);
-    elseif abs(mux)<0.1
+    elseif abs(mux)<10
         ef=sqrt(pu^2+muy^2)/sqrt(pry^2+mry^2);
     end
     

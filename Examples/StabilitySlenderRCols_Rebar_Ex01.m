@@ -7,9 +7,9 @@
 %
 %----------------------------------------------------------------
 
-% LAST MODIFIED: L.F.Veduzco    2023-04-16
-%                Faculty of Engineering
-%                Autonomous University of Queretaro
+% LAST MODIFIED: L.F.Veduzco    2023-07-03
+% Copyright (c)  Faculty of Engineering
+%                Autonomous University of Queretaro, Mexico
 %----------------------------------------------------------------
 
 clc
@@ -32,7 +32,7 @@ fdpc=fc*0.85; % reduced concrete's compressive strength (Kg/cm2)
 fy=4200; % Yield stress of reinforcing steel Kg/cm2
 
 %% Additional structural parameters
-k=2; % slederness factor
+k=1.5; % slederness factor
 npdiag=50; % number of points for the computation of the interaction
            % diagram
 
@@ -43,8 +43,8 @@ load_conditions=[1 -15000 28e5 22e5]; % [nload, Pu, Mx, My]
 P=load_conditions(2);
 Mx=load_conditions(3);
 My=load_conditions(4);
-Vx=0; % Lateral loads
-Vy=0;
+Vx=0.0; % Lateral loads
+Vy=0.0;
 
 %% Rebar data
 
@@ -125,7 +125,7 @@ b=dimensionsColumn(1);
 %% Structural resistance efficiency according to applied load combinations
 [maxef01,eficiencia01,cxy01]=effRecColsLinearSearch...
         (diagrama,load_conditions,Pot,Poc,cPoints)     
-    
+
 %% Plot the interaction diagram for better assessment 
 diagramsFinalRebarCols(load_conditions,diagrama,rebarCoordinates,...
                         h,b,rebarTypeslist);
@@ -168,6 +168,7 @@ Pcr=pi^2*Ec*I/(k*height)^2;
 %% Amplification bending moments for each axis direction
 [Deltax,Mampx]=MomAmpColsGeomNL(fc,k,InertiaXY(1),height,Vx,P,...
                                 Mx,b,h,0); % In the x-axis
+
 h=dimensionsColumn(1);
 b=dimensionsColumn(2);
 [Deltay,Mampy]=MomAmpColsGeomNL(fc,k,InertiaXY(2),height,Vy,P,...

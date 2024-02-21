@@ -22,9 +22,9 @@ function elemConc=casoConcretoCirc(a,fdpc,diam)
 %
 %         diam:     is the cross-section diameter
 %------------------------------------------------------------------------
-% LAST MODIFIED: L.F.Veduzco    2023-01-24
-%                Faculty of Engineering
-%                Autonomous University of Queretaro
+% LAST MODIFIED: L.F.Veduzco    2023-02-05
+% Copyright (c)  Faculty of Engineering
+%                Autonomous University of Queretaro, Mexico
 %------------------------------------------------------------------------
 
 % computing the compression zone of the concrete

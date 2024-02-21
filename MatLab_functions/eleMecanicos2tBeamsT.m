@@ -41,9 +41,9 @@ function eleMec=eleMecanicos2tBeamsT(c,a,fdpc,bp,ht,ba,ha,cover,Es,...
 %         Lb:           is the length of the beam element
 %
 %------------------------------------------------------------------------
-% LAST MODIFIED: L.F.Veduzco    2023-01-20
-%                Faculty of Engineering
-%                Autonomous University of Queretaro
+% LAST MODIFIED: L.F.Veduzco    2023-02-05
+% Copyright (c)  Faculty of Engineering
+%                Autonomous University of Queretaro, Mexico
 %------------------------------------------------------------------------
 
 bpp=bp-2*cover;

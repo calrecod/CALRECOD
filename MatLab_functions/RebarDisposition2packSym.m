@@ -30,9 +30,9 @@ function [dispositionRebar]=RebarDisposition2packSym(b,...
 %                               axis directions: [coverX,coverY]
 %
 %------------------------------------------------------------------------
-% LAST MODIFIED: L.F.Veduzco    2022-08-05
-%                Faculty of Engineering
-%                Autonomous University of Queretaro
+% LAST MODIFIED: L.F.Veduzco    2023-07-03
+% Copyright (c)  Faculty of Engineering
+%                Autonomous University of Queretaro, Mexico
 %------------------------------------------------------------------------
 
 bprima=b-2*rec(1);

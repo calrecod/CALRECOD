@@ -1,13 +1,13 @@
 function [Mr_col,h,bestArea,bestCost,bestdiagram,bestnv,bestEf,...
-    bestArrangement,bestDisposition,nv4,bestcxy,bestCP,bestLoad]=...
+    bestArrangement,bestDisposition,nv4,bestcxy,bestCP,bestLoad,bestCFA]=...
     AsymmSym4DiamIntSurf(b,h,rec,act,E,npdiag,fdpc,beta1,height,...
-    wac,RebarAvailable,load_conditions,pu_asym_cols,ductility)
+    wac,RebarAvailable,load_conditions,ductility,puCostCardBuild,dataCFA)
 %-------------------------------------------------------------------------
 % Syntax:
 % [Mr_col,h,bestArea,bestCost,bestdiagram,bestnv,bestEf,...
-%  bestArrangement,bestDisposition,nv4,bestcxy,bestCP,bestLoad]=...
+%  bestArrangement,bestDisposition,nv4,bestcxy,bestCP,bestLoad,bestCFA]=...
 %  AsymmSym4DiamIntSurf(b,h,rec,act,E,npdiag,fdpc,beta1,height,...
-%  wac,RebarAvailable,load_conditions,pu_asym_cols,ductility)
+%  wac,RebarAvailable,load_conditions,ductility,puCostCardBuild,dataCFA)
 %
 %-------------------------------------------------------------------------
 % SYSTEM OF UNITS: SI - (Kg,cm)
@@ -92,18 +92,20 @@ function [Mr_col,h,bestArea,bestCost,bestdiagram,bestnv,bestEf,...
 %         beta1:                is determined as specified by code (see 
 %                               Documentation)
 %
-%         pu_asym_cols:         is the average unit construction cost for
-%                               this rebar prototype
-%
 %         ductility:            is a parameter that indicates which
 %                               ductility demand level is required for the
 %                               reinforcement designs. A number between 1
 %                               to 3 (see Documentation)
 %
+%         puCostCardBuild:      is a vector containing the parameters
+%                               required for the calculation of the unit
+%                               cost of a rebar design with a 
+%                               "unitCostCardColsRec"
+%
 %------------------------------------------------------------------------
-% LAST MODIFIED: L.F.Veduzco    2023-06-22
-%                Faculty of Engineering
-%                Autonomous University of Queretaro
+% LAST MODIFIED: L.F.Veduzco    2023-02-05
+% Copyright (c)  Faculty of Engineering
+%                Autonomous University of Queretaro, Mexico
 %------------------------------------------------------------------------
 fc=fdpc/0.85;
 fy=E*0.0021; % yield stress of reinforcing steel
@@ -117,8 +119,6 @@ while noptions==0
     bestArea=inf;
     for i=1:ndiam % for each type of rebar
         op=i;
-        
-        ov=RebarAvailable(i,1);
         dv=RebarAvailable(i,2);
         av=(dv)^2*pi/4;
 
@@ -158,9 +158,9 @@ while noptions==0
                 varCos=0.5*(nv-2*varSup);
 
                 arregloVar=zeros(nv,1)+i;
-                [disposicion_varillado]=RebarDisposition(b,...
+                [dispositionRebar]=RebarDisposition(b,...
                                         h,rec,dv,nv,varCos,varSup);
-                if nv~=length(disposicion_varillado)
+                if nv~=length(dispositionRebar)
                     break;
                 end
                 nvxy=[varSup varCos];
@@ -169,10 +169,10 @@ while noptions==0
                 % Asymmetrical design with as many as 4 types of rebar
                 [av4_2,bestasbar2,bestEf2,bestdiagram21,...
                 arregloVar2,bestDisposition2,bestMr2,...
-                bestcxy2,bestCP2,bestCost2,maxLoad]=asymSym4DiamIntSurf...
-                (disposicion_varillado,op,arraySymOriginal,RebarAvailable,...
-                b,h,fy,fdpc,beta1,E,pu_asym_cols,height,wac,...
-                load_conditions,npdiag,ductility);
+                bestcxy2,bestCP2,bestCost2,maxLoad,bestCFA2]=asymSym4DiamIntSurf...
+                (dispositionRebar,op,arraySymOriginal,RebarAvailable,...
+                b,h,fy,fdpc,beta1,E,height,wac,load_conditions,npdiag,...
+                ductility,puCostCardBuild,dataCFA);
                 
                 bestnv2=nv;
                 nv4_2=arraySymOriginal;
@@ -182,6 +182,7 @@ while noptions==0
                     if bestasbar2<bestArea
                         bestdiagram=bestdiagram21;
                         bestLoad=maxLoad;
+                        bestCFA=bestCFA2;
                         bestDisposition=bestDisposition2;
                         bestArrangement=arregloVar2;
                         bestArea=bestasbar2;
@@ -227,6 +228,7 @@ while noptions==0
         nv4=[];
         av4=[];
         bestcxy=[];
+        bestCFA=[];
         bestCP=[];
         Mr_col=[];
         bestLoad=[];

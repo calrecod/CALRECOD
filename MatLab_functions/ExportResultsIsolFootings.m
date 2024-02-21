@@ -48,9 +48,9 @@ function ExportResultsIsolFootings(directionData,bestDispositionFootings,...
 %                                       rebar in columns or the ISR
 %
 %------------------------------------------------------------------------
-% LAST MODIFIED: L.F.Veduzco    2022-02-05
-%                Faculty of Engineering
-%                Autonomous University of Queretaro
+% LAST MODIFIED: L.F.Veduzco    2023-02-05
+% Copyright (c)  Faculty of Engineering
+%                Autonomous University of Queretaro, Mexico
 %------------------------------------------------------------------------
 if isempty(directionData)==0
     % To export design results of isolated footings

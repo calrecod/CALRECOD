@@ -18,9 +18,9 @@
 %
 %----------------------------------------------------------------
 %
-% LAST MODIFIED: L.F.Veduzco    2023-03-24
-%                Faculty of Engineering
-%                Autonomous University of Queretaro
+% LAST MODIFIED: L.F.Veduzco    2023-07-03
+% Copyright (c)  Faculty of Engineering
+%                Autonomous University of Queretaro, Mexico
 %----------------------------------------------------------------
 
 clc 
@@ -350,13 +350,15 @@ pu_steel_footings=26.75;
 
 cols_sym_asym_isr="Symmetric"; % To choose which type of rebar design
                                % is required
-if cols_sym_asym_isr=="Symmetric" || cols_sym_asym_isr=="Asymmetric"
-    pu_cols=[29.19, 29.06, 28.93, 28.93, 28.93, 28.93, 28.93]; 
-    
-elseif  cols_sym_asym_isr=="ISR"
-    pu_cols=[29.1];
-end
- 
+
+puColsISR=[29.1];
+puColBuild=[1.2,0.9,128,214.75,0.04,0.105,7];
+dataCFA=[0,1,1,2]; % Data required for the computation of the 
+                   % constructability factor for the rebar designs of columns
+                   % Lower and upper values for the range of the CFA and 
+                   % weight factors for the uniformity of rebars and rebar 
+                   % diameters
+
 %% Directory route to save the design results (if required)
 % Note: if not required just set: directionData=[];
 directionData=[];
@@ -365,9 +367,9 @@ directionData=[];
 [totalWeightStruc,wsteelColsTotal,pacColsElem,Mp,final_dimensions,...
 unit_weight_elem,wsteelConcBeamsElem,wsteelConcColsElem,...
 wsteelConcFootingsElem,hefootings,dimFoot,totalCostStruc,inertiaElem,...
-wsteelStructure]=DesignRCPlaneFrameBCI(pu_beams,pu_cols,lenElem,fpc,...
-inertiaElem,qadm,FS,nodes_support_column,pu_steel_footings,dimensions,...
-fcbeams,fccols,fc_footing,areaElem,cols_sym_asym_isr,RebarAvailable,...
+wsteelStructure]=DesignRCPlaneFrameBCI(pu_beams,puColsISR,puColBuild,...
+dataCFA,lenElem,fpc,inertiaElem,qadm,FS,nodes_support_column,pu_steel_footings,...
+dimensions,fcbeams,fccols,fc_footing,areaElem,cols_sym_asym_isr,RebarAvailable,...
 condition_cracking,ductility,elem_cols,elem_beams,recxy_cols,...
 load_conditions_beams,load_conditions_columns,reactions,shear_beams,...
 coordBaseCols,coordEndBeams,coordBaseFooting,directionData);
@@ -389,13 +391,7 @@ disp(totalCostStruc);
 y2=[totalCostStruc];
 
 cols_sym_asym_isr="Asymmetric";
-if cols_sym_asym_isr=="Symmetric"
-    pu_cols=[29.19, 29.06, 28.93, 28.93, 28.93, 28.93, 28.93]; 
-elseif cols_sym_asym_isr=="Asymmetric"
-    pu_cols=[29.19, 29.06, 28.93, 28.93, 28.93, 28.93, 28.93];
-elseif  cols_sym_asym_isr=="ISR"
-    pu_cols=[28.93];
-end
+puColsISR=[28.93];
 
 %% Optimal design with asymmetrical reinforcement in columns
 directionData=[];
@@ -403,7 +399,7 @@ directionData=[];
 Mp,final_dimensions,unit_weight_elem,wsteelConcBeamsElem,...
 wsteelConcColsElem,wsteelConcFootingsElem,hefootings,dimFoot,...
 totalCostStruc,inertiaElem,wsteelStructure]=DesignRCPlaneFrameBCI...
-(pu_beams,pu_cols,lenElem,fpc,inertiaElem,qadm,FS,nodes_support_column,...
+(pu_beams,puColsISR,puColBuild,dataCFA,lenElem,fpc,inertiaElem,qadm,FS,nodes_support_column,...
 pu_steel_footings,dimensions,fcbeams,fccols,fc_footing,areaElem,...
 cols_sym_asym_isr,RebarAvailable,condition_cracking,ductility,...
 elem_cols,elem_beams,recxy_cols,load_conditions_beams,...

@@ -1,14 +1,14 @@
 function [bestMr,h,bestArea,bestCost,bestdiagram,bestnv,bestEf,...
-    bestArrangement,bestDisposition,nv4,bestcxy,bestCP,bestLoad]=...
+    bestArrangement,bestDisposition,nv4,bestcxy,bestCP,bestLoad,bestCFA]=...
     Asym2pack1DiamIntSurf(b,h,rec,act,npdiag,fdpc,fy,beta1,load_conditions,...
-    RebarAvailable,height,wac,pu_asym_cols,pu_col_sym,ductility)
+    RebarAvailable,height,wac,ductility,puCostCardBuild,dataCFA)
 
 %-------------------------------------------------------------------------
 % Syntax:
 % [bestMr,h,bestArea,bestCost,bestdiagram,bestnv,bestEf,...
-% bestArrangement,bestDisposition,nv4,bestcxy,bestCP,bestLoad]=...
+% bestArrangement,bestDisposition,nv4,bestcxy,bestCP,bestLoad,bestCFA]=...
 % Asym2pack1DiamIntSurf(b,h,rec,act,npdiag,fdpc,fy,beta1,load_conditions,...
-% RebarAvailable,height,wac,pu_asym_cols,pu_col_sym,ductility)
+% RebarAvailable,height,wac,ductility,puCostCardBuild,dataCFA)
 %
 %-------------------------------------------------------------------------
 % SYSTEM OF UNITS: SI - (Kg,cm)
@@ -92,24 +92,19 @@ function [bestMr,h,bestArea,bestCost,bestdiagram,bestnv,bestEf,...
 %         pu_asym_cols:         is the average construction unit cost for 
 %                               this rebar prototype
 %
-%         pu_sym_cols:          is the database of reinforcement assembly
-%                               and construction unit cost for the most
-%                               symmetrical design prototype: format by
-%                               default:
-%    -----------------------------------------------------------------
-%    pu_col=[PU{#4}, PU{#5}, PU{#6}, PU{#8}, PU{#9}, PU{#12}, ...]
-%    -----------------------------------------------------------------
-%
 %         ductility:            is a parameter that indicates which 
 %                               ductility demand is required for the 
 %                               reinforcement designs. A number between 
 %                               1 to 3 (see Documentation)
 %
 %------------------------------------------------------------------------
-% LAST MODIFIED: L.F.Veduzco    2022-06-21
-%                Faculty of Engineering
-%                Autonomous University of Queretaro
+% LAST MODIFIED: L.F.Veduzco    2023-02-05
+% Copyright (c)  Faculty of Engineering
+%                Autonomous University of Queretaro, Mexico
 %------------------------------------------------------------------------
+pccb=puCostCardBuild;
+pu_col_sym=unitCostCardColsRec(pccb(1),pccb(2),pccb(3),...
+                                 pccb(4),pccb(5),pccb(6),pccb(7));
 fc=fdpc/0.85;
 bp=b-2*rec(1);
 hp=h-2*rec(2);
@@ -155,7 +150,7 @@ while noptions==0
         elseif (2*maxVarillasSup<nv)
             continue;
         else
-            costSym=nv*av*height*wac*pu_col_sym(i);
+            costSym=nv*av*height*wac*pu_col_sym;
             
             for type=minVarillasSup:maxVarillasSup
                 varSup=type;
@@ -173,10 +168,10 @@ while noptions==0
                 % in packs of two
                 [av4_1,nv4_1,arregloVar1,bestDisposition1,bestnv1,bestMr1,...
                 bestEf1,bestcxy1,bestCP1,bestasbar1,bestdiagram1,bestCost1,...
-                maxLoad]=asym1typeRebar2packIntSurf(fdpc,fy,nvxy,...
+                maxLoad,bestCFA1]=asym1typeRebar2packIntSurf(fdpc,fy,nvxy,...
                 arraySymOriginal,b,h,rec,RebarAvailable,op,av,npdiag,...
-                costSym,pu_asym_cols,height,wac,load_conditions,ductility,...
-                beta1);
+                height,wac,load_conditions,ductility,...
+                beta1,puCostCardBuild,dataCFA);
             
                 if bestasbar1<bestArea 
                     noptions=noptions+1;
@@ -194,6 +189,7 @@ while noptions==0
                     av4=av4_1;
                     bestcxy=bestcxy1;
                     bestCP=bestCP1;
+                    bestCFA=bestCFA1;
                     
                     vx1Ec=nv4(1);
                     vx2Ec=nv4(2); 
@@ -229,6 +225,7 @@ while noptions==0
         nv4=[];
         bestcxy=[];
         bestCP=[];
+        bestCFA=[];
         break;
     end
 end

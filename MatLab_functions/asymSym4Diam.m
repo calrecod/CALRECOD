@@ -1,16 +1,15 @@
 function [bestav4,relyEffList,bestArea,bestEf,bestdiagram,bestdiagram2,...
-    bestArrangement,bestDisposition,bestMr,bestcxy,bestCP,bestCost]=...
+    bestArrangement,bestDisposition,bestMr,bestcxy,bestCP,bestCost,bestCFA]=...
     asymSym4Diam(OriginalDisposition,op,arrayOriginal,RebarAvailable,rec,...
-    b,h,fy,fdpc,beta1,E,pu_asym_cols,height,wac,load_conditions,npdiag,...
-    ductility)
-
+    b,h,fy,fdpc,beta1,E,height,wac,load_conditions,npdiag,...
+    ductility,puCostCardBuild,dataCFA)
 %-------------------------------------------------------------------------
 % Syntax:
 % [bestav4,relyEffList,bestArea,bestEf,bestdiagram,bestdiagram2,...
-%  bestArrangement,bestDisposition,bestMr,bestcxy,bestCP,bestCost]=...
+%  bestArrangement,bestDisposition,bestMr,bestcxy,bestCP,bestCost,bestCFA]=...
 %  asymSym4Diam(OriginalDisposition,op,arrayOriginal,RebarAvailable,rec,...
-%  b,h,fy,fdpc,beta1,E,pu_asym_cols,height,wac,load_conditions,npdiag,...
-%  ductility)
+%  b,h,fy,fdpc,beta1,E,height,wac,load_conditions,npdiag,...
+%  ductility,puCostCardBuild,dataCFA)
 %
 %-------------------------------------------------------------------------
 % SYSTEM OF UNITS: SI - (Kg,cm)
@@ -95,10 +94,15 @@ function [bestav4,relyEffList,bestArea,bestEf,bestdiagram,bestdiagram2,...
 %                               reinforcement designs. A number between 1
 %                               to 3 (see documentation)
 %
+%         puCostCardBuild:      is a vector containing the parameters
+%                               required for the calculation of the unit
+%                               cost of a rebar design with a 
+%                               "unitCostCardColsRec"
+%
 %------------------------------------------------------------------------
-% LAST MODIFIED: L.F.Veduzco    2022-06-21
-%                Faculty of Engineering
-%                Autonomous University of Queretaro
+% LAST MODIFIED: L.F.Veduzco    2023-02-05
+% Copyright (c)  Faculty of Engineering
+%                Autonomous University of Queretaro, Mexico
 %------------------------------------------------------------------------
 
 bestDisposition=OriginalDisposition;
@@ -122,7 +126,7 @@ count2=0;
 list_efficiencies=[];
 relyEffList=[];
 
-% Array Variations.....................................................
+% Array Variations
 variationsArray=[];
 for i=1:op
     for j=1:op
@@ -151,7 +155,16 @@ for i=1:op
                 fy,fdpc,beta1,E,arrayOriginal(1),arrayOriginal(2),...
                 arrayOriginal(3),arrayOriginal(4),RebarAvailable,...
                 bestDisposition,rec);
-
+                
+                Wnb=dataCFA(3);
+                Wnd=dataCFA(4);
+                [BS,CFA]=BuildabilityScoreRebarCols(typeArray,arrayOriginal,...
+                    Wnb,Wnd);
+            
+                pccb=puCostCardBuild;
+                pu_asym_cols=unitCostCardColsRec(pccb(1),pccb(2),pccb(3),...
+                                   pccb(4)*CFA,pccb(5),pccb(6),pccb(7));
+            
                 % ----------------------------------------------------
                 % Analyse the resistance efficiency of the cross-
                 % section, given the load conditions:
@@ -162,7 +175,9 @@ for i=1:op
                 list_efficiencies=[list_efficiencies;
                                     maxef];
 
-                if maxef<1.0 && ast<amin && ast>=aminCode
+                if maxef<1.0 && ast<amin && ast>=aminCode && ...
+                    dataCFA(1)<=CFA && CFA<=dataCFA(2)
+                    
                     amin=ast;
                     bestArea=amin;
                     bestav4=[ab1,ab2,ab3,ab4];
@@ -203,6 +218,7 @@ for i=1:op
                     bestMrx=eficiencia(1,5);
                     bestMry=eficiencia(1,7);
                     bestMr=[bestMrx bestMry];
+                    bestCFA=CFA;
                 end
                 if maxef<1.0
                     relyEffList=[relyEffList; maxef];
@@ -214,7 +230,7 @@ for i=1:op
 end
 if isempty(bestArea)==1 % when no feasible rebar option is found
     bestArea=[];
-
+    bestCFA=[];
     bestDisposition=[];
     bestEf=[];
     bestdiagram=[];

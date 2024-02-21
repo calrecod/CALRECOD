@@ -16,9 +16,9 @@
 %
 %----------------------------------------------------------------
 
-% LAST MODIFIED: L.F.Veduzco    2023-03-11
-%                Faculty of Engineering
-%                Autonomous University of Queretaro
+% LAST MODIFIED: L.F.Veduzco    2023-07-03
+% Copyright (c)  Faculty of Engineering
+%                Autonomous University of Queretaro, Mexico
 %----------------------------------------------------------------
 
 clear all

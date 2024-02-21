@@ -79,9 +79,9 @@ function [sepbarsRestric,cbest,b,h,bestBarDisposition,bestCost,arrangement_t1,..
 %                               in format: [nload, Mu]
 %
 %------------------------------------------------------------------------
-% LAST MODIFIED: L.F.Veduzco    2022-02-05
-%                Faculty of Engineering
-%                Autonomous University of Queretaro
+% LAST MODIFIED: L.F.Veduzco    2023-02-05
+% Copyright (c)  Faculty of Engineering
+%                Autonomous University of Queretaro, Mexico
 %------------------------------------------------------------------------
 
 if fc<2000 % units: Kg,cm

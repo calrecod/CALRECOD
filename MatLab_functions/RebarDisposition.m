@@ -30,9 +30,9 @@ function [dispositionRebar]=RebarDisposition(b,...
 %                               axis directions: [coverX,coverY]
 %
 %------------------------------------------------------------------------
-% LAST MODIFIED: L.F.Veduzco    2022-02-05
-%                Faculty of Engineering
-%                Autonomous University of Queretaro
+% LAST MODIFIED: L.F.Veduzco    2023-07-03
+% Copyright (c)  Faculty of Engineering
+%                Autonomous University of Queretaro, Mexico
 %------------------------------------------------------------------------
 
 %%%------------------------------------------------------------------%%%

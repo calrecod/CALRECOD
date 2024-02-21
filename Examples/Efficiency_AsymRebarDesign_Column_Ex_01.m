@@ -3,16 +3,17 @@
 % PURPOSE 
 %    To determine the structural efficiency of an assymmetrically
 %    reinforced rectangular column cross-section in which only positive
-%    bending moments are applied.
+%    bending moments are applied. The Bresler's formula is used for the
+%    computation of the structural efficiency.
 %
 %----------------------------------------------------------------
 % CREATED:       L.F.Veduzco    2023-03-18
 %                Faculty of Engineering
 %                Autonomous University of Queretaro
 %
-% LAST MODIFIED: L.F.Veduzco    2023-04-16
-%                Faculty of Engineering
-%                Autonomous University of Queretaro
+% LAST MODIFIED: L.F.Veduzco    2023-07-03
+% Copyright (c)  Faculty of Engineering
+%                Autonomous University of Queretaro, Mexico
 %----------------------------------------------------------------
 
 clc

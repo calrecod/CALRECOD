@@ -38,9 +38,9 @@ function cost = EvaluateCostISRFoot(be,rec,act,acmin,pu_steel_footings,wac)
 %                               rebar may be placed)
 %
 %------------------------------------------------------------------------
-% LAST MODIFIED: L.F.Veduzco    2022-02-05
-%                Faculty of Engineering
-%                Autonomous University of Queretaro
+% LAST MODIFIED: L.F.Veduzco    2023-02-05
+% Copyright (c)  Faculty of Engineering
+%                Autonomous University of Queretaro, Mexico
 %------------------------------------------------------------------------
 
 cost=act*(be-2*rec)*wac*pu_steel_footings+...

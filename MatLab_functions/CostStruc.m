@@ -45,9 +45,9 @@ function totalCostStruc=CostStruc(costSteelBeams,costSteelCols,...
 %                                   function WeightStruc
 %
 %------------------------------------------------------------------------
-% LAST MODIFIED: L.F.Veduzco    2022-02-05
-%                Faculty of Engineering
-%                Autonomous University of Queretaro
+% LAST MODIFIED: L.F.Veduzco    2023-02-05
+% Copyright (c)  Faculty of Engineering
+%                Autonomous University of Queretaro, Mexico
 %------------------------------------------------------------------------
 
 total_cost_steel_structure=sum(costSteelBeams)+sum(costSteelCols)+...

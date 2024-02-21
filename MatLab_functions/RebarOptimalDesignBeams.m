@@ -91,9 +91,9 @@ function [sepbarsRestric,cbest,b,h,maxEf,bestMr,area_var_t,nv_t,arreglo_t1,...
 %                               (see Documentation)
 %
 %------------------------------------------------------------------------
-% LAST MODIFIED: L.F.Veduzco    2022-02-05
-%                Faculty of Engineering
-%                Autonomous University of Queretaro
+% LAST MODIFIED: L.F.Veduzco    2023-07-03
+% Copyright (c)  Faculty of Engineering
+%                Autonomous University of Queretaro, Mexico
 %------------------------------------------------------------------------
 
 tma=2/3; %(in)

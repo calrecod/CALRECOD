@@ -45,9 +45,9 @@ function [maxef,diagramaInteraccion,tablaEficiencias,c]=diagCircColsRebar(ast,..
 %                             - size: nloads x 3, in format [nload,Pu,Mu]
 %
 %------------------------------------------------------------------------
-% LAST MODIFIED: L.F.Veduzco    2023-01-24
-%                Faculty of Engineering
-%                Autonomous University of Queretaro
+% LAST MODIFIED: L.F.Veduzco    2023-02-05
+% Copyright (c)  Faculty of Engineering
+%                Autonomous University of Queretaro, Mexico
 %------------------------------------------------------------------------
 
 if npdiag<3

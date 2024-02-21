@@ -74,9 +74,9 @@ function [b,h,cost_elem_col,Ac_sec_elem,Ef_sec_col,Mr_col,t_value_x,...
 %                           are not required
 %
 %------------------------------------------------------------------------
-% LAST MODIFIED: L.F.Veduzco    2022-02-05
-%                Faculty of Engineering
-%                Autonomous University of Queretaro
+% LAST MODIFIED: L.F.Veduzco    2023-02-05
+% Copyright (c)  Faculty of Engineering
+%                Autonomous University of Queretaro, Mexico
 %------------------------------------------------------------------------
 
 load_conditions(:,2:4)=abs(load_conditions(:,2:4));

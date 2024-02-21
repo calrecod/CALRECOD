@@ -29,9 +29,9 @@ function Inertia_modif=InertiaBeamCrackedSection(fc,E,areabartension,...
 %         h_rec           is the concrete cover along the height dimension
 %
 %------------------------------------------------------------------------
-% LAST MODIFIED: L.F.Veduzco    2022-02-05
-%                Faculty of Engineering
-%                Autonomous University of Queretaro
+% LAST MODIFIED: L.F.Veduzco    2023-02-05
+% Copyright (c)  Faculty of Engineering
+%                Autonomous University of Queretaro, Mexico
 %------------------------------------------------------------------------
 
 d=h-h_rec;

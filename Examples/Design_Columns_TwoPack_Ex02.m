@@ -11,9 +11,9 @@
 %
 %----------------------------------------------------------------
 %
-% LAST MODIFIED: L.F.Veduzco    2022-07-27
-%                Faculty of Engineering
-%                Autonomous University of Queretaro
+% LAST MODIFIED: L.F.Veduzco    2023-07-03
+% Copyright (c)  Faculty of Engineering
+%                Autonomous University of Queretaro, Mexico
 %----------------------------------------------------------------
 
 clear all
@@ -61,18 +61,18 @@ RebarAvailable=[4 4/8*2.54;
 rec=[4 4]; % [coverx covery] - concrete cover
 npdiag=30; % number of points to compute for the interaction diagram
 
-pu_cols=[29.19,29.06,28.93,28.93,28.93,28.93,28.93]; % symmetrical 
-                                                     % rebar
-                                                     
-pu_asym_cols=1/0.6*sum(pu_cols)/length(pu_cols);     % asymmetrical 
-                                                     % rebar
-pu_cols_isr=[28.93];
+puColBuild=[1.2,0.9,128,214.75,0.04,0.105,7];
+pu_cols_isr=[28.93]./18;
    
 condition_cracking="Cracked"; % "Cracked" or "Non-cracked"
 
 % Ductility demand
 ductility=3;
-        
+dataCFA=[0,1,1,2]; % Data required for the computation of the 
+                   % constructability factor for the rebar designs of columns
+                   % Lower and upper values for the range of the CFA and 
+                   % weight factors for the uniformity of rebars and rebar 
+                   % diameters
 %% ISR optimization
 [b,h,cost_elem_col,Ac_sec_elem,Ef_sec_col,Mr_col,t_value_01,t_value_03,cxy]=...
 isrColumns(pu_cols_isr,height,b,h,rec,fy,fc,load_conditions,ws,ductility,...
@@ -81,10 +81,9 @@ isrColumns(pu_cols_isr,height,b,h,rec,fy,fc,load_conditions,ws,ductility,...
 %% Optimization rebar design - RP: (Asym-2pack-4Diam)
 
 [Mr_col,h,Inertia_xy_modif,bestArea,bestCost,bestdiagram,bestdiagram2,...
-bestnv,bestEf,bestArrangement,bestDisposition,nv4,bestcxy,bestCP]=...
-Asym2pack4Diam(b,h,rec,Ac_sec_elem,npdiag,fdpc,beta1,...
-fy,load_conditions,pu_asym_cols,RebarAvailable,ws,height,...
-condition_cracking,ductility);
+bestnv,bestEf,bestArrangement,bestDisposition,nv4,bestcxy,bestCP,bestCFA]=...
+Asym2pack4Diam(b,h,rec,Ac_sec_elem,npdiag,fdpc,beta1,fy,load_conditions,...
+RebarAvailable,ws,height,condition_cracking,ductility,puColBuild,dataCFA);
 
 %% Ploting design results
 diagDoubleDirecAsymRebarCols(load_conditions,bestdiagram,...

@@ -48,9 +48,9 @@ function [Eft,diagramaInteraccion,tablaEficiencias,cxy]=widthEfficiencyCols(t,..
 %         c:                  neutral axis value (cm)
 %
 %------------------------------------------------------------------------
-% LAST MODIFIED: L.F.Veduzco    2022-02-05
-%                Faculty of Engineering
-%                Autonomous University of Queretaro
+% LAST MODIFIED: L.F.Veduzco    2023-07-03
+% Copyright (c)  Faculty of Engineering
+%                Autonomous University of Queretaro, Mexico
 %------------------------------------------------------------------------
 
 ea=0.001; % approximation error for each point of the interaction diagram

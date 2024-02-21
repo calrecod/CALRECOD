@@ -3,7 +3,6 @@ function [tablaEff,iloadmax,maxLoadCondition,maxgamma,diagramIntAxis1,...
     load_conditions,comborebar,npdiag,fy,fdpc,beta1,E,numberRebars1,...
     numberRebars2,numberRebars3,numberRebars4,rebarAvailable,...
     dispositionRebar)
-
 %------------------------------------------------------------------------
 % Syntax:
 % [tablaEff,iloadmax,maxLoadCondition,maxgamma,diagramIntAxis1,...
@@ -103,12 +102,12 @@ function [tablaEff,iloadmax,maxLoadCondition,maxgamma,diagramIntAxis1,...
 %                               conditions
 %
 %------------------------------------------------------------------------
-% LAST MODIFIED: L.F.Veduzco    2023-04-12
-%                Faculty of Engineering
-%                Autonomous University of Queretaro
+% LAST MODIFIED: L.F.Veduzco    2023-07-03
+% Copyright (c)  Faculty of Engineering
+%                Autonomous University of Queretaro, Mexico
 %------------------------------------------------------------------------
-
-maxef=-100000;
+iloadmax=1;
+maxef=-inf;
 nloads=length(load_conditions(:,1));
 for i=1:nloads
     %% Interaction diagram in the load direction
@@ -119,8 +118,8 @@ for i=1:nloads
     [diagramIntAxis,pot,poc,cvector1,newdispositionRebar,...
     newCoordCorners,newCP,gamma]=InteractionDiagramAxis...
     (npdiag,comborebar,b,h,fy,fdpc,beta1,E,numberRebars1,...
-    numberRebars2,numberRebars3,numberRebars4,...
-    rebarAvailable,dispositionRebar,Mux,Muy);
+    numberRebars2,numberRebars3,numberRebars4,rebarAvailable,...
+    dispositionRebar,Mux,Muy);
 
     newCoordCorners(5,:)=newCoordCorners(1,:);    % to close the drawing
                                                   % of the rotated section

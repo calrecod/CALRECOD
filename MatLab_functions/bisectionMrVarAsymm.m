@@ -1,14 +1,14 @@
 function [raiz]=bisectionMrVarAsymm(cUno,cDos,fr,E,h,b,fdpc,beta,...
-        ea,nv,number_rebars_sup,number_rebars_inf,number_rebars_izq,...
-        number_rebars_der,rebarAvailable,op1,op2,op3,op4,...
+        ea,nv,nRebarsTop,nRebarsBot,nRebarsL,...
+        nRebarsR,rebarAvailable,op1,op2,op3,op4,...
         dispositionRebar,cp)
 
 %------------------------------------------------------------------------
 % Syntax:
 % [raiz]=bisectionMrVarAsymm(cUno,cDos,fr,E,h,b,fdpc,beta,...
-%       ea,nv,number_rebars_sup,number_rebars_inf,number_rebars_izq,...
-%       number_rebars_der,varDisponibles,op1,op2,op3,op4,...
-%       disposicion_varillado,cp)
+%       ea,nv,nRebarsTop,nRebarsBot,nRebarsL,...
+%       nRebarsR,varDisponibles,op1,op2,op3,op4,...
+%       dispositionRebar,cp)
 %
 %-------------------------------------------------------------------------
 % SYSTEM OF UNITS: Any.
@@ -73,23 +73,23 @@ function [raiz]=bisectionMrVarAsymm(cUno,cDos,fr,E,h,b,fdpc,beta,...
 %                               direction of the column cross-section
 %
 %------------------------------------------------------------------------
-% LAST MODIFIED: L.F.Veduzco    2022-02-05
-%                Faculty of Engineering
-%                Autonomous University of Queretaro
+% LAST MODIFIED: L.F.Veduzco    2023-02-05
+% Copyright (c)  Faculty of Engineering
+%                Autonomous University of Queretaro, Mexico
 %------------------------------------------------------------------------
 
 %%%%%%%%%%%%%%%%%%%%%%% f(l) %%%%%%%%%%%%%%%%%%%%%
 
-[eMecVar]=eleMecanicosVarAsymm(dispositionRebar,nv,number_rebars_sup,number_rebars_inf,...
-        number_rebars_izq,number_rebars_der,rebarAvailable,op1,op2,op3,op4,b,h,...
+[eMecVar]=eleMecanicosVarAsymm(dispositionRebar,nv,nRebarsTop,nRebarsBot,...
+        nRebarsL,nRebarsR,rebarAvailable,op1,op2,op3,op4,b,h,...
                                       cUno,fdpc,E,beta,cp);
                               
 frt=eMecVar(1,1)+eMecVar(2,1);
 raizUno=fr-frt;
 
 %%%%%%%%%%%%%%%%%%%%%% f(u) %%%%%%%%%%%%%%%%%%%%%%% 
-[eMecVar]=eleMecanicosVarAsymm(dispositionRebar,nv,number_rebars_sup,number_rebars_inf,...
-        number_rebars_izq,number_rebars_der,rebarAvailable,op1,op2,op3,op4,b,h,...
+[eMecVar]=eleMecanicosVarAsymm(dispositionRebar,nv,nRebarsTop,nRebarsBot,...
+        nRebarsL,nRebarsR,rebarAvailable,op1,op2,op3,op4,b,h,...
                                       cDos,fdpc,E,beta,cp);
 frt=eMecVar(1,1)+eMecVar(2,1);
 raizDos=fr-frt;
@@ -102,8 +102,8 @@ if c==0
 end
 a=beta*c;
 
-[eMecVar]=eleMecanicosVarAsymm(dispositionRebar,nv,number_rebars_sup,number_rebars_inf,...
-        number_rebars_izq,number_rebars_der,rebarAvailable,op1,op2,op3,op4,b,h,...
+[eMecVar]=eleMecanicosVarAsymm(dispositionRebar,nv,nRebarsTop,nRebarsBot,...
+        nRebarsL,nRebarsR,rebarAvailable,op1,op2,op3,op4,b,h,...
                                       c,fdpc,E,beta,cp);
 frt=eMecVar(1,1)+eMecVar(2,1);
 raizc=fr-frt;
@@ -116,44 +116,44 @@ cu=cDos;
 es=abs((c-cu)/c);
 while(es>ea)
     
-if((raizUno*raizc)<0)
-    cDos=c;
-    [eMecVar]=eleMecanicosVarAsymm(dispositionRebar,nv,number_rebars_sup,number_rebars_inf,...
-        number_rebars_izq,number_rebars_der,rebarAvailable,op1,op2,op3,op4,b,h,...
-                                      cDos,fdpc,E,beta,cp);
+    if((raizUno*raizc)<0)
+        cDos=c;
+        [eMecVar]=eleMecanicosVarAsymm(dispositionRebar,nv,nRebarsTop,nRebarsBot,...
+            nRebarsL,nRebarsR,rebarAvailable,op1,op2,op3,op4,b,h,...
+                                          cDos,fdpc,E,beta,cp);
+        frt=eMecVar(1,1)+eMecVar(2,1);
+        raizDos=fr-frt;
+
+        ituno=ituno+1;
+
+    elseif((raizUno*raizc)>0)
+        cUno=c;
+        [eMecVar]=eleMecanicosVarAsymm(dispositionRebar,nv,nRebarsTop,nRebarsBot,...
+                nRebarsL,nRebarsR,rebarAvailable,op1,op2,op3,op4,b,h,...
+                                              cUno,fdpc,E,beta,cp);
+            frt=eMecVar(1,1)+eMecVar(2,1);
+            raizUno=fr-frt;
+
+            itdos=itdos+1;
+    end
+
+    cu=c;
+
+    c=cDos-(raizDos*(cUno-cDos)/(raizUno-raizDos));
+    if c==0
+        c=0.00001;
+    end
+    [eMecVar]=eleMecanicosVarAsymm(dispositionRebar,nv,nRebarsTop,nRebarsBot,...
+            nRebarsL,nRebarsR,rebarAvailable,op1,op2,op3,op4,b,h,...
+                                          c,fdpc,E,beta,cp);
     frt=eMecVar(1,1)+eMecVar(2,1);
-    raizDos=fr-frt;
- 
-    ituno=ituno+1;
+    raizc=fr-frt;
 
-elseif((raizUno*raizc)>0)
-    cUno=c;
-[eMecVar]=eleMecanicosVarAsymm(dispositionRebar,nv,number_rebars_sup,number_rebars_inf,...
-        number_rebars_izq,number_rebars_der,rebarAvailable,op1,op2,op3,op4,b,h,...
-                                      cUno,fdpc,E,beta,cp);
-    frt=eMecVar(1,1)+eMecVar(2,1);
-    raizUno=fr-frt;
-    
-    itdos=itdos+1;
-end
+    es=abs((c-cu)/c);
 
-cu=c;
-
-c=cDos-(raizDos*(cUno-cDos)/(raizUno-raizDos));
-if c==0
-    c=0.00001;
-end
-[eMecVar]=eleMecanicosVarAsymm(dispositionRebar,nv,number_rebars_sup,number_rebars_inf,...
-        number_rebars_izq,number_rebars_der,rebarAvailable,op1,op2,op3,op4,b,h,...
-                                      c,fdpc,E,beta,cp);
-frt=eMecVar(1,1)+eMecVar(2,1);
-raizc=fr-frt;
-
-es=abs((c-cu)/c);
-
-if itdos>100 || ituno>100
-    break;
-end
+    if itdos>100 || ituno>100
+        break;
+    end
 end
 mrt=eMecVar(1,2)+eMecVar(2,2);
 raiz=[c,frt,mrt];   

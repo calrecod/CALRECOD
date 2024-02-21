@@ -34,9 +34,9 @@ function PlotRotRecSecRebarCols(CoordCorners,load_conditions,...
 %                               heigth, respectively)
 %
 %------------------------------------------------------------------------
-% LAST MODIFIED: L.F.Veduzco    2023-02-04
-%                Faculty of Engineering
-%                Autonomous University of Queretaro
+% LAST MODIFIED: L.F.Veduzco    2023-07-03
+% Copyright (c)  Faculty of Engineering
+%                Autonomous University of Queretaro, Mexico
 %------------------------------------------------------------------------
 
 CoordCorners(5,:)=CoordCorners(1,:);                      

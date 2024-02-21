@@ -1,14 +1,13 @@
 function [h,bestArea,bestEf,bestdiagram,bestArrangement,bestDisposition,...
-    bestMr,bestcxy,bestCP,bestCost,bestLoad]=AssemRebarSymAsymIntSurf(b,...
-    h,rec,Ac_sec_elem,E,npdiag,fdpc,beta1,height,wac,pu_sym_cols,...
-    RebarAvailable,load_conditions,ductility,plotRebarDesign)
-
+    bestMr,bestcxy,bestCP,bestCost,bestLoad,bestCFA]=AssemRebarSymAsymIntSurf(b,...
+    h,rec,Ac_sec_elem,E,npdiag,fdpc,beta1,height,wac,RebarAvailable,...
+    load_conditions,ductility,puCostCardBuild,dataCFA,plotRebarDesign)
 %-------------------------------------------------------------------------
 % Syntax:
 % [h,bestArea,bestEf,bestdiagram,bestArrangement,bestDisposition,...
-%  bestMr,bestcxy,bestCP,bestCost,bestLoad]=AssemRebarSymAsymIntSurf(b,...
-%  h,rec,Ac_sec_elem,E,npdiag,fdpc,beta1,height,wac,pu_sym_cols,...
-%  RebarAvailable,load_conditions,ductility,plotRebarDesign)
+%  bestMr,bestcxy,bestCP,bestCost,bestLoad,bestCFA]=AssemRebarSymAsymIntSurf(b,...
+%  h,rec,Ac_sec_elem,E,npdiag,fdpc,beta1,height,wac,RebarAvailable,...
+%  load_conditions,ductility,puCostCardBuild,dataCFA,plotRebarDesign)
 %
 %-------------------------------------------------------------------------
 % SYSTEM OF UNITS: SI - (Kg,cm)
@@ -75,26 +74,23 @@ function [h,bestArea,bestEf,bestdiagram,bestArrangement,bestDisposition,...
 %         beta1:                is determined as specified by code (see 
 %                               Documentation)
 %
-%         pu_sym_cols:          is the database of reinforcement assembly
-%                               and construction unit cost for the most
-%                               symmetrical design prototype: format by
-%                               default:
-%    -----------------------------------------------------------------
-%    pu_col=[PU{#4}, PU{#5}, PU{#6}, PU{#8}, PU{#9}, PU{#10}, ...]
-%    -----------------------------------------------------------------
-%
 %         plotRebarDesign:      is the parameters that indicates if the 
 %                               rebar design results are required or not. 
 %                               Options are: (1) they are required, 
 %                               (2) they are not required
 %
+%         puCostCardBuild:      is a vector containing the parameters
+%                               required for the calculation of the unit
+%                               cost of a rebar design with a 
+%                               "unitCostCardColsRec"
+%
 %------------------------------------------------------------------------
-% LAST MODIFIED: L.F.Veduzco    2023-03-23
-%                Faculty of Engineering
-%                Autonomous University of Queretaro
+% LAST MODIFIED: L.F.Veduzco    2023-02-05
+% Copyright (c)  Faculty of Engineering
+%                Autonomous University of Queretaro, Mexico
 %------------------------------------------------------------------------
-fc=fdpc/0.85;
-iter=0;
+
+iter=0; maxiter=1;
 noptions=0;
 while noptions==0
     iter=iter+1;
@@ -102,14 +98,13 @@ while noptions==0
     % --------------------------------------------------------------------
     % RP-5 (Asym-Sym4Diam)
     % --------------------------------------------------------------------
-    pu_asym_cols=1/0.8*sum(pu_sym_cols)/length(pu_sym_cols);
 
     % Optimal asymmetrical design in individual rebars (option avilable:
     % as many as four rebar diameters symmetrically distributed in number) 
     [Mr_col1,h,bestArea1,cost_elem_col1,bestdiagram1,bestnv1,Ef_sec_col1,...
-    bestArrangement1,bestDisposition1,nv4,bestcxy1,bestCP1,bestLoad1]=...
+    bestArrangement1,bestDisposition1,nv4,bestcxy1,bestCP1,bestLoad1,bestCFA1]=...
     AsymmSym4DiamIntSurf(b,h,rec,Ac_sec_elem,E,npdiag,fdpc,beta1,height,...
-    wac,RebarAvailable,load_conditions,pu_asym_cols,ductility);
+    wac,RebarAvailable,load_conditions,ductility,puCostCardBuild,dataCFA);
 
     if isempty(bestArea1)==0
         if bestArea1<bestArea
@@ -123,18 +118,17 @@ while noptions==0
             bestCP=bestCP1;
             bestCost=cost_elem_col1;
             bestLoad=bestLoad1;
+            bestCFA=bestCFA1;
         end
     end
     % --------------------------------------------------------------------
     % RP-6 (Asym-1Diam)
     % --------------------------------------------------------------------
     
-    pu_asym_cols=1/0.8*sum(pu_sym_cols)/length(pu_sym_cols);
-    
     [Mr_col2,h,bestArea2,bestCost2,bestdiagram21,bestnv2,Ef_sec_col2,...
-    bestArrangement2,bestDisposition2,nv42,bestcxy2,bestCP2,bestLoad2]=...
+    bestArrangement2,bestDisposition2,nv42,bestcxy2,bestCP2,bestLoad2,bestCFA2]=...
     Asym1DiamIntSurf(b,h,rec,Ac_sec_elem,npdiag,fdpc,beta1,load_conditions,...
-    pu_asym_cols,pu_sym_cols,height,wac,RebarAvailable,ductility);
+    height,wac,RebarAvailable,ductility,puCostCardBuild,dataCFA);
 
     if isempty(bestArea2)==0
         if bestArea2<bestArea
@@ -148,6 +142,7 @@ while noptions==0
             bestCP=bestCP2;
             bestCost=bestCost2;
             bestLoad=bestLoad2;
+            bestCFA=bestCFA2;
         end
     end
 
@@ -155,12 +150,10 @@ while noptions==0
     % RP-7 (Asym-4Diam)
     % --------------------------------------------------------------------
 
-    pu_asym_cols=1/0.7*sum(pu_sym_cols)/length(pu_sym_cols);
-
     [Mr_col3,h,bestArea3,bestCost3,bestdiagram31,bestnv3,Ef_sec_col3,...
-    bestArrangement3,bestDisposition3,nv43,bestcxy3,bestCP3,bestLoad3]=...
+    bestArrangement3,bestDisposition3,nv43,bestcxy3,bestCP3,bestLoad3,bestCFA3]=...
     Asym4DiamIntSurf(b,h,rec,Ac_sec_elem,E,npdiag,fdpc,beta1,RebarAvailable,...
-    height,wac,load_conditions,pu_asym_cols,ductility);
+    height,wac,load_conditions,ductility,puCostCardBuild,dataCFA);
 
     if isempty(bestArea3)==0
         if bestArea3<bestArea
@@ -174,17 +167,34 @@ while noptions==0
             bestCP=bestCP3;
             bestCost=bestCost3;
             bestLoad=bestLoad3;
+            bestCFA=bestCFA3;
         end
     end
     
     if (isempty(Mr_col1)==1 && isempty(Mr_col2)==1 && ...
             isempty(Mr_col3)==1)
-        if fc<2000 % units: kg,cm
-            h=h+5;
-        else       % units: lb,in
-            h=h+2;
+        
+        if iter <= maxiter
+            if fdpc<2000 % units: kg,cm
+                h=h+5;
+            else       % units: lb,in
+                h=h+2;
+            end
+            continue;
+        else
+            bestArea=[];
+            bestEf=[];
+            bestdiagram=[];
+            bestArrangement=[];
+            bestDisposition=[];
+            bestMr=[];
+            bestcxy=[];
+            bestCP=[];
+            bestCost=[];
+            bestLoad=[];
+            bestCFA=[];
+            break;
         end
-        continue;
 
     else
         break;

@@ -22,9 +22,9 @@ function [dispositionRebar,separation]=RebarDispositionCirc(diam,rec,dv,nv)
 %         rec:                  is the concrete cover
 %
 %------------------------------------------------------------------------
-% LAST MODIFIED: L.F.Veduzco    2023-01-26
-%                Faculty of Engineering
-%                Autonomous University of Queretaro
+% LAST MODIFIED: L.F.Veduzco    2023-07-03
+% Copyright (c)  Faculty of Engineering
+%                Autonomous University of Queretaro, Mexico
 %------------------------------------------------------------------------
 
 separation=round((pi*(diam-2*rec)-nv*dv)/nv,1);

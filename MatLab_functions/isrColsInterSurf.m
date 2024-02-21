@@ -73,14 +73,14 @@ function [b,h,cost_elem_col,Ac_sec_elem,Ef_sec_col,Mr_col,t_value_x,...
 %                           are not required
 %
 %------------------------------------------------------------------------
-% LAST MODIFIED: L.F.Veduzco    2022-02-05
-%                Faculty of Engineering
-%                Autonomous University of Queretaro
+% LAST MODIFIED: L.F.Veduzco    2023-02-05
+% Copyright (c)  Faculty of Engineering
+%                Autonomous University of Queretaro, Mexico
 %------------------------------------------------------------------------
 
-load_conditions(:,2:4)=abs(load_conditions(:,2:4));
 npdiag=30; % number of points to be computed for the interaction diagram
 Ac_sec_elem=0;
+maxiter=1;
 iter=0;
 while Ac_sec_elem==0
     %% ISR optimization process with the Steepest Gradient Descent method
@@ -239,7 +239,9 @@ while Ac_sec_elem==0
             break;
         end
     end
-    
+    if iter==maxiter
+        break;
+    end
     if tk1>=tmax
         fprintf("\nThe column cross-section is too small");
         if fc<2000 % units: (Kg,cm)

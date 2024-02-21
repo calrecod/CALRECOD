@@ -54,9 +54,9 @@ function [eMecVar]=eleMecanicosVarAsymm(dispositionRebar,nv,number_rebars_sup,..
 %                               direction of the column cross-section
 %
 %------------------------------------------------------------------------
-% LAST MODIFIED: L.F.Veduzco    2022-02-05
-%                Faculty of Engineering
-%                Autonomous University of Queretaro
+% LAST MODIFIED: L.F.Veduzco    2023-02-05
+% Copyright (c)  Faculty of Engineering
+%                Autonomous University of Queretaro, Mexico
 %------------------------------------------------------------------------
 
 coordy_cp=0.5*h-cp;

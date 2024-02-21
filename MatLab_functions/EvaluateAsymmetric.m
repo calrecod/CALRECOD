@@ -61,9 +61,9 @@ function [maxef,diagramaInteraccion,efficiency,cp_axis,cxy]=...
 %                               definition of the interaction diagram
 %
 %------------------------------------------------------------------------
-% LAST MODIFIED: L.F.Veduzco    2022-02-05
-%                Faculty of Engineering
-%                Autonomous University of Queretaro
+% LAST MODIFIED: L.F.Veduzco    2023-02-05
+% Copyright (c)  Faculty of Engineering
+%                Autonomous University of Queretaro, Mexico
 %------------------------------------------------------------------------
 if npoints<3
     disp('Error: the number of points for the Interaction Diagram must be 3 or higher');
@@ -134,8 +134,8 @@ for sentido=1:2
     if (sentido==2)
        h=dimensionesColumna(1);
        b=dimensionesColumna(2);
-       dispositionRebar(:,1)=-rebar(:,2);
-       dispositionRebar(:,2)=rebar(:,1);
+       dispositionRebar(:,1)=rebar(:,2);
+       dispositionRebar(:,2)=-rebar(:,1);
     end
     % Plastic Center
     [cp]=PlastiCenterAxis(fy,fdpc,b,h,dispositionRebar,arregloVar,...

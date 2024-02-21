@@ -1,14 +1,16 @@
 function [Mr_col,h,bestArea,lowestCost,ovMostEc,nvEc,maxEfEc,...
     bestArrangement,bestDisposition,nvxy,bestdiagram,bestLoad]=...
-    optrebarColsSymIntSurf(b,h,rec,act,E,npdiag,fdpc,beta1,pu_col_sym,...
-    RebarAvailable,wac,height,load_conditions,plotRebarDesign)
+    optrebarColsSymIntSurf(b,h,rec,act,E,npdiag,fdpc,beta1,...
+    RebarAvailable,wac,height,load_conditions,puCostCardBuild,...
+    plotRebarDesign)
 
 %------------------------------------------------------------------------
 % Syntax:
 % [Mr_col,h,bestArea,lowestCost,ovMostEc,nvEc,maxEfEc,...
 % bestArrangement,bestDisposition,nvxy,bestdiagram,bestLoad]=...
-% optrebarColsSymIntSurf(b,h,rec,act,E,npdiag,fdpc,beta1,pu_col_sym,...
-% RebarAvailable,wac,height,load_conditions,plotRebarDesign)
+% optrebarColsSymIntSurf(b,h,rec,act,E,npdiag,fdpc,beta1,...
+% RebarAvailable,wac,height,load_conditions,puCostCardBuild,...
+% plotRebarDesign)
 %
 %-------------------------------------------------------------------------
 % SYSTEM OF UNITS: SI - (Kg,cm)
@@ -83,23 +85,24 @@ function [Mr_col,h,bestArea,lowestCost,ovMostEc,nvEc,maxEfEc,...
 %         beta1:                is determined as specified by code (see 
 %                               Documentation)
 %
-%         pu_col:               is the database of reinforcement assembly
-%                               and construction unit cost: format by
-%                               default:
-%    -----------------------------------------------------------------
-%    pu_col=[PU{#4}, PU{#5}, PU{#6}, PU{#8}, PU{#9}, PU{#10}, ...]
-%    -----------------------------------------------------------------
-%
 %         plotRebarDesign:      is the parameters that indicates if the 
 %                               rebar design results are required or not. 
 %                               Options are: (1) they are required, 
 %                               (2) they are not required
 %
+%         puCostCardBuild:      is a vector containing the parameters
+%                               required for the calculation of the unit
+%                               cost of a rebar design with a 
+%                               "unitCostCardColsRec"
+%
 %------------------------------------------------------------------------
-% LAST MODIFIED: L.F.Veduzco    2022-02-05
-%                Faculty of Engineering
-%                Autonomous University of Queretaro
+% LAST MODIFIED: L.F.Veduzco    2023-07-03
+% Copyright (c)  Faculty of Engineering
+%                Autonomous University of Queretaro, Mexico
 %------------------------------------------------------------------------
+pucb=puCostCardBuild;
+pu_col_sym=unitCostCardColsRec(pucb(1),pucb(2),pucb(3),pucb(4),pucb(5),...
+                               pucb(6),pucb(7));
 fy=E*0.0021;
 bp=b-2*rec(1);
 hp=h-2*rec(2);
@@ -151,7 +154,7 @@ while noptions==0
             
             continue;
         else
-            costo=nv*av*height*wac*pu_col_sym(i);
+            costo=nv*av*height*wac*pu_col_sym;
             
             for type=minVarillasSup:maxVarillasSup
                 varSup=type;
@@ -165,8 +168,8 @@ while noptions==0
                 [eficiencia,iloadmax,bestLoad1,gamma,...
                 diagrama,rotdispositionRebar,rotsection,cxy,cp]=...
                 multiDiagAxisColRec(b,h,load_conditions,[i,i,i,i],npdiag,...
-                fy,fdpc,beta1,E,varSup,varSup,...
-                varCos,varCos,RebarAvailable,disposicion_varillado);
+                fy,fdpc,beta1,E,varSup,varSup,varCos,varCos,...
+                RebarAvailable,disposicion_varillado);
             
                 maxef=eficiencia(iloadmax,5);
                 

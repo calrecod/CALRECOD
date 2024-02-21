@@ -1,15 +1,15 @@
 function [Mr_col,h,bestArea,bestCost,bestdiagram,bestnv,bestEf,...
-    bestArrangement,bestDisposition,nv4,bestcxy,bestLoad]=...
+    bestArrangement,bestDisposition,nv4,bestcxy,bestLoad,bestCFA]=...
     supOptRebarSym2PackIntSurf(b,h,rec,act,E,npdiag,fdpc,beta1,...
-    pu_col_sym,load_conditions,wac,height,RebarAvailable,ductility,...
-    plotRebarDesign)
+    load_conditions,wac,height,RebarAvailable,ductility,...
+    puCostCardBuild,dataCFA,plotRebarDesign)
 %-------------------------------------------------------------------------
 % Syntax:
 % [Mr_col,h,bestArea,bestCost,bestdiagram,bestnv,bestEf,...
-%  bestArrangement,bestDisposition,nv4,bestcxy,bestLoad]=...
+%  bestArrangement,bestDisposition,nv4,bestcxy,bestLoad,bestCFA]=...
 %  supOptRebarSym2PackIntSurf(b,h,rec,act,E,npdiag,fdpc,beta1,...
-%  pu_col_sym,load_conditions,wac,height,RebarAvailable,ductility,...
-%  plotRebarDesign)
+%  load_conditions,wac,height,RebarAvailable,ductility,...
+%  puCostCardBuild,dataCFA,plotRebarDesign)
 %
 %-------------------------------------------------------------------------
 % SYSTEM OF UNITS: SI - (Kg,cm)
@@ -87,13 +87,6 @@ function [Mr_col,h,bestArea,bestCost,bestdiagram,bestnv,bestEf,...
 %         beta1:                is determined as specified by code (see 
 %                               Documentation)
 %
-%         pu_col_sym:           is the database of reinforcement assembly
-%                               and construction unit cost: format by
-%                               default:
-%    -----------------------------------------------------------------
-%    pu_col=[PU{#4}, PU{#5}, PU{#6}, PU{#8}, PU{#9}, PU{#10}, PU{#12}]
-%    -----------------------------------------------------------------
-%
 %         plotRebarDesign:      is the parameters that indicates if the 
 %                               rebar design results are required or not. 
 %                               Options are: (1) they are required, 
@@ -103,15 +96,19 @@ function [Mr_col,h,bestArea,bestCost,bestdiagram,bestnv,bestEf,...
 %                               of ductility demand to desing the rebar, 
 %                               according to code specifications
 %
+%         puCostCardBuild:      is a vector containing the parameters
+%                               required for the calculation of the unit
+%                               cost of a rebar design with a 
+%                               "unitCostCardColsRec" 
+%
 %------------------------------------------------------------------------
-% LAST MODIFIED: L.F.Veduzco    2022-06-21
-%                Faculty of Engineering
-%                Autonomous University of Queretaro
+% LAST MODIFIED: L.F.Veduzco    2023-07-03
+% Copyright (c)  Faculty of Engineering
+%                Autonomous University of Queretaro, Mexico
 %------------------------------------------------------------------------
-
-puSym2cols=1.15*sum(pu_col_sym)/length(pu_col_sym); % average unit-cost of 
-                                                    % rebar assembly, by 
-                                                    % default
+pucb=puCostCardBuild;
+pu_col_sym=unitCostCardColsRec(pucb(1),pucb(2),pucb(3),pucb(4),pucb(5),...
+                               pucb(6),pucb(7));  
 fy=E*0.0021; % yield stress of reinforcing steel 
 
 bp=b-2*rec(1);
@@ -162,7 +159,8 @@ while noptions==0
         if (2*maxVarillasSup+2*maxVarillasCos<nv)
             continue;
         else
-            bestCost1=nv*av*height*wac*pu_col_sym(i); % cost of pre 
+            
+            bestCost1=nv*av*height*wac*pu_col_sym; % cost of pre 
                                                       % symmetrical design
             
             for type=minVarillasSup:maxVarillasSup
@@ -198,11 +196,13 @@ while noptions==0
                 
                 % Symmetrical design with as many as 2 types of rebar
                 % with options of two-packs
+                
                 [av4_2,bestasbar2,bestEf2,bestdiagram2,arregloVar2,...
-                bestDisposition2,bestMr2,bestcxy2,bestCost2,bestLoad2]=...
+                bestDisposition2,bestMr2,bestcxy2,bestCost2,bestLoad2,bestCFA2]=...
                 sym2typeRebarIntSurf(disposicion_varillado,op,...
                 arraySymOriginal,RebarAvailable,b,h,fy,fdpc,beta1,E,...
-                load_conditions,wac,height,npdiag,ductility,puSym2cols);
+                load_conditions,wac,height,npdiag,ductility,puCostCardBuild,...
+                dataCFA);
             
                 bestnv2=nv;
                 nv4_2=arraySymOriginal;
@@ -218,7 +218,7 @@ while noptions==0
                             bestLoad=bestLoad2;
                             bestArea=bestasbar2;
                             bestCost=bestCost2;
-                            
+                            bestCFA=bestCFA2;
                             bestEf=bestEf2;
                             Mr_col=bestMr2;
                             
@@ -235,7 +235,7 @@ while noptions==0
                             bestArea=bestasbar1;
                             bestLoad=bestLoad1;
                             bestCost=bestCost1;
-                            
+                            bestCFA=1;
                             bestEf=bestEf1;
                             Mr_col=bestMr1;
                             
@@ -264,7 +264,7 @@ while noptions==0
                         bestArea=bestasbar1;
                         bestLoad=bestLoad1;
                         bestCost=bestCost1;
-                        
+                        bestCFA=1;
                         bestEf=bestEf1;
                         
                         Mr_col=bestMr1;
@@ -294,7 +294,7 @@ while noptions==0
     if noptions==0
         fprintf('\nThe dimensions of the columns are too small for rebar.\n');
         fprintf('with this rebar prototype Sym-2pack.\n');
-
+        bestCFA=[];
         bestdiagram=bestdiagram2;
         bestDisposition=[];
         bestArrangement=[];
@@ -317,7 +317,7 @@ if plotRebarDesign==1 && noptions>0
              -0.5*b -0.5*h;
               0.5*b -0.5*h;
               0.5*b 0.5*h];
-      
+          
     PlotRotRecSecRebarCols(section,bestLoad,bestdiagram,...
                     bestDisposition,b,h,bestArrangement);
 end

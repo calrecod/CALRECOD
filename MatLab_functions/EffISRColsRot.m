@@ -71,12 +71,12 @@ function [maxef,tablaEff,iloadmax,maxLoadCondition,maxgamma,diagramIntAxis1,...
 %         E:                  Elasticity modulus of the reinforcing steel
 %
 %------------------------------------------------------------------------
-% LAST MODIFIED: L.F.Veduzco    2023-06-22
-%                Faculty of Engineering
-%                Autonomous University of Queretaro
+% LAST MODIFIED: L.F.Veduzco    2023-02-05
+% Copyright (c)  Faculty of Engineering
+%                Autonomous University of Queretaro, Mexico
 %------------------------------------------------------------------------
 
-maxef=-100000;
+maxef=-inf;
 nloads=length(load_conditions(:,1));
 for i=1:nloads
     %% Interaction diagram in the load direction

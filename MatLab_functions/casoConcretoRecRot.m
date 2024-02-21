@@ -35,11 +35,11 @@ function elemConc=casoConcretoRecRot(a,fdpc,b,h,RotCornerSec,rotCP,gamma)
 %         gamma:            is the angle of rotation of the cross-section
 %
 %------------------------------------------------------------------------
-% LAST MODIFIED: L.F.Veduzco    2023-02-04
-%                Faculty of Engineering
-%                Autonomous University of Queretaro
+% LAST MODIFIED: L.F.Veduzco    2023-02-05
+% Copyright (c)  Faculty of Engineering
+%                Autonomous University of Queretaro, Mexico
 %------------------------------------------------------------------------
-
+areaCo=0;
 % Slope for boundary 1
 m1=(RotCornerSec(1,2)-RotCornerSec(2,2))/...
     (RotCornerSec(1,1)-RotCornerSec(2,1));
@@ -496,8 +496,11 @@ elseif gamma>=270 && gamma<=360 % Case 4
         end
     end
 end
-
+if areaCo==0
+    areaCo=1e-6;
+end
 yc=mc/areaCo; % depth of the concrete compressión zone's centroid
+
 ha=max(RotCornerSec(:,2))-min(RotCornerSec(:,2));
 if (a>ha)
     areaCo=b*h;

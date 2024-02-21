@@ -45,9 +45,9 @@ function [c_best,bestMr,bestEf,best_area,tbest,h]=SGD1tBeamsISR(b,h,duct,...
 %                               (Kg/cm2)
 %
 %------------------------------------------------------------------------
-% LAST MODIFIED: L.F.Veduzco    2022-02-05
-%                Faculty of Engineering
-%                Autonomous University of Queretaro
+% LAST MODIFIED: L.F.Veduzco    2023-07-03
+% Copyright (c)  Faculty of Engineering
+%                Autonomous University of Queretaro, Mexico
 %------------------------------------------------------------------------
 
 fy=E*0.0021; % yield stress of the reinforcing steel

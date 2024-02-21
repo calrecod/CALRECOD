@@ -64,16 +64,16 @@ function [Mr_col,Inertia,bestArea,bestCost,bestdiagram,bestnv,bestobar,...
 %         fdpc:                 is 0.85*f'c
 %          
 %         pu_col_circ:          is the rebar unit construction cost:
-%                               vector size: [1,nCommercialRebars]
+%                               vector size: 1 x nCommercialRebars
 %
 %         plotRebarDesign:      is the parameter that indicates if the 
 %                               rebar design results are required to plot
 %                               not. Option are: (1) do plot, (2) do not
 %
 %------------------------------------------------------------------------
-% LAST MODIFIED: L.F.Veduzco    2023-03-19
-%                Faculty of Engineering
-%                Autonomous University of Queretaro
+% LAST MODIFIED: L.F.Veduzco    2023-07-03
+% Copyright (c)  Faculty of Engineering
+%                Autonomous University of Queretaro, Mexico
 %------------------------------------------------------------------------
 
 fc=fdpc/0.85;

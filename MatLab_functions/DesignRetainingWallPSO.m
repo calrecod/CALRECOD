@@ -123,9 +123,9 @@ function [bestPerformance,bestPosition,besttippingFS,bestslideFS,...
 %         LF_DL:                is the Dead Load Design Factor
 %
 %------------------------------------------------------------------------
-% LAST MODIFIED: L.F.Veduzco    2023-04-05
-%                Faculty of Engineering
-%                Autonomous University of Queretaro
+% LAST MODIFIED: L.F.Veduzco    2023-02-05
+% Copyright (c)  Faculty of Engineering
+%                Autonomous University of Queretaro, Mexico
 %------------------------------------------------------------------------
 
 %% PSO algorithmic parameters 

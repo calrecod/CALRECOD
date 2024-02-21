@@ -1,14 +1,14 @@
 function [Mr_col,h,bestArea,bestCost,bestdiagram,bestnv,bestEf,...
-    bestArrangement,bestDisposition,nv4,bestcxy,bestCP,bestLoad]=...
+    bestArrangement,bestDisposition,nv4,bestcxy,bestCP,bestLoad,bestCFA]=...
     Asym1DiamIntSurf(b,h,rec,act,npdiag,fdpc,beta1,load_conditions,...
-    pu_asym_cols,pu_col_sym,height,wac,RebarAvailable,ductility)
+    height,wac,RebarAvailable,ductility,puCostCardBuild,dataCFA)
 
 %-------------------------------------------------------------------------
 % Syntax:
 % [Mr_col,h,bestArea,bestCost,bestdiagram,bestnv,bestEf,...
-% bestArrangement,bestDisposition,nv4,bestcxy,bestCP,bestLoad]=...
+% bestArrangement,bestDisposition,nv4,bestcxy,bestCP,bestLoad,bestCFA]=...
 % Asym1DiamIntSurf(b,h,rec,act,npdiag,fdpc,beta1,load_conditions,...
-% pu_asym_cols,pu_col_sym,height,wac,RebarAvailable,ductility)
+% height,wac,RebarAvailable,ductility,puCostCardBuild,dataCFA)
 %
 %-------------------------------------------------------------------------
 % SYSTEM OF UNITS: SI - (Kg,cm)
@@ -98,19 +98,20 @@ function [Mr_col,h,bestArea,bestCost,bestdiagram,bestnv,bestEf,...
 %                               reinforcement designs. A number between 1
 %                               to 3 (see Documentation)
 %
-%         pu_sym_cols:          is the database of reinforcement assembly
-%                               and construction unit cost for the most
-%                               symmetrical design prototype: format by
-%                               default:
-%    -----------------------------------------------------------------
-%    pu_col=[PU{#4}, PU{#5}, PU{#6}, PU{#8}, PU{#9}, PU{#10}, ...]
-%    -----------------------------------------------------------------
+%         puCostCardBuild:      is a vector containing the parameters
+%                               required for the calculation of the unit
+%                               cost of a rebar design with a 
+%                               "unitCostCardColsRec"
 %
 %------------------------------------------------------------------------
-% LAST MODIFIED: L.F.Veduzco    2022-06-21
-%                Faculty of Engineering
-%                Autonomous University of Queretaro
+% LAST MODIFIED: L.F.Veduzco    2023-02-05
+% Copyright (c)  Faculty of Engineering
+%                Autonomous University of Queretaro, Mexico
 %------------------------------------------------------------------------
+pccb=puCostCardBuild;
+pu_col_sym=unitCostCardColsRec(pccb(1),pccb(2),pccb(3),...
+                                 pccb(4),pccb(5),pccb(6),pccb(7));
+
 fc=fdpc/0.85;
 
 bp=b-2*rec(1);
@@ -158,7 +159,7 @@ while noptions==0
         elseif 2*maxVarillasSup>nv
             continue;
         else
-            costo=nv*av*height*wac*pu_col_sym(i); % This cost is used to
+            costo=nv*av*height*wac*pu_col_sym; % This cost is used to
                                                    % estimate the cost
                                                    % savings of each
                                                    % asymmetrical rebar
@@ -179,10 +180,10 @@ while noptions==0
                 % Asymmetrical design with only one type of rebar
                 [av4_1,nv4_1,arregloVar1,bestDisposition1,...
                 bestnv1,bestMr1,bestEf1,bestcxy1,bestCP1,bestasbar1,...
-                bestdiagram1,bestCost1,maxLoad]=asym1typeRebarIntSurf...
+                bestdiagram1,bestCost1,maxLoad,bestCFA1]=asym1typeRebarIntSurf...
                 (fdpc,nvxy,arraySymOriginal,b,h,rec,RebarAvailable,op,av,...
-                npdiag,costo,pu_asym_cols,wac,height,load_conditions,...
-                ductility,beta1);
+                npdiag,wac,height,load_conditions,...
+                ductility,beta1,puCostCardBuild,dataCFA);
                 
                 if isempty(bestasbar1)==0
                     noptions=noptions+1;
@@ -200,7 +201,7 @@ while noptions==0
                         av4=av4_1;
                         bestcxy=bestcxy1;
                         bestCP=bestCP1;
-                    
+                        bestCFA=bestCFA1;
                         vx1Ec=nv4(1);
                         vx2Ec=nv4(2); 
                         vy1Ec=nv4(3);
@@ -235,6 +236,7 @@ while noptions==0
         bestcxy=[];
         bestCP=[];
         Mr_col=[];
+        bestCFA=[];
         
         break;
     end

@@ -1,16 +1,16 @@
 function [Mr_col,h,Inertia_xy_modif,bestArea,bestCost,bestdiagram,...
     bestdiagram2,bestnv,bestEf,bestArrangement,bestDisposition,nv4,...
-    bestcxy,bestCP]=AssembledRebarSymAsym2packs(b,h,rec,act,E,npdiag,...
-    fdpc,beta1,load_conditions,pu_sym_cols,RebarAvailable,height,wac,...
-    condition_cracking,ductility)
+    bestcxy,bestCP,bestCFA]=AssembledRebarSymAsym2packs(b,h,rec,act,E,...
+    npdiag,fdpc,beta1,load_conditions,RebarAvailable,height,wac,...
+    condition_cracking,ductility,puCostCardBuild,dataCFA)
 
 %-------------------------------------------------------------------------
 % Syntax:
 % [Mr_col,h,Inertia_xy_modif,bestArea,bestCost,bestdiagram,...
 %  bestdiagram2,bestnv,bestEf,bestArrangement,bestDisposition,nv4,...
-%  bestcxy,bestCP]=AssembledRebarSymAsym2packs(b,h,rec,act,E,npdiag,fdpc,...
-%  beta1,load_conditions,pu_asym_cols,RebarAvailable,height,wac,...
-%  condition_cracking,ductility)
+%  bestcxy,bestCP,bestCFA]=AssembledRebarSymAsym2packs(b,h,rec,act,E,...
+%  npdiag,fdpc,beta1,load_conditions,RebarAvailable,height,wac,...
+%  condition_cracking,ductility,puCostCardBuild,dataCFA)
 %
 %-------------------------------------------------------------------------
 % SYSTEM OF UNITS: SI - (Kg,cm)
@@ -75,18 +75,16 @@ function [Mr_col,h,Inertia_xy_modif,bestArea,bestCost,bestdiagram,...
 %         beta1:                is determined as specified by code (see 
 %                               Documentation)
 %
-%         pu_sym_cols:          is the database of reinforcement assembly
-%                               and construction unit cost: format by
-%                               default:
-%    -----------------------------------------------------------------
-%    pu_col=[PU{#4}, PU{#5}, PU{#6}, PU{#8}, PU{#9}, PU{#10}, PU{#12}]
-%    -----------------------------------------------------------------
-%
 %         condition_cracking:   parameter that indicates which cross-section
 %                               cracking mechanism will be consider, either 
 %                               Cracked or Non-cracked. If the condition 
 %                               Non-cracked is set, then the cracking 
 %                               mechanism will be neglected by all means
+%
+%         puCostCardBuild:      is a vector containing the parameters
+%                               required for the calculation of the unit
+%                               cost of a rebar design with a 
+%                               "unitCostCardColsRec"
 %
 %         plotRebarDesign:      is the parameters that indicates if the 
 %                               rebar design results are required or not. 
@@ -94,16 +92,16 @@ function [Mr_col,h,Inertia_xy_modif,bestArea,bestCost,bestdiagram,...
 %                               (2) they are not required
 %
 %------------------------------------------------------------------------
-% LAST MODIFIED: L.F.Veduzco    2022-06-21
-%                Faculty of Engineering
-%                Autonomous University of Queretaro
+% LAST MODIFIED: L.F.Veduzco    2023-02-05
+% Copyright (c)  Faculty of Engineering
+%                Autonomous University of Queretaro, Mexico
 %------------------------------------------------------------------------
 
+pccb=puCostCardBuild;
+pu_col_sym=unitCostCardColsRec(pccb(1),pccb(2),pccb(3),...
+                                 pccb(4),pccb(5),pccb(6),pccb(7));
+                             
 fy=E*0.0021; % yield stress of reinforcing steel
-pu_col_sym=[29.19, 29.06, 28.93, 28.93, 28.93, 28.93, 28.93];
-pu=load_conditions(1,2);
-mux=load_conditions(1,3);
-muy=load_conditions(1,4);
 
 ndiam=length(RebarAvailable(:,1));
 
@@ -154,7 +152,7 @@ while noptions==0
             continue;
         else
             
-            costo=nv*av*height*wac*pu_col_sym(i);
+            costo=nv*av*height*wac*pu_col_sym;
             
             for type=minVarillasSup:maxVarillasSup
                 varSup=type;
@@ -172,27 +170,24 @@ while noptions==0
                 % Asymmetrical design with only one rebar diameter
                 % in packs of two ---------------------------------------
                 
-                pu_asym_cols=1/0.75*sum(pu_sym_cols)/length(pu_sym_cols);
-
                 [av4_1,nv4_1,relyEffList,arregloVar1,bestDisposition1,...
                 bestnv1,bestMr1,bestEf1,bestcxy1,bestCP1,bestasbar1,...
-                bestdiagram11,bestdiagrama12,bestCost1]=asym1typeRebar2pack...
+                bestdiagram11,bestdiagrama12,bestCost1,bestCFA1]=asym1typeRebar2pack...
                 (fdpc,nvxy,arraySymOriginal,b,h,rec,RebarAvailable,op,av,...
-                npdiag,costo,pu_asym_cols,height,wac,load_conditions,...
-                ductility,beta1);
+                npdiag,height,wac,load_conditions,ductility,beta1,...
+                puCostCardBuild,dataCFA);
             
                 if isempty(nv4_1)==0
                     noptions=noptions+1;
                     % Asymmetrical design with as many as 4 types of rebar
                     % asymmetrical also in number of rebars --------------
-                    pu_asym_cols=1/0.6*sum(pu_sym_cols)/length(pu_sym_cols);
                     
                     [av4_2,relyEffList,bestasbar2,bestEf2,bestdiagrama21,...
                     bestdiagrama22,arregloVar2,bestDisposition2,bestMr2,...
-                    bestcxy2,bestCP2,bestCost2]=asymSym4Diam...
+                    bestcxy2,bestCP2,bestCost2,bestCFA2]=asymSym4Diam...
                     (bestDisposition1,op,nv4_1,RebarAvailable,rec,b,h,...
-                    fy,fdpc,beta1,E,pu_asym_cols,height,wac,load_conditions,...
-                    npdiag,ductility);
+                    fy,fdpc,beta1,E,height,wac,load_conditions,...
+                    npdiag,ductility,puCostCardBuild,dataCFA);
 
                     bestnv2=bestnv1;
                     nv4_2=nv4_1;
@@ -204,14 +199,12 @@ while noptions==0
                 % Asymmetrical design with as many as 4 types of rebar
                 % in packs of two ---------------------------------------
                 
-                pu_asym_cols=1/0.7*sum(pu_sym_cols)/length(pu_sym_cols);
-
                 [av4_3,relyEffList,bestasbar3,bestEf3,bestdiagrama31,...
                 bestdiagrama32,arregloVar3,bestDisposition3,bestMr3,...
-                bestcxy3,bestCP3,bestCost3]=asymSym4Diam...
+                bestcxy3,bestCP3,bestCost3,bestCFA3]=asymSym4Diam...
                 (disposicion_varillado,op,arraySymOriginal,RebarAvailable,...
-                rec,b,h,fy,fdpc,beta1,E,pu_asym_cols,height,wac,...
-                load_conditions,npdiag,ductility);
+                rec,b,h,fy,fdpc,beta1,E,height,wac,...
+                load_conditions,npdiag,ductility,puCostCardBuild,dataCFA);
                 
                 bestnv3=nv;
                 nv4_3=arraySymOriginal;
@@ -236,7 +229,7 @@ while noptions==0
                             av4=av4_2;
                             bestcxy=bestcxy2;
                             bestCP=bestCP2;
-                            
+                            bestCFA=bestCFA2;
                             vx1Ec=nv4(1);
                             vx2Ec=nv4(2); 
                             vy1Ec=nv4(3);
@@ -262,6 +255,7 @@ while noptions==0
                             av4=av4_1;
                             bestcxy=bestcxy1;
                             bestCP=bestCP1;
+                            bestCFA=bestCFA1;
                             
                             vx1Ec=nv4(1);
                             vx2Ec=nv4(2); 
@@ -288,7 +282,7 @@ while noptions==0
                             av4=av4_3;
                             bestcxy=bestcxy3;
                             bestCP=bestCP3;
-                            
+                            bestCFA=bestCFA3;
                             vx1Ec=nv4(1);
                             vx2Ec=nv4(2); 
                             vy1Ec=nv4(3);
@@ -319,6 +313,7 @@ while noptions==0
                             av4=av4_2;
                             bestcxy=bestcxy2;
                             bestCP=bestCP2;
+                            bestCFA=bestCFA2;
                             
                             vx1Ec=nv4(1);
                             vx2Ec=nv4(2); 
@@ -345,6 +340,7 @@ while noptions==0
                             av4=av4_1;
                             bestcxy=bestcxy1;
                             bestCP=bestCP1;
+                            bestCFA=bestCFA1;
                             
                             vx1Ec=nv4(1);
                             vx2Ec=nv4(2); 
@@ -376,6 +372,7 @@ while noptions==0
                             av4=av4_1;
                             bestcxy=bestcxy1;
                             bestCP=bestCP1;
+                            bestCFA=bestCFA1;
                             
                             vx1Ec=nv4(1);
                             vx2Ec=nv4(2); 
@@ -402,6 +399,7 @@ while noptions==0
                             av4=av4_3;
                             bestcxy=bestcxy3;
                             bestCP=bestCP3;
+                            bestCFA=bestCFA3;
                             
                             vx1Ec=nv4(1);
                             vx2Ec=nv4(2); 
@@ -433,7 +431,7 @@ while noptions==0
                             av4=av4_1;
                             bestcxy=bestcxy1;
                             bestCP=bestCP1;
-                            
+                            bestCFA=bestCFA1;
                             vx1Ec=nv4(1);
                             vx2Ec=nv4(2); 
                             vy1Ec=nv4(3);
@@ -459,7 +457,7 @@ while noptions==0
                             av4=av4_2;
                             bestcxy=bestcxy2;
                             bestCP=bestCP2;
-                            
+                            bestCFA=bestCFA2;
                             vx1Ec=nv4(1);
                             vx2Ec=nv4(2); 
                             vy1Ec=nv4(3);
@@ -489,7 +487,7 @@ while noptions==0
                         av4=av4_1;
                         bestcxy=bestcxy1;
                         bestCP=bestCP1;
-                        
+                        bestCFA=bestCFA1;
                         vx1Ec=nv4(1);
                         vx2Ec=nv4(2); 
                         vy1Ec=nv4(3);
@@ -517,7 +515,7 @@ while noptions==0
                         av4=av4_2;
                         bestcxy=bestcxy2;
                         bestCP=bestCP2;
-                        
+                        bestCFA=bestCFA2;
                         vx1Ec=nv4(1);
                         vx2Ec=nv4(2); 
                         vy1Ec=nv4(3);
@@ -545,6 +543,7 @@ while noptions==0
                         av4=av4_3;
                         bestcxy=bestcxy3;
                         bestCP=bestCP3;
+                        bestCFA=bestCFA3;
                         
                         vx1Ec=nv4(1);
                         vx2Ec=nv4(2); 
@@ -583,7 +582,7 @@ while noptions==0
         bestCost=[];
         bestcxy=[];
         bestCP=[];
-
+        bestCFA=[];
         Mr_col=[];
         if fc<2000 % units: kg,cm
             h=h+5;

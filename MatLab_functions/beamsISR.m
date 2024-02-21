@@ -149,9 +149,9 @@ function [sepbarsRestricSections,b,h,inertia_modif,dispositionBar_Der,barArrange
 %                                            (2) they are not required
 %
 %------------------------------------------------------------------------
-% LAST MODIFIED: L.F.Veduzco    2022-02-05
-%                Faculty of Engineering
-%                Autonomous University of Queretaro
+% LAST MODIFIED: L.F.Veduzco    2023-02-05
+% Copyright (c)  Faculty of Engineering
+%                Autonomous University of Queretaro, Mexico
 %------------------------------------------------------------------------
 
 factor_fc=0.85;

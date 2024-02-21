@@ -45,9 +45,9 @@ function [maxef,diagramaInteraccion,tablaEficiencias,c]=diagCircColsISR(t,...
 %         E:                  Elasticity modulus of reinforcing steel
 %
 %------------------------------------------------------------------------
-% LAST MODIFIED: L.F.Veduzco    2023-01-24
-%                Faculty of Engineering
-%                Autonomous University of Queretaro
+% LAST MODIFIED: L.F.Veduzco    2023-02-05
+% Copyright (c)  Faculty of Engineering
+%                Autonomous University of Queretaro, Mexico
 %------------------------------------------------------------------------
 
 if npdiag<3

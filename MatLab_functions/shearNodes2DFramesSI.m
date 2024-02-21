@@ -76,7 +76,7 @@ function [VcrxNode,VuxNode,VxSF,hnodeMin]=shearNodes2DFramesSI(ni,nf,...
 %-------------------------------------------------------------------------
 % LAST MODIFIED: L.Verduzco    2023-07-03
 % Copyright (c)  Faculty of Engineering
-%                Autonomous University of Queretaro
+%                Autonomous University of Queretaro, Mexico
 %-------------------------------------------------------------------------
 beams=length(elembeams);
 cols=length(elemcols);

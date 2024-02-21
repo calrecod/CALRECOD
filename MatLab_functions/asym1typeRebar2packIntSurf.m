@@ -1,16 +1,16 @@
 function [bestav4,bestnv4,bestArrangement,bestDisposition,...
- bestnv,bestMr,bestEf,bestcxy,bestCP,bestArea,bestdiagram,...
- bestCost,maxLoad]=asym1typeRebar2packIntSurf(fdpc,fy,nvxy,...
- arraySymOriginal,b,h,rec,RebarAvailable,op,av,npdiag,symCost,...
- pu_asym_cols,height,wac,load_conditions,ductility,beta1)
+    bestnv,bestMr,bestEf,bestcxy,bestCP,bestArea,bestdiagram,...
+    bestCost,maxLoad,bestCFA]=asym1typeRebar2packIntSurf(fdpc,fy,nvxy,...
+    arraySymOriginal,b,h,rec,RebarAvailable,op,av,npdiag,...
+    height,wac,load_conditions,ductility,beta1,puCostCardBuild,dataCFA)
 
 %-------------------------------------------------------------------------
 % Syntax:
 % [bestav4,bestnv4,bestArrangement,bestDisposition,...
 % bestnv,bestMr,bestEf,bestcxy,bestCP,bestArea,bestdiagram,...
-% bestCost,maxLoad]=asym1typeRebar2packIntSurf(fdpc,fy,nvxy,...
+% bestCost,maxLoad,bestCFA]=asym1typeRebar2packIntSurf(fdpc,fy,nvxy,...
 % arraySymOriginal,b,h,rec,RebarAvailable,op,av,npdiag,symCost,...
-% pu_asym_cols,height,wac,load_conditions,ductility,beta1)
+% height,wac,load_conditions,ductility,beta1,puCostCardBuild,dataCFA)
 %
 %-------------------------------------------------------------------------
 % SYSTEM OF UNITS: SI - (Kg,cm)
@@ -111,10 +111,15 @@ function [bestav4,bestnv4,bestArrangement,bestDisposition,...
 %                               reinforcement designs. A number between 1
 %                               to 3 (see Documentation).
 %
+%         puCostCardBuild:      is a vector containing the parameters
+%                               required for the calculation of the unit
+%                               cost of a rebar design with a 
+%                               "unitCostCardColsRec"
+%
 %------------------------------------------------------------------------
-% LAST MODIFIED: L.F.Veduzco    2022-10-22
-%                Faculty of Engineering
-%                Autonomous University of Queretaro
+% LAST MODIFIED: L.F.Veduzco    2023-02-05
+% Copyright (c)  Faculty of Engineering
+%                Autonomous University of Queretaro, Mexico
 %------------------------------------------------------------------------
 fc=fdpc/0.85;
 if fc<2000 % units: kg,cm - Mexican NTC-17
@@ -174,9 +179,19 @@ for i=0:(nvxy(1)-2)
                     npdiag,fy,fdpc,beta1,E,arrayAsym(1),arrayAsym(2),...
                     arrayAsym(3),arrayAsym(4),RebarAvailable,dispositionRebar);
 
+                    wub=dataCFA(3);
+                    wnd=dataCFA(4);
+                    [BS,CFA]=BuildabilityScoreRebarCols([op,op,op,op],...
+                        arrayAsym,wub,wnd);
+
+                    pccb=puCostCardBuild;
+                    pu_asym_cols=unitCostCardColsRec(pccb(1),pccb(2),pccb(3),...
+                                 pccb(4)*CFA,pccb(5),pccb(6),pccb(7));
+                             
                     maxef=eficiencia(iloadmax,5);
                     
-                    if maxef<1.0 && ast<amin && ast>=aminCode
+                    if maxef<1.0 && ast<amin && ast>=aminCode && ...
+                            dataCFA(1)<=CFA && CFA<=dataCFA(2)
                         amin=ast;
                         bestArea=amin;
                         
@@ -191,10 +206,10 @@ for i=0:(nvxy(1)-2)
                         bestav4=[ab1,ab2,ab3,ab4];
                         
                         bestCost=bestArea*height*wac*pu_asym_cols;
-                        CostSaving=symCost-bestCost;
+                        
                         bestcxy=cxy;
                         bestCP=cp;
-                        
+                        bestCFA=CFA;
                         bestMr=eficiencia(1,4);
                     end
                 end
@@ -212,7 +227,7 @@ if isempty(bestArea)==1 % if no feasible option was found
     bestArrangement=[];
     bestnv4=[];
     bestav4=[];
-
+    bestCFA=[];
     bestCost=[];
     bestcxy=[];
     bestCP=[];

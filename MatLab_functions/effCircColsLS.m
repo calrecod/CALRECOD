@@ -37,9 +37,9 @@ function [maxef,tablaEficiencias,c]=effCircColsLS(diagrama,...
 %                               points: vector size: [npoints+2,2]
 %
 %------------------------------------------------------------------------
-% LAST MODIFIED: L.F.Veduzco    2023-03-19
-%                Faculty of Engineering
-%                Autonomous University of Queretaro
+% LAST MODIFIED: L.F.Veduzco    2023-02-05
+% Copyright (c)  Faculty of Engineering
+%                Autonomous University of Queretaro, Mexico
 %------------------------------------------------------------------------
 
 nconditions=length(load_conditions(:,1));
@@ -75,10 +75,14 @@ for j=1:nconditions
             break;
         end
     end
-    cdos=c_vector(k,1);
-    ctres=c_vector(k+1,1);
     mr=(((ydos-ytres)/(xtres-xdos))*xtres+ytres)/...
         (pu/mu-((ytres-ydos)/(xtres-xdos)));
+    if mr>max(diagrama(:,4))
+        [mr,k]=max(diagrama(:,4));
+    end
+    cdos=c_vector(k,1);
+    ctres=c_vector(k+1,1);
+    
     c=(cdos+ctres)*0.5;
     
     C=[C;

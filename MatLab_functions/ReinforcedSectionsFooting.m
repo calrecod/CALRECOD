@@ -32,16 +32,17 @@ function ReinforcedSectionsFooting(h,be,le,dispositionRebar1,...
 %                               dimension, respectively
 %
 %------------------------------------------------------------------------
-% LAST MODIFIED: L.F.Veduzco    2022-02-05
-%                Faculty of Engineering
-%                Autonomous University of Queretaro
+% LAST MODIFIED: L.F.Veduzco    2023-07-03
+% Copyright (c)  Faculty of Engineering
+%                Autonomous University of Queretaro, Mexico
 %------------------------------------------------------------------------
 
-%%%%%%%%%%%%%%%%%%%%%%%%% section %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Transversal cross-section
+% Rebar coordinates
 x_var=dispositionRebar1(:,1);
 y_var=dispositionRebar1(:,2);
 
-%%---------------------------------------------%%%
+% cross-section border
 coordenadas_esq_seccion=[0.5*be 0.5*h;
                          0.5*be -0.5*h;
                          -0.5*be -0.5*h;
@@ -92,7 +93,6 @@ end
 for i=1:nbars2
     barTypes=[barTypes,barTypes2B(i)];
 end
-
 
 for j=1:nbars
     if barTypes(j)==1
@@ -165,13 +165,13 @@ if isempty(t7)~=1
     plot(dispVar7x,dispVar7y,'o','linewidth',1,'MarkerFaceColor','[0.255 0.069 0]','DisplayName','Bar Type 12');
 end
         
-% REINFORCEMENT ON THE OTHER SECTION _________________________________
+%% Longitudinal cross-section
 
-%%%%%%%%%%%%%%%%%%%%%%%%% seccion %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Rebar coordinates
 x_var=dispositionRebar2(:,1);
 y_var=dispositionRebar2(:,2);
 
-%%---------------------------------------------%%%
+% cross-section's borders
 coordenadas_esq_seccion=[0.5*le 0.5*h;
                          0.5*le -0.5*h;
                          -0.5*le -0.5*h;
@@ -183,7 +183,7 @@ y=coordenadas_esq_seccion(:,2);
 
 nbars1=length(barTypes1L);
 nbars2=length(barTypes2L);
-%-------------- baem plot ------------------%
+
 
 t1=[];
 t2=[];

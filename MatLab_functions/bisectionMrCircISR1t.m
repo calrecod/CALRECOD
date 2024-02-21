@@ -39,9 +39,9 @@ function [raiz]=bisectionMrCircISR1t(cUno,cDos,fr,E,t,diam,rec,fdpc,beta1,ea)
 %         ea:                 is the approximation root error (close to 0)
 %
 %------------------------------------------------------------------------
-% LAST MODIFIED: L.F.Veduzco    2023-01-25
-%                Faculty of Engineering
-%                Autonomous University of Queretaro
+% LAST MODIFIED: L.F.Veduzco    2023-02-05
+% Copyright (c)  Faculty of Engineering
+%                Autonomous University of Queretaro, Mexico
 %------------------------------------------------------------------------
 
 %%%%%%%%%%%%%%%%%%%%%%% f(l) %%%%%%%%%%%%%%%%%%%%%%%%%
